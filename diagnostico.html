@@ -13,7 +13,7 @@
       max-width: 800px;
       margin: auto;
     }
-    h1, h2, h3 {
+    h1, h2, h3, h4 {
       color: #2a2a2a;
     }
     .bloque {
@@ -27,7 +27,7 @@
       display: block;
       margin: 10px 0 5px;
     }
-    select, input[type="text"] {
+    select {
       width: 100%;
       padding: 8px;
       border-radius: 5px;
@@ -67,8 +67,35 @@
   <p>Responde estas preguntas para descubrir en qué etapa se encuentra tu negocio. Al final, recibirás una evaluación con recomendaciones.</p>
 
   <form id="diagnostico">
-    <!-- BLOQUES YA INCLUIDOS -->
-    <!-- ... -->
+    <div class="bloque">
+      <h2>💰 Finanzas</h2>
+      <label>¿Llevas control de ingresos y egresos?</label>
+      <select><option value="0">0 - No</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 - Sí, con reportes</option></select>
+    </div>
+
+    <div class="bloque">
+      <h2>📈 Clientes y Ventas</h2>
+      <label>¿Tienes definido tu cliente ideal?</label>
+      <select><option value="0">0 - No</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 - Sí, muy claro</option></select>
+    </div>
+
+    <div class="bloque">
+      <h2>💠 Operaciones</h2>
+      <label>¿El negocio puede operar sin ti algunos días?</label>
+      <select><option value="0">0 - No</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 - Sí, sin problemas</option></select>
+    </div>
+
+    <div class="bloque">
+      <h2>🤝 Dirección y Decisiones</h2>
+      <label>¿Tienes metas claras y las revisas?</label>
+      <select><option value="0">0 - No</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 - Sí, mensualmente</option></select>
+    </div>
+
+    <div class="bloque">
+      <h2>🌱 Bienestar del Dueño</h2>
+      <label>¿Tienes tiempo libre semanalmente?</label>
+      <select><option value="0">0 - No</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 - Sí, sin estrés</option></select>
+    </div>
 
     <button type="button" class="cta" onclick="calcularResultado()">Ver Resultado</button>
   </form>
