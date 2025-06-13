@@ -2,161 +2,158 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Radar Vestra de Propuesta de Valor</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descubre tu Propuesta de Valor</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #022c43, #115173);
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 30px;
+      color: #333;
     }
-    .container {
+    h1 {
+      color: #0B3C5D;
+    }
+    .form-section {
       background: #fff;
-      color: #022c43;
-      padding: 2em;
-      margin: 2em;
-      max-width: 700px;
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      animation: fadeIn 1s ease-in-out;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h1, h2, p {
-      margin-bottom: 1em;
-    }
-    .section {
-      margin-bottom: 2em;
-      animation: fadeSlide 0.8s ease-in-out;
-    }
-    select, input[type="text"] {
-      width: 100%;
-      padding: 0.75em;
-      margin-top: 0.5em;
-      margin-bottom: 1em;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-    .btn {
-      background-color: #022c43;
-      color: #fff;
-      border: none;
-      padding: 0.75em 1.5em;
-      border-radius: 10px;
-      cursor: pointer;
+    label {
+      display: block;
+      margin-top: 10px;
       font-weight: bold;
-      transition: background-color 0.3s ease;
     }
-    .btn:hover {
-      background-color: #01406c;
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
-    .hidden {
-      display: none;
+    .submit-btn {
+      background: #0B3C5D;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      margin-top: 20px;
+      border-radius: 4px;
+      cursor: pointer;
     }
     .result {
-      border: 2px dashed #022c43;
-      padding: 1.5em;
-      border-radius: 15px;
-      background-color: #f0f8ff;
-      color: #022c43;
-    }
-    .signature {
-      margin-top: 2em;
-      font-size: 0.95em;
-      font-style: italic;
-      color: #115173;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-    @keyframes fadeSlide {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+      background: #e0f7fa;
+      border-left: 4px solid #0097a7;
+      padding: 15px;
+      margin-top: 20px;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚨 Radar Vestra de Propuesta de Valor</h1>
-    <p>¿Tu negocio está compitiendo por precio o por verdadero valor? Este diagnóstico gratuito te revela en 5 minutos por qué tu mensaje no conecta... y qué cambiar para vender con claridad y autoridad.</p>
-    <p><strong>✔️ Diagnóstico Express</strong> · <strong>✔️ Consejo accionable</strong> · <strong>✔️ Lead magnet estratégico</strong></p>
 
-    <div id="quiz">
-      <div class="section" data-step="1">
-        <h2>1️⃣ ¿A quién ayudas y qué problema le quita el sueño?</h2>
-        <input id="q1" type="text" placeholder="Ej: Ayudo a talleres mecánicos a reducir tiempos muertos">
-        <button class="btn" onclick="next(1)">Siguiente</button>
-      </div>
+  <h1>🎯 Descubre el Corazón de tu Negocio</h1>
+  <p>Responde estas preguntas y descubre si tu propuesta de valor está bien definida.</p>
 
-      <div class="section hidden" data-step="2">
-        <h2>2️⃣ ¿Cuál es el beneficio concreto que entregas?</h2>
-        <input id="q2" type="text" placeholder="Ej: Más ingresos, control de inventario, menos errores">
-        <button class="btn" onclick="next(2)">Siguiente</button>
-      </div>
+  <form id="valorForm">
 
-      <div class="section hidden" data-step="3">
-        <h2>3️⃣ ¿Qué haces diferente a tus competidores?</h2>
-        <input id="q3" type="text" placeholder="Ej: Tecnología propia, rapidez, garantía de resultados">
-        <button class="btn" onclick="next(3)">Siguiente</button>
-      </div>
-
-      <div class="section hidden" data-step="4">
-        <h2>4️⃣ ¿Por qué deberían elegirte a ti y no a la opción más barata?</h2>
-        <input id="q4" type="text" placeholder="Escribe tu respuesta aquí">
-        <button class="btn" onclick="showResult()">Ver resultado</button>
-      </div>
+    <div class="form-section">
+      <label>1. ¿Qué problema principal resuelves?</label>
+      <select id="problema">
+        <option value="">Selecciona una opción</option>
+        <option value="tiempo">Mis clientes no tienen tiempo</option>
+        <option value="dinero">Mis clientes gastan mucho</option>
+        <option value="frustracion">Clientes frustrados con otras soluciones</option>
+        <option value="claridad">No saben cómo hacer algo</option>
+        <option value="otro">Otro</option>
+      </select>
+      <input type="text" id="problemaOtro" placeholder="Describe el problema..." style="display:none;">
     </div>
 
-    <div id="resultado" class="hidden result"></div>
-    <div class="signature hidden" id="firma">
-      👋 Soy Uriel Vargas, consultor estratégico y fundador de Vestra. <br>
-      Ayudo a empresas como la tuya a dejar atrás la improvisación y comunicar con autoridad su valor real. <br><br>
-      💬 ¿Quieres mi plantilla + asesoría express? Escribe <strong>"VALOR"</strong> por DM y te la comparto sin costo.
+    <div class="form-section">
+      <label>2. ¿Quién es tu cliente ideal?</label>
+      <select id="cliente">
+        <option value="">Selecciona</option>
+        <option value="personas">Personas</option>
+        <option value="negocios">Negocios pequeños</option>
+        <option value="empresas">Empresas medianas o grandes</option>
+        <option value="profesionales">Profesionales independientes</option>
+        <option value="otro">Otro</option>
+      </select>
     </div>
-  </div>
+
+    <div class="form-section">
+      <label>3. ¿Qué resultado obtiene tu cliente?</label>
+      <select id="resultado">
+        <option value="">Selecciona</option>
+        <option value="tiempo">Ahorro de tiempo</option>
+        <option value="dinero">Ahorro de dinero</option>
+        <option value="mejora">Mejora su vida o negocio</option>
+        <option value="acompanado">Se siente acompañado</option>
+        <option value="ingresos">Aumenta ingresos o productividad</option>
+      </select>
+    </div>
+
+    <div class="form-section">
+      <label>4. ¿Cómo logras ese resultado?</label>
+      <input type="text" id="como" placeholder="Ej. Con un software que automatiza tareas">
+    </div>
+
+    <div class="form-section">
+      <label>5. ¿Qué te hace diferente?</label>
+      <select id="diferencia">
+        <option value="">Selecciona</option>
+        <option value="rapido">Más accesible o rápido</option>
+        <option value="personalizado">Experiencia personalizada</option>
+        <option value="especializado">Enfoque o método especializado</option>
+        <option value="comprobado">Resultados comprobados</option>
+        <option value="ninguno">No estoy seguro</option>
+      </select>
+    </div>
+
+    <div class="form-section">
+      <label>6. ¿Tu equipo/clientes entienden lo que haces?</label>
+      <select id="claridad">
+        <option value="">Selecciona</option>
+        <option value="todos">Sí, todos lo tienen claro</option>
+        <option value="algunos">Algunos sí, otros no</option>
+        <option value="confusion">Cada quien dice algo distinto</option>
+      </select>
+    </div>
+
+    <button type="button" class="submit-btn" onclick="evaluar()">Ver Resultado</button>
+
+  </form>
+
+  <div class="result" id="resultadoFinal"></div>
 
   <script>
-    function next(step) {
-      const current = document.querySelector(`[data-step="${step}"]`);
-      const input = document.getElementById(`q${step}`);
-      if (!input.value.trim()) {
-        alert('Por favor, completa esta sección antes de continuar.');
-        return;
-      }
-      current.classList.add('hidden');
-      const nextSection = document.querySelector(`[data-step="${step+1}"]`);
-      if (nextSection) nextSection.classList.remove('hidden');
-    }
+    document.getElementById('problema').addEventListener('change', function() {
+      document.getElementById('problemaOtro').style.display = this.value === 'otro' ? 'block' : 'none';
+    });
 
-    function showResult() {
-      const answers = [1, 2, 3, 4].map(i => document.getElementById(`q${i}`).value.trim().toLowerCase());
-      let mensaje = "";
+    function evaluar() {
+      const diferencia = document.getElementById('diferencia').value;
+      const resultadoDiv = document.getElementById('resultadoFinal');
+      let resultadoTexto = "";
 
-      if (answers.includes('') || answers.some(ans => ans.length < 10)) {
-        mensaje = `<h2>🔍 Resultado: Propuesta poco clara</h2>
-        <p>No estás comunicando el valor real de tu negocio. Tu mensaje es débil o demasiado genérico.</p>
-        <p><strong>Consejo Vestra:</strong> Reescribe enfocándote en UN cliente, UN beneficio transformador y UN diferenciador fuerte.</p>`;
-      } else if (answers[2].includes("precio") || answers[3].includes("precio")) {
-        mensaje = `<h2>⚠️ Resultado: Estás compitiendo por precio</h2>
-        <p>Tu diferenciador no es lo suficientemente poderoso. Estás vendiendo "más barato", no "mejor".</p>
-        <p><strong>Consejo Vestra:</strong> Construye una propuesta centrada en transformación, no en descuentos.</p>`;
+      if (diferencia === "ninguno") {
+        resultadoTexto = "<strong>🟥 Tu propuesta está poco clara.</strong><br>Necesitas definir con más precisión el problema que resuelves, para quién y qué te hace único.";
+      } else if (diferencia === "personalizado" || diferencia === "especializado") {
+        resultadoTexto = "<strong>🟨 Tienes una base sólida, pero falta diferenciación.</strong><br>Define mejor tu ventaja competitiva para destacarte en el mercado.";
       } else {
-        mensaje = `<h2>✅ Resultado: Propuesta con potencial</h2>
-        <p>Tu propuesta de valor tiene bases sólidas. Aún puedes afinar tu mensaje y hacerlo inolvidable.</p>
-        <p><strong>Consejo Vestra:</strong> Transforma tu mensaje en una frase clara, emocional y repetible por todo tu equipo.</p>`;
+        resultadoTexto = "<strong>🟩 Tu propuesta está bien enfocada.</strong><br>Ahora enfócate en comunicarla con más fuerza en tus redes, discursos y ventas.";
       }
 
-      document.getElementById('resultado').innerHTML = mensaje;
-      document.getElementById('resultado').classList.remove('hidden');
-      document.getElementById('firma').classList.remove('hidden');
+      resultadoTexto += `<br><br>📩 ¿Quieres una guía paso a paso? <strong>Escríbeme “PROPUESTA” por DM en Instagram</strong> y te la envío.`;
+
+      resultadoDiv.innerHTML = resultadoTexto;
+      resultadoDiv.style.display = 'block';
+      window.scrollTo(0, document.body.scrollHeight);
     }
   </script>
+
 </body>
 </html>
