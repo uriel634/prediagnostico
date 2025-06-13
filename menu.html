@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Sitio - Página</title>
+    <style>
+        /* Estilos del menú */
+        nav {
+            background: #333;
+            padding: 1rem;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav li {
+            margin-right: 20px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+        
+        nav a:hover {
+            background: #555;
+        }
+        
+        /* Responsive para móvil */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+            }
+            nav li {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú de navegación -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="valor.html">Sobre Mí</a></li>
+        </ul>
+    </nav>
+    
+    <!-- Contenido de la página -->
+    <main>
+        <h1>Contenido de esta página</h1>
+        <p>Tu contenido aquí...</p>
+    </main>
+</body>
+</html>
