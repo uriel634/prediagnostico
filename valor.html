@@ -2,149 +2,161 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Descubre tu Propuesta de Valor</title>
+  <title>Radar Vestra de Propuesta de Valor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 1em; }
-    .hidden { display: none; }
-    .section { margin-bottom: 2em; }
-    .btn { background: #007bfc; color: #fff; padding: 0.5em 1em; border: none; cursor: pointer; }
-    .btn:hover { background: #005bb5; }
-    .result { border: 2px solid #007bfc; padding: 1em; border-radius: 8px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #022c43, #115173);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      color: #022c43;
+      padding: 2em;
+      margin: 2em;
+      max-width: 700px;
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 1s ease-in-out;
+    }
+    h1, h2, p {
+      margin-bottom: 1em;
+    }
+    .section {
+      margin-bottom: 2em;
+      animation: fadeSlide 0.8s ease-in-out;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 0.75em;
+      margin-top: 0.5em;
+      margin-bottom: 1em;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    .btn {
+      background-color: #022c43;
+      color: #fff;
+      border: none;
+      padding: 0.75em 1.5em;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .btn:hover {
+      background-color: #01406c;
+    }
+    .hidden {
+      display: none;
+    }
+    .result {
+      border: 2px dashed #022c43;
+      padding: 1.5em;
+      border-radius: 15px;
+      background-color: #f0f8ff;
+      color: #022c43;
+    }
+    .signature {
+      margin-top: 2em;
+      font-size: 0.95em;
+      font-style: italic;
+      color: #115173;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    @keyframes fadeSlide {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>🚨 Radar Vestra de Propuesta de Valor</h1>
+    <p>¿Tu negocio está compitiendo por precio o por verdadero valor? Este diagnóstico gratuito te revela en 5 minutos por qué tu mensaje no conecta... y qué cambiar para vender con claridad y autoridad.</p>
+    <p><strong>✔️ Diagnóstico Express</strong> · <strong>✔️ Consejo accionable</strong> · <strong>✔️ Lead magnet estratégico</strong></p>
 
-  <h1>Descubre tu Propuesta de Valor en 5 Minutos</h1>
-  <p>Rápido, claro y con resultados. Completa las preguntas y recibe tu valoración + siguiente paso.</p>
+    <div id="quiz">
+      <div class="section" data-step="1">
+        <h2>1️⃣ ¿A quién ayudas y qué problema le quita el sueño?</h2>
+        <input id="q1" type="text" placeholder="Ej: Ayudo a talleres mecánicos a reducir tiempos muertos">
+        <button class="btn" onclick="next(1)">Siguiente</button>
+      </div>
 
-  <div id="quiz">
+      <div class="section hidden" data-step="2">
+        <h2>2️⃣ ¿Cuál es el beneficio concreto que entregas?</h2>
+        <input id="q2" type="text" placeholder="Ej: Más ingresos, control de inventario, menos errores">
+        <button class="btn" onclick="next(2)">Siguiente</button>
+      </div>
 
-    <div class="section" data-step="1">
-      <h2>1. ¿Quién es tu cliente ideal?</h2>
-      <select id="q1">
-        <option value="">-- selecciona --</option>
-        <option value="fisico">Persona física</option>
-        <option value="pyme">Empresa pequeña</option>
-        <option value="grande">Empresa mediana o grande</option>
-        <option value="ns">No estoy seguro</option>
-      </select>
-      <button class="btn" onclick="next(1)">Siguiente →</button>
+      <div class="section hidden" data-step="3">
+        <h2>3️⃣ ¿Qué haces diferente a tus competidores?</h2>
+        <input id="q3" type="text" placeholder="Ej: Tecnología propia, rapidez, garantía de resultados">
+        <button class="btn" onclick="next(3)">Siguiente</button>
+      </div>
+
+      <div class="section hidden" data-step="4">
+        <h2>4️⃣ ¿Por qué deberían elegirte a ti y no a la opción más barata?</h2>
+        <input id="q4" type="text" placeholder="Escribe tu respuesta aquí">
+        <button class="btn" onclick="showResult()">Ver resultado</button>
+      </div>
     </div>
 
-    <div class="section hidden" data-step="2">
-      <h2>2. ¿Qué problema resuelves?</h2>
-      <select id="q2">
-        <option value="">-- selecciona --</option>
-        <option value="tiempo">Ahorro de tiempo</option>
-        <option value="dinero">Ahorro de dinero</option>
-        <option value="resultados">Mejor desempeño</option>
-        <option value="norma">Cumplimiento</option>
-        <option value="otro">Otro</option>
-      </select>
-      <input id="q2otro" type="text" class="hidden" placeholder="Describe tu otro problema">
-      <button class="btn" onclick="next(2)">Siguiente →</button>
+    <div id="resultado" class="hidden result"></div>
+    <div class="signature hidden" id="firma">
+      👋 Soy Uriel Vargas, consultor estratégico y fundador de Vestra. <br>
+      Ayudo a empresas como la tuya a dejar atrás la improvisación y comunicar con autoridad su valor real. <br><br>
+      💬 ¿Quieres mi plantilla + asesoría express? Escribe <strong>"VALOR"</strong> por DM y te la comparto sin costo.
     </div>
-
-    <div class="section hidden" data-step="3">
-      <h2>3. ¿Qué ofreces?</h2>
-      <select id="q3">
-        <option value="">-- selecciona --</option>
-        <option value="producto">Producto físico</option>
-        <option value="servicio">Servicio profesional</option>
-        <option value="integral">Producto + servicio</option>
-        <option value="otro">Otro</option>
-      </select>
-      <input id="q3otro" type="text" class="hidden" placeholder="Describe tu oferta">
-      <button class="btn" onclick="next(3)">Siguiente →</button>
-    </div>
-
-    <div class="section hidden" data-step="4">
-      <h2>4. Beneficio principal</h2>
-      <select id="q4">
-        <option value="">-- selecciona --</option>
-        <option value="ventas">Más ventas</option>
-        <option value="control">Tranquilidad o control</option>
-        <option value="menosgastos">Menos gastos</option>
-        <option value="imagen">Mejor imagen</option>
-        <option value="otro">Otro</option>
-      </select>
-      <input id="q4otro" type="text" class="hidden" placeholder="Otro beneficio">
-      <button class="btn" onclick="next(4)">Siguiente →</button>
-    </div>
-
-    <div class="section hidden" data-step="5">
-      <h2>5. ¿Qué te hace diferente?</h2>
-      <select id="q5">
-        <option value="">-- selecciona --</option>
-        <option value="precio">Mejor precio</option>
-        <option value="calidad">Mayor calidad</option>
-        <option value="personalizada">Atención personalizada</option>
-        <option value="resultado">Resultados comprobables</option>
-        <option value="innovacion">Innovación</option>
-        <option value="ns">No estoy seguro</option>
-      </select>
-      <button class="btn" onclick="next(5)">Ver resultado</button>
-    </div>
-
   </div>
-
-  <div id="resultado" class="hidden result"></div>
 
   <script>
     function next(step) {
       const current = document.querySelector(`[data-step="${step}"]`);
-      if (!validate(step)) {
-        alert('Por favor, responde esta pregunta.');
+      const input = document.getElementById(`q${step}`);
+      if (!input.value.trim()) {
+        alert('Por favor, completa esta sección antes de continuar.');
         return;
       }
       current.classList.add('hidden');
-      const nextEl = document.querySelector(`[data-step="${step+1}"]`);
-      if (nextEl) nextEl.classList.remove('hidden');
-      else showResult();
-    }
-
-    // Mostrar campo "otro"
-    ['2','3','4'].forEach(i => {
-      document.getElementById(`q${i}`).addEventListener('change', e => {
-        const other = document.getElementById(`q${i}otro`);
-        other.classList.toggle('hidden', e.target.value !== 'otro');
-      });
-    });
-
-    function validate(step) {
-      const sel = document.getElementById('q'+step);
-      if (!sel.value) return false;
-      if (sel.value === 'otro') {
-        const txt = document.getElementById(`q${step}otro`);
-        return txt.value.trim() !== '';
-      }
-      return true;
+      const nextSection = document.querySelector(`[data-step="${step+1}"]`);
+      if (nextSection) nextSection.classList.remove('hidden');
     }
 
     function showResult() {
-      const answers = [1,2,3,4,5].map(i => {
-        const sel = document.getElementById('q'+i).value;
-        return sel === 'otro' ? document.getElementById(`q${i}otro`).value.toLowerCase() : sel;
-      });
-      const [c1,c2,c3,c4,c5] = answers;
-      let perfil, consejo;
+      const answers = [1, 2, 3, 4].map(i => document.getElementById(`q${i}`).value.trim().toLowerCase());
+      let mensaje = "";
 
-      if (['ns',''].includes(c1) || ['no estoy seguro', 'otro'].includes(c2) || ['no estoy seguro'].includes(c5)) {
-        perfil = "Tu propuesta aún está en construcción";
-        consejo = "Empieza entrevistando a 3 clientes actuales: ¿por qué te eligen? Usa esas respuestas para aclarar tu mensaje.";
-      } else if (c5 === 'precio' || c5 === 'calidad' || c5 === 'personalizada' || c5 === 'resultado' || c5 === 'innovacion') {
-        perfil = "Tienes buena base, pero falta diferenciación";
-        consejo = "Selecciona un atributo clave (ej. rapidez, ahorro, innovación) y úsalo como tu bandera de comunicación.";
+      if (answers.includes('') || answers.some(ans => ans.length < 10)) {
+        mensaje = `<h2>🔍 Resultado: Propuesta poco clara</h2>
+        <p>No estás comunicando el valor real de tu negocio. Tu mensaje es débil o demasiado genérico.</p>
+        <p><strong>Consejo Vestra:</strong> Reescribe enfocándote en UN cliente, UN beneficio transformador y UN diferenciador fuerte.</p>`;
+      } else if (answers[2].includes("precio") || answers[3].includes("precio")) {
+        mensaje = `<h2>⚠️ Resultado: Estás compitiendo por precio</h2>
+        <p>Tu diferenciador no es lo suficientemente poderoso. Estás vendiendo "más barato", no "mejor".</p>
+        <p><strong>Consejo Vestra:</strong> Construye una propuesta centrada en transformación, no en descuentos.</p>`;
       } else {
-        perfil = "Tu propuesta es clara y enfocada";
-        consejo = "Integra esa claridad en tu pitch, sitio web, redes y asegúrate de que todo tu equipo lo comparta.";
+        mensaje = `<h2>✅ Resultado: Propuesta con potencial</h2>
+        <p>Tu propuesta de valor tiene bases sólidas. Aún puedes afinar tu mensaje y hacerlo inolvidable.</p>
+        <p><strong>Consejo Vestra:</strong> Transforma tu mensaje en una frase clara, emocional y repetible por todo tu equipo.</p>`;
       }
 
-      document.getElementById('resultado').innerHTML =
-        `<h2>${perfil}</h2><p>${consejo}</p><p>💬 ¿Quieres una plantilla para pulir tu propuesta? Escribe <strong>VALOR</strong> por DM y te la envío.</p>`;
+      document.getElementById('resultado').innerHTML = mensaje;
       document.getElementById('resultado').classList.remove('hidden');
+      document.getElementById('firma').classList.remove('hidden');
     }
   </script>
-
 </body>
 </html>
