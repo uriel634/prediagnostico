@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Descubre tu Propuesta de Valor</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 1em; }
+    .hidden { display: none; }
+    .section { margin-bottom: 2em; }
+    .btn { background: #007bfc; color: #fff; padding: 0.5em 1em; border: none; cursor: pointer; }
+    .btn:hover { background: #005bb5; }
+    .result { border: 2px solid #007bfc; padding: 1em; border-radius: 8px; }
+  </style>
+</head>
+<body>
+
+  <h1>Descubre tu Propuesta de Valor en 5 Minutos</h1>
+  <p>Rápido, claro y con resultados. Completa las preguntas y recibe tu valoración + siguiente paso.</p>
+
+  <div id="quiz">
+
+    <div class="section" data-step="1">
+      <h2>1. ¿Quién es tu cliente ideal?</h2>
+      <select id="q1">
+        <option value="">-- selecciona --</option>
+        <option value="fisico">Persona física</option>
+        <option value="pyme">Empresa pequeña</option>
+        <option value="grande">Empresa mediana o grande</option>
+        <option value="ns">No estoy seguro</option>
+      </select>
+      <button class="btn" onclick="next(1)">Siguiente →</button>
+    </div>
+
+    <div class="section hidden" data-step="2">
+      <h2>2. ¿Qué problema resuelves?</h2>
+      <select id="q2">
+        <option value="">-- selecciona --</option>
+        <option value="tiempo">Ahorro de tiempo</option>
+        <option value="dinero">Ahorro de dinero</option>
+        <option value="resultados">Mejor desempeño</option>
+        <option value="norma">Cumplimiento</option>
+        <option value="otro">Otro</option>
+      </select>
+      <input id="q2otro" type="text" class="hidden" placeholder="Describe tu otro problema">
+      <button class="btn" onclick="next(2)">Siguiente →</button>
+    </div>
+
+    <div class="section hidden" data-step="3">
+      <h2>3. ¿Qué ofreces?</h2>
+      <select id="q3">
+        <option value="">-- selecciona --</option>
+        <option value="producto">Producto físico</option>
+        <option value="servicio">Servicio profesional</option>
+        <option value="integral">Producto + servicio</option>
+        <option value="otro">Otro</option>
+      </select>
+      <input id="q3otro" type="text" class="hidden" placeholder="Describe tu oferta">
+      <button class="btn" onclick="next(3)">Siguiente →</button>
+    </div>
+
+    <div class="section hidden" data-step="4">
+      <h2>4. Beneficio principal</h2>
+      <select id="q4">
+        <option value="">-- selecciona --</option>
+        <option value="ventas">Más ventas</option>
+        <option value="control">Tranquilidad o control</option>
+        <option value="menosgastos">Menos gastos</option>
+        <option value="imagen">Mejor imagen</option>
+        <option value="otro">Otro</option>
+      </select>
+      <input id="q4otro" type="text" class="hidden" placeholder="Otro beneficio">
+      <button class="btn" onclick="next(4)">Siguiente →</button>
+    </div>
+
+    <div class="section hidden" data-step="5">
+      <h2>5. ¿Qué te hace diferente?</h2>
+      <select id="q5">
+        <option value="">-- selecciona --</option>
+        <option value="precio">Mejor precio</option>
+        <option value="calidad">Mayor calidad</option>
+        <option value="personalizada">Atención personalizada</option>
+        <option value="resultado">Resultados comprobables</option>
+        <option value="innovacion">Innovación</option>
+        <option value="ns">No estoy seguro</option>
+      </select>
+      <button class="btn" onclick="next(5)">Ver resultado</button>
+    </div>
+
+  </div>
+
+  <div id="resultado" class="hidden result"></div>
+
+  <script>
+    function next(step) {
+      const current = document.querySelector(`[data-step="${step}"]`);
+      if (!validate(step)) {
+        alert('Por favor, responde esta pregunta.');
+        return;
+      }
+      current.classList.add('hidden');
+      const nextEl = document.querySelector(`[data-step="${step+1}"]`);
+      if (nextEl) nextEl.classList.remove('hidden');
+      else showResult();
+    }
+
+    // Mostrar campo "otro"
+    ['2','3','4'].forEach(i => {
+      document.getElementById(`q${i}`).addEventListener('change', e => {
+        const other = document.getElementById(`q${i}otro`);
+        other.classList.toggle('hidden', e.target.value !== 'otro');
+      });
+    });
+
+    function validate(step) {
+      const sel = document.getElementById('q'+step);
+      if (!sel.value) return false;
+      if (sel.value === 'otro') {
+        const txt = document.getElementById(`q${step}otro`);
+        return txt.value.trim() !== '';
+      }
+      return true;
+    }
+
+    function showResult() {
+      const answers = [1,2,3,4,5].map(i => {
+        const sel = document.getElementById('q'+i).value;
+        return sel === 'otro' ? document.getElementById(`q${i}otro`).value.toLowerCase() : sel;
+      });
+      const [c1,c2,c3,c4,c5] = answers;
+      let perfil, consejo;
+
+      if (['ns',''].includes(c1) || ['no estoy seguro', 'otro'].includes(c2) || ['no estoy seguro'].includes(c5)) {
+        perfil = "Tu propuesta aún está en construcción";
+        consejo = "Empieza entrevistando a 3 clientes actuales: ¿por qué te eligen? Usa esas respuestas para aclarar tu mensaje.";
+      } else if (c5 === 'precio' || c5 === 'calidad' || c5 === 'personalizada' || c5 === 'resultado' || c5 === 'innovacion') {
+        perfil = "Tienes buena base, pero falta diferenciación";
+        consejo = "Selecciona un atributo clave (ej. rapidez, ahorro, innovación) y úsalo como tu bandera de comunicación.";
+      } else {
+        perfil = "Tu propuesta es clara y enfocada";
+        consejo = "Integra esa claridad en tu pitch, sitio web, redes y asegúrate de que todo tu equipo lo comparta.";
+      }
+
+      document.getElementById('resultado').innerHTML =
+        `<h2>${perfil}</h2><p>${consejo}</p><p>💬 ¿Quieres una plantilla para pulir tu propuesta? Escribe <strong>VALOR</strong> por DM y te la envío.</p>`;
+      document.getElementById('resultado').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
