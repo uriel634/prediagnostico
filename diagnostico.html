@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico Empresarial Express</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(#f8f9fa, #e0e0e0);
+      color: #333;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1, h2, h3 {
+      color: #2a2a2a;
+    }
+    .bloque {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    .cta {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .cta:hover {
+      background-color: #0056b3;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+    #resultado {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Diagnóstico Empresarial Express</h1>
+  <p>Responde estas preguntas para descubrir en qué etapa se encuentra tu negocio. Al final, recibirás una evaluación con recomendaciones.</p>
+
+  <form id="diagnostico">
+    <!-- BLOQUES YA INCLUIDOS -->
+    <!-- ... -->
+
+    <button type="button" class="cta" onclick="calcularResultado()">Ver Resultado</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <div class="footer">
+    <p>¿Quieres un plan para crecer? Escríbeme con la palabra <strong>CRECER</strong> 📩</p>
+  </div>
+
+  <script>
+    function calcularResultado() {
+      const selects = document.querySelectorAll('form select');
+      let total = 0;
+      selects.forEach(select => total += parseInt(select.value));
+
+      let etapa = '';
+      let plan = '';
+
+      if (total <= 39) {
+        etapa = '🔴 Caos total';
+        plan = `
+          <h4>Bloques recomendados:</h4>
+          <ul>
+            <li><strong>🧱 Bloque 1: Orden Interno</strong> – Define procesos, rutinas y controla finanzas básicas.</li>
+            <li><strong>📋 Bloque 2: Finanzas Básicas</strong> – Registra ingresos, egresos y calcula tu rentabilidad.</li>
+            <li><strong>🧠 Bloque 3: Fundamentos del Negocio</strong> – Define qué vendes, a quién, y por qué te compran.</li>
+          </ul>`;
+      } else if (total <= 74) {
+        etapa = '🟠 Supervivencia';
+        plan = `
+          <h4>Bloques recomendados:</h4>
+          <ul>
+            <li><strong>🚀 Bloque 2: Aumento de Ventas</strong> – Establece un sistema de clientes y referidos.</li>
+            <li><strong>📊 Bloque 4: Toma de Decisiones</strong> – Usa datos y KPIs para evaluar lo que sí funciona.</li>
+            <li><strong>🛠️ Bloque 1: Operaciones Eficientes</strong> – Estandariza y delega tareas básicas.</li>
+          </ul>`;
+      } else if (total <= 99) {
+        etapa = '🟡 Estabilización';
+        plan = `
+          <h4>Bloques recomendados:</h4>
+          <ul>
+            <li><strong>⚙️ Bloque 3: Sostenibilidad</strong> – Documenta procesos y automatiza lo repetitivo.</li>
+            <li><strong>📈 Bloque 4: KPIs Estratégicos</strong> – Mide avances y ajusta rumbo.</li>
+            <li><strong>🧭 Bloque 5: Enfoque del Dueño</strong> – Reinvierte tiempo y energía donde más valor generas.</li>
+          </ul>`;
+      } else {
+        etapa = '🟢 Expansión';
+        plan = `
+          <h4>Bloques recomendados:</h4>
+          <ul>
+            <li><strong>📌 Bloque 6: Liderazgo y Escalamiento</strong> – Forma equipo y estructura para crecer.</li>
+            <li><strong>🌎 Bloque 7: Posicionamiento</strong> – Clarifica tu marca y ventaja competitiva.</li>
+            <li><strong>📊 Bloque 4: Evaluación Estratégica</strong> – Toma decisiones con visión de 12 meses.</li>
+          </ul>`;
+      }
+
+      document.getElementById('resultado').style.display = 'block';
+      document.getElementById('resultado').innerHTML = `
+        <h3>📈 Resultado:</h3>
+        <p><strong>Puntaje total:</strong> ${total}/125</p>
+        <p><strong>Etapa:</strong> ${etapa}</p>
+        ${plan}
+      `;
+    }
+  </script>
+</body>
+</html>
