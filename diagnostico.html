@@ -754,76 +754,52 @@
         
         // Calcular resultados
         function calculateResults() {
-            // Validar que todas las preguntas estén respondidas
-            const unanswered = document.querySelectorAll('input[type="radio"]:not(:checked)').length;
-            if (unanswered > 0) {
-                alert('Por favor responde todas las preguntas antes de continuar');
-                return;
-            }
-            
-            // Ocultar formulario y mostrar resultados
-            document.getElementById('form-container').classList.add('hidden');
-            document.getElementById('results-container').style.display = 'block';
-            
-            // Calcular puntaje total (ejemplo simplificado)
-            const radios = document.querySelectorAll('input[type="radio"]:checked');
-            let totalScore = 0;
-            
-            radios.forEach(radio => {
-                totalScore += parseInt(radio.value);
-            });
-            
-            // Determinar etapa del negocio
-            let stage, description, badgeClass;
-            
-            if (totalScore <= 10) {
-                stage = "Caos Total";
-                description = "Tu negocio opera en modo crisis constante, con poca estructura y mucha dependencia de ti.";
-                badgeClass = "stage-1";
-            } else if (totalScore <= 16) {
-                stage = "Supervivencia";
-                description = "Tu negocio está en modo supervivencia, trabajando día a día sin mucha planificación.";
-                badgeClass = "stage-2";
-            } else {
-                stage = "Crecimiento";
-                description = "Tu negocio tiene bases sólidas y está listo para crecer de manera estructurada.";
-                badgeClass = "stage-3";
-            }
-            
-            // Actualizar UI con resultados
-            document.getElementById('stage-badge').textContent = `Etapa de ${stage}`;
-            document.getElementById('stage-badge').className = `stage-badge ${badgeClass}`;
-            document.getElementById('stage-description').textContent = description;
-            
-            // Scroll to results
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        // Reiniciar cuestionario
-        function restartQuiz() {
-            // Limpiar respuestas
-            document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.checked = false;
-            });
-            
-            // Resetear formulario
-            document.getElementById('results-container').style.display = 'none';
-            document.getElementById('form-container').classList.remove('hidden');
-            document.getElementById('section1').classList.add('active');
-            document.getElementById('section2').classList.remove('active');
-            document.getElementById('section3').classList.remove('active');
-            document.getElementById('section4').classList.remove('active');
-            document.getElementById('section5').classList.remove('active');
-            document.getElementById('section6').classList.remove('active');
-            
-            // Resetear progreso
-            document.querySelectorAll('.progress-bar').forEach(bar => {
-                bar.style.width = '20%';
-            });
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    // Obtener solo las preguntas de la sección actual (última sección)
+    const currentSection = document.querySelector('.form-section.active');
+    const unansweredInCurrentSection = currentSection.querySelectorAll('input[type="radio"]:not(:checked)').length;
+    
+    if (unansweredInCurrentSection > 0) {
+        alert('Por favor responde todas las preguntas de esta sección antes de continuar');
+        return;
+    }
+
+    // Ocultar formulario y mostrar resultados
+    document.getElementById('form-container').classList.add('hidden');
+    document.getElementById('results-container').style.display = 'block';
+    
+    // Calcular puntaje total solo de las preguntas respondidas
+    const radios = document.querySelectorAll('input[type="radio"]:checked');
+    let totalScore = 0;
+    
+    radios.forEach(radio => {
+        totalScore += parseInt(radio.value);
+    });
+    
+    // Determinar etapa del negocio
+    let stage, description, badgeClass;
+    
+    if (totalScore <= 10) {
+        stage = "Caos Total";
+        description = "Tu negocio opera en modo crisis constante, con poca estructura y mucha dependencia de ti.";
+        badgeClass = "stage-1";
+    } else if (totalScore <= 16) {
+        stage = "Supervivencia";
+        description = "Tu negocio está en modo supervivencia, trabajando día a día sin mucha planificación.";
+        badgeClass = "stage-2";
+    } else {
+        stage = "Crecimiento";
+        description = "Tu negocio tiene bases sólidas y está listo para crecer de manera estructurada.";
+        badgeClass = "stage-3";
+    }
+    
+    // Actualizar UI con resultados
+    document.getElementById('stage-badge').textContent = `Etapa de ${stage}`;
+    document.getElementById('stage-badge').className = `stage-badge ${badgeClass}`;
+    document.getElementById('stage-description').textContent = description;
+    
+    // Scroll to results
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
     </script>
 </body>
 </html>
