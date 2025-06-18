@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --primary: #2A5CAA;
@@ -17,6 +17,7 @@
             --light-text: #6C757D;
             --border: #DEE2E6;
             --success: #28A745;
+            --error: #DC3545;
         }
         
         * {
@@ -200,6 +201,11 @@
             background-color: #1d4a8a;
         }
         
+        .btn-primary:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
         .btn-secondary {
             background-color: var(--secondary);
             color: var(--text);
@@ -210,9 +216,16 @@
             background-color: #e9ecef;
         }
         
-        .btn-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .section-complete {
+            color: var(--success);
+            font-size: 14px;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-complete i {
+            margin-right: 5px;
         }
         
         .results-container {
@@ -226,11 +239,6 @@
         .results-header {
             text-align: center;
             margin-bottom: 30px;
-        }
-        
-        .results-title {
-            color: var(--primary);
-            margin-bottom: 10px;
         }
         
         .business-profile {
@@ -247,10 +255,6 @@
             font-weight: 700;
             color: var(--accent);
             margin-bottom: 10px;
-        }
-        
-        .profile-description {
-            color: var(--text);
         }
         
         .results-table {
@@ -334,30 +338,34 @@
             margin-top: 30px;
         }
         
-        .hidden {
+        .spinner {
             display: none;
+            text-align: center;
+            margin: 20px 0;
         }
         
-        .section-complete {
-            color: var(--success);
+        .spinner i {
+            font-size: 24px;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: var(--error);
             font-size: 14px;
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-complete i {
-            margin-right: 5px;
+            margin-top: 5px;
+            display: none;
         }
         
         @media (max-width: 768px) {
             .scale-label {
                 font-size: 10px;
                 height: 40px;
-            }
-            
-            .question-container {
-                margin-bottom: 35px;
             }
         }
     </style>
@@ -373,835 +381,8 @@
             <div class="progress-bar" id="progressBar"></div>
         </div>
         
-        <!-- Sección de Finanzas -->
-        <div class="form-section active" id="section-finanzas">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="section-title">Finanzas</div>
-                <div class="section-complete hidden" id="finanzas-complete"><i class="fas fa-check-circle"></i> Completo</div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">1. ¿Con qué frecuencia analizas tus estados financieros (balance general, estado de resultados, flujo de efectivo)?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Nunca</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Anualmente</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Semestralmente</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Trimestralmente</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Mensualmente</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Semanalmente</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">2. ¿Cómo manejas el presupuesto y la planeación financiera en tu empresa?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No tenemos presupuesto</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Presupuesto mental</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Presupuesto básico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Presupuesto anual</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Presupuesto con revisiones</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Presupuesto detallado con KPIs</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">3. ¿Qué tan claro tienes tus márgenes de utilidad por producto/servicio?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No los conozco</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Estimado general</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Conozco algunos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Conozco la mayoría</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Conozco todos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Con análisis detallado</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">4. ¿Cómo es tu flujo de efectivo y capacidad para cubrir obligaciones?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Frecuentes problemas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Justo cubro gastos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algo de margen</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Buen flujo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Flujo saludable</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Excelente con reservas</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">5. ¿Qué sistemas utilizas para el control financiero?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Ninguno</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Excel básico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Software contable</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">ERP básico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">ERP integrado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema avanzado con BI</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" id="prevBtn" disabled>Anterior</button>
-                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
-            </div>
-        </div>
-        
-        <!-- Sección de Ventas y Marketing -->
-        <div class="form-section" id="section-ventas">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </div>
-                <div class="section-title">Ventas y Marketing</div>
-                <div class="section-complete hidden" id="ventas-complete"><i class="fas fa-check-circle"></i> Completo</div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">1. ¿Cómo defines tus estrategias de marketing y ventas?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No tengo estrategia</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Intuición</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Estrategia básica</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Estrategia documentada</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Estrategia con métricas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Estrategia integrada</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">2. ¿Qué tan claro tienes tu propuesta de valor y diferenciación?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No la tengo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Idea básica</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algo definida</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Definida</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Clara y comunicada</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Optimizada continuamente</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">3. ¿Cómo es tu proceso de ventas?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay proceso</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Informal</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algo estructurado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Documentado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Seguimiento métrico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Optimizado continuamente</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">4. ¿Qué sistemas usas para gestionar clientes y ventas?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Ninguno</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Excel/Notas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">CRM básico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">CRM profesional</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">CRM integrado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema avanzado</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">5. ¿Cómo es tu estrategia de fidelización de clientes?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No tengo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Relación personal</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Programa básico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Programa estructurado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Programa con métricas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Estrategia integral</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
-                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
-            </div>
-        </div>
-        
-        <!-- Sección de Operaciones -->
-        <div class="form-section" id="section-operaciones">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-cogs"></i>
-                </div>
-                <div class="section-title">Operaciones</div>
-                <div class="section-complete hidden" id="operaciones-complete"><i class="fas fa-check-circle"></i> Completo</div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">1. ¿Cómo están documentados tus procesos operativos?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Nada documentado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Algunos en mi cabeza</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunos documentados</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">La mayoría documentados</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Todos documentados</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Optimizados continuamente</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">2. ¿Qué nivel de estandarización tienen tus operaciones?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Nada estandarizado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Algo de consistencia</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunos estándares</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Buen nivel</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Altamente estandarizado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Excelencia operativa</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">3. ¿Cómo manejas la calidad de tus productos/servicios?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay control</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Revisión ocasional</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunos controles</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Procesos definidos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Sistema de calidad</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Mejora continua</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">4. ¿Qué sistemas usas para gestionar operaciones?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Ninguno</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Excel/Herramientas básicas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Software específico</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Sistemas integrados</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">ERP operativo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Tecnología avanzada</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">5. ¿Cómo es tu cadena de suministro y proveedores?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Improvisada</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Algunos proveedores</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Proveedores regulares</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Proveedores confiables</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Cadena optimizada</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Estrategia de suministro</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
-                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
-            </div>
-        </div>
-        
-        <!-- Sección de Personas y Equipo -->
-        <div class="form-section" id="section-personas">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="section-title">Personas y Equipo</div>
-                <div class="section-complete hidden" id="personas-complete"><i class="fas fa-check-circle"></i> Completo</div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">1. ¿Cómo es tu proceso de reclutamiento y selección?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay proceso</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Contratación informal</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algo estructurado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Proceso definido</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Con evaluación técnica</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema integral</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">2. ¿Cómo capacitas y desarrollas a tu equipo?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay capacitación</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Ocasionalmente</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Capacitación básica</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Programa regular</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Desarrollo continuo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Plan de carrera</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">3. ¿Cómo evalúas el desempeño de tu equipo?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No evalúo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Por intuición</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Revisión informal</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Evaluación anual</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Evaluación periódica</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema integral</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">4. ¿Cómo es la cultura y clima organizacional?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay cultura definida</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Basada en el dueño</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunos valores</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Cultura definida</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Cultura fortalecida</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Cultura de alto desempeño</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">5. ¿Cómo manejas la compensación y beneficios?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay estructura</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Salarios básicos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunos beneficios</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Estructura definida</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Paquete competitivo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema estratégico</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
-                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
-            </div>
-        </div>
-        
-        <!-- Sección de Estrategia y Dirección -->
-        <div class="form-section" id="section-estrategia">
-            <div class="section-header">
-                <div class="section-icon">
-                    <i class="fas fa-chess"></i>
-                </div>
-                <div class="section-title">Estrategia y Dirección</div>
-                <div class="section-complete hidden" id="estrategia-complete"><i class="fas fa-check-circle"></i> Completo</div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">1. ¿Qué tan clara tienes tu visión y misión empresarial?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No las tengo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Idea básica</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algo definidas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Documentadas</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Comunicadas al equipo</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Guían todas las decisiones</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">2. ¿Cómo defines y haces seguimiento a tus objetivos?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No tengo objetivos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Objetivos mentales</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunos escritos</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Objetivos anuales</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Con seguimiento</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema estratégico</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">3. ¿Cómo tomas decisiones estratégicas?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">Intuición/improvisación</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Basada en experiencia</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algo de análisis</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Proceso definido</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Con datos e indicadores</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Sistema estratégico</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">4. ¿Qué tan preparado está tu negocio para crecer?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No puedo crecer</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Crecimiento limitado</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Alguna capacidad</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Preparado para crecer</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Estructura escalable</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Listo para expansión</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <div class="question-text">5. ¿Cómo manejas la innovación en tu empresa?</div>
-                <div class="scale-container">
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="0">0</div>
-                        <div class="scale-label">No hay innovación</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="1">1</div>
-                        <div class="scale-label">Ocasional</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="2">2</div>
-                        <div class="scale-label">Algunas mejoras</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="3">3</div>
-                        <div class="scale-label">Proceso de mejora</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="4">4</div>
-                        <div class="scale-label">Cultura innovadora</div>
-                    </div>
-                    <div class="scale-option">
-                        <div class="scale-number" data-value="5">5</div>
-                        <div class="scale-label">Innovación estratégica</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
-                <button class="btn btn-primary" id="finishBtn">Finalizar Diagnóstico</button>
-            </div>
-        </div>
+        <!-- Secciones del formulario se generarán dinámicamente -->
+        <div id="form-sections-container"></div>
         
         <!-- Sección de Resultados -->
         <div class="results-container" id="results-section">
@@ -1211,8 +392,8 @@
             </div>
             
             <div class="business-profile">
-                <h3 class="profile-title" id="profile-title">Empresa en Crecimiento Desorganizado</h3>
-                <p class="profile-description" id="profile-description">Tu negocio muestra signos de crecimiento, pero con falta de sistemas y procesos definidos que podrían limitar tu escalabilidad y rentabilidad a largo plazo.</p>
+                <h3 class="profile-title" id="profile-title"></h3>
+                <p class="profile-description" id="profile-description"></p>
             </div>
             
             <table class="results-table">
@@ -1223,276 +404,841 @@
                         <th>Nivel</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>Finanzas</td>
-                        <td>
-                            <span id="finanzas-score">0</span>/25
-                            <div class="score-bar"><div class="score-fill" id="finanzas-bar" style="width: 0%;"></div></div>
-                        </td>
-                        <td id="finanzas-level">Básico</td>
-                    </tr>
-                    <tr>
-                        <td>Ventas y Marketing</td>
-                        <td>
-                            <span id="ventas-score">0</span>/25
-                            <div class="score-bar"><div class="score-fill" id="ventas-bar" style="width: 0%;"></div></div>
-                        </td>
-                        <td id="ventas-level">Básico</td>
-                    </tr>
-                    <tr>
-                        <td>Operaciones</td>
-                        <td>
-                            <span id="operaciones-score">0</span>/25
-                            <div class="score-bar"><div class="score-fill" id="operaciones-bar" style="width: 0%;"></div></div>
-                        </td>
-                        <td id="operaciones-level">Básico</td>
-                    </tr>
-                    <tr>
-                        <td>Personas y Equipo</td>
-                        <td>
-                            <span id="personas-score">0</span>/25
-                            <div class="score-bar"><div class="score-fill" id="personas-bar" style="width: 0%;"></div></div>
-                        </td>
-                        <td id="personas-level">Básico</td>
-                    </tr>
-                    <tr>
-                        <td>Estrategia y Dirección</td>
-                        <td>
-                            <span id="estrategia-score">0</span>/25
-                            <div class="score-bar"><div class="score-fill" id="estrategia-bar" style="width: 0%;"></div></div>
-                        </td>
-                        <td id="estrategia-level">Básico</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Total</strong></td>
-                        <td>
-                            <strong><span id="total-score">0</span>/125</strong>
-                            <div class="score-bar"><div class="score-fill" id="total-bar" style="width: 0%;"></div></div>
-                        </td>
-                        <td id="total-level">Básico</td>
-                    </tr>
+                <tbody id="results-table-body">
+                    <!-- Se generará dinámicamente -->
                 </tbody>
             </table>
             
-            <div class="recommendations">
-                <h3>Recomendaciones por Área</h3>
-                
-                <div class="recommendation-block">
-                    <h4 class="recommendation-title"><i class="fas fa-chart-line"></i> Finanzas</h4>
-                    <ul class="recommendation-list" id="finanzas-recommendations">
-                        <!-- Las recomendaciones se generarán dinámicamente -->
-                    </ul>
-                </div>
-                
-                <div class="recommendation-block">
-                    <h4 class="recommendation-title"><i class="fas fa-shopping-cart"></i> Ventas y Marketing</h4>
-                    <ul class="recommendation-list" id="ventas-recommendations">
-                        <!-- Las recomendaciones se generarán dinámicamente -->
-                    </ul>
-                </div>
-                
-                <div class="recommendation-block">
-                    <h4 class="recommendation-title"><i class="fas fa-cogs"></i> Operaciones</h4>
-                    <ul class="recommendation-list" id="operaciones-recommendations">
-                        <!-- Las recomendaciones se generarán dinámicamente -->
-                    </ul>
-                </div>
-                
-                <div class="recommendation-block">
-                    <h4 class="recommendation-title"><i class="fas fa-users"></i> Personas y Equipo</h4>
-                    <ul class="recommendation-list" id="personas-recommendations">
-                        <!-- Las recomendaciones se generarán dinámicamente -->
-                    </ul>
-                </div>
-                
-                <div class="recommendation-block">
-                    <h4 class="recommendation-title"><i class="fas fa-chess"></i> Estrategia y Dirección</h4>
-                    <ul class="recommendation-list" id="estrategia-recommendations">
-                        <!-- Las recomendaciones se generarán dinámicamente -->
-                    </ul>
-                </div>
-                
-                <div class="recommendation-block">
-                    <h4 class="recommendation-title"><i class="fas fa-road"></i> Próximos Pasos</h4>
-                    <ul class="recommendation-list" id="next-steps">
-                        <!-- Los próximos pasos se generarán dinámicamente -->
-                    </ul>
-                </div>
+            <div class="recommendations" id="recommendations-container">
+                <!-- Se generará dinámicamente -->
             </div>
             
-            <button class="btn btn-primary download-btn" id="downloadBtn"><i class="fas fa-download"></i> Descargar Reporte Completo (PDF)</button>
+            <div class="spinner" id="pdf-spinner">
+                <i class="fas fa-spinner"></i>
+                <p>Generando PDF...</p>
+            </div>
+            
+            <button class="btn btn-primary download-btn" id="downloadBtn">
+                <i class="fas fa-download"></i> Descargar Reporte Completo (PDF)
+            </button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuración inicial
-            const sections = [
-                'finanzas', 
-                'ventas', 
-                'operaciones', 
-                'personas', 
-                'estrategia'
-            ];
-            
-            let currentSection = 0;
-            const totalSections = sections.length;
-            const answers = {};
-            
-            // Inicializar objeto de respuestas
-            sections.forEach(section => {
-                answers[section] = Array(5).fill(null);
-            });
-            
-            // Mostrar la primera sección
-            showSection(currentSection);
-            updateProgressBar();
-            
-            // Configurar eventos de navegación
-            document.querySelectorAll('#nextBtn').forEach(btn => {
-                btn.addEventListener('click', nextSection);
-            });
-            
-            document.querySelectorAll('#prevBtn').forEach(btn => {
-                btn.addEventListener('click', prevSection);
-            });
-            
-            document.getElementById('finishBtn').addEventListener('click', finishAssessment);
-            document.getElementById('downloadBtn').addEventListener('click', generatePDF);
-            
-            // Configurar eventos para las opciones de escala
-            document.querySelectorAll('.scale-number').forEach(option => {
-                option.addEventListener('click', function() {
-                    const section = this.closest('.form-section').id.split('-')[1];
-                    const questionIndex = Array.from(this.closest('.question-container').parentElement.children).indexOf(this.closest('.question-container'));
+            // Configuración centralizada con todas las preguntas
+            const config = {
+                sections: [
+                    {
+                        id: 'finanzas',
+                        title: 'Finanzas',
+                        icon: 'fa-chart-line',
+                        questions: [
+                            {
+                                text: '¿Con qué frecuencia analizas tus estados financieros (balance general, estado de resultados, flujo de efectivo)?',
+                                options: [
+                                    { value: 0, label: 'Nunca' },
+                                    { value: 1, label: 'Anualmente' },
+                                    { value: 2, label: 'Semestralmente' },
+                                    { value: 3, label: 'Trimestralmente' },
+                                    { value: 4, label: 'Mensualmente' },
+                                    { value: 5, label: 'Semanalmente' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas el presupuesto y la planeación financiera en tu empresa?',
+                                options: [
+                                    { value: 0, label: 'No tenemos presupuesto' },
+                                    { value: 1, label: 'Presupuesto mental' },
+                                    { value: 2, label: 'Presupuesto básico' },
+                                    { value: 3, label: 'Presupuesto anual' },
+                                    { value: 4, label: 'Presupuesto con revisiones' },
+                                    { value: 5, label: 'Presupuesto detallado con KPIs' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué tan claro tienes tus márgenes de utilidad por producto/servicio?',
+                                options: [
+                                    { value: 0, label: 'No los conozco' },
+                                    { value: 1, label: 'Estimado general' },
+                                    { value: 2, label: 'Conozco algunos' },
+                                    { value: 3, label: 'Conozco la mayoría' },
+                                    { value: 4, label: 'Conozco todos' },
+                                    { value: 5, label: 'Con análisis detallado' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu flujo de efectivo y capacidad para cubrir obligaciones?',
+                                options: [
+                                    { value: 0, label: 'Frecuentes problemas' },
+                                    { value: 1, label: 'Justo cubro gastos' },
+                                    { value: 2, label: 'Algo de margen' },
+                                    { value: 3, label: 'Buen flujo' },
+                                    { value: 4, label: 'Flujo saludable' },
+                                    { value: 5, label: 'Excelente con reservas' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué sistemas utilizas para el control financiero?',
+                                options: [
+                                    { value: 0, label: 'Ninguno' },
+                                    { value: 1, label: 'Excel básico' },
+                                    { value: 2, label: 'Software contable' },
+                                    { value: 3, label: 'ERP básico' },
+                                    { value: 4, label: 'ERP integrado' },
+                                    { value: 5, label: 'Sistema avanzado con BI' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'ventas',
+                        title: 'Ventas y Marketing',
+                        icon: 'fa-shopping-cart',
+                        questions: [
+                            {
+                                text: '¿Cómo defines tus estrategias de marketing y ventas?',
+                                options: [
+                                    { value: 0, label: 'No tengo estrategia' },
+                                    { value: 1, label: 'Intuición' },
+                                    { value: 2, label: 'Estrategia básica' },
+                                    { value: 3, label: 'Estrategia documentada' },
+                                    { value: 4, label: 'Estrategia con métricas' },
+                                    { value: 5, label: 'Estrategia integrada' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué tan claro tienes tu propuesta de valor y diferenciación?',
+                                options: [
+                                    { value: 0, label: 'No la tengo' },
+                                    { value: 1, label: 'Idea básica' },
+                                    { value: 2, label: 'Algo definida' },
+                                    { value: 3, label: 'Definida' },
+                                    { value: 4, label: 'Clara y comunicada' },
+                                    { value: 5, label: 'Optimizada continuamente' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu proceso de ventas?',
+                                options: [
+                                    { value: 0, label: 'No hay proceso' },
+                                    { value: 1, label: 'Informal' },
+                                    { value: 2, label: 'Algo estructurado' },
+                                    { value: 3, label: 'Documentado' },
+                                    { value: 4, label: 'Seguimiento métrico' },
+                                    { value: 5, label: 'Optimizado continuamente' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué sistemas usas para gestionar clientes y ventas?',
+                                options: [
+                                    { value: 0, label: 'Ninguno' },
+                                    { value: 1, label: 'Excel/Notas' },
+                                    { value: 2, label: 'CRM básico' },
+                                    { value: 3, label: 'CRM profesional' },
+                                    { value: 4, label: 'CRM integrado' },
+                                    { value: 5, label: 'Sistema avanzado' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu estrategia de fidelización de clientes?',
+                                options: [
+                                    { value: 0, label: 'No tengo' },
+                                    { value: 1, label: 'Relación personal' },
+                                    { value: 2, label: 'Programa básico' },
+                                    { value: 3, label: 'Programa estructurado' },
+                                    { value: 4, label: 'Programa con métricas' },
+                                    { value: 5, label: 'Estrategia integral' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'operaciones',
+                        title: 'Operaciones',
+                        icon: 'fa-cogs',
+                        questions: [
+                            {
+                                text: '¿Cómo están documentados tus procesos operativos?',
+                                options: [
+                                    { value: 0, label: 'Nada documentado' },
+                                    { value: 1, label: 'Algunos en mi cabeza' },
+                                    { value: 2, label: 'Algunos documentados' },
+                                    { value: 3, label: 'La mayoría documentados' },
+                                    { value: 4, label: 'Todos documentados' },
+                                    { value: 5, label: 'Optimizados continuamente' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué nivel de estandarización tienen tus operaciones?',
+                                options: [
+                                    { value: 0, label: 'Nada estandarizado' },
+                                    { value: 1, label: 'Algo de consistencia' },
+                                    { value: 2, label: 'Algunos estándares' },
+                                    { value: 3, label: 'Buen nivel' },
+                                    { value: 4, label: 'Altamente estandarizado' },
+                                    { value: 5, label: 'Excelencia operativa' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas la calidad de tus productos/servicios?',
+                                options: [
+                                    { value: 0, label: 'No hay control' },
+                                    { value: 1, label: 'Revisión ocasional' },
+                                    { value: 2, label: 'Algunos controles' },
+                                    { value: 3, label: 'Procesos definidos' },
+                                    { value: 4, label: 'Sistema de calidad' },
+                                    { value: 5, label: 'Mejora continua' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué sistemas usas para gestionar operaciones?',
+                                options: [
+                                    { value: 0, label: 'Ninguno' },
+                                    { value: 1, label: 'Excel/Herramientas básicas' },
+                                    { value: 2, label: 'Software específico' },
+                                    { value: 3, label: 'Sistemas integrados' },
+                                    { value: 4, label: 'ERP operativo' },
+                                    { value: 5, label: 'Tecnología avanzada' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu cadena de suministro y proveedores?',
+                                options: [
+                                    { value: 0, label: 'Improvisada' },
+                                    { value: 1, label: 'Algunos proveedores' },
+                                    { value: 2, label: 'Proveedores regulares' },
+                                    { value: 3, label: 'Proveedores confiables' },
+                                    { value: 4, label: 'Cadena optimizada' },
+                                    { value: 5, label: 'Estrategia de suministro' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'personas',
+                        title: 'Personas y Equipo',
+                        icon: 'fa-users',
+                        questions: [
+                            {
+                                text: '¿Cómo es tu proceso de reclutamiento y selección?',
+                                options: [
+                                    { value: 0, label: 'No hay proceso' },
+                                    { value: 1, label: 'Contratación informal' },
+                                    { value: 2, label: 'Algo estructurado' },
+                                    { value: 3, label: 'Proceso definido' },
+                                    { value: 4, label: 'Con evaluación técnica' },
+                                    { value: 5, label: 'Sistema integral' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo capacitas y desarrollas a tu equipo?',
+                                options: [
+                                    { value: 0, label: 'No hay capacitación' },
+                                    { value: 1, label: 'Ocasionalmente' },
+                                    { value: 2, label: 'Capacitación básica' },
+                                    { value: 3, label: 'Programa regular' },
+                                    { value: 4, label: 'Desarrollo continuo' },
+                                    { value: 5, label: 'Plan de carrera' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo evalúas el desempeño de tu equipo?',
+                                options: [
+                                    { value: 0, label: 'No evalúo' },
+                                    { value: 1, label: 'Por intuición' },
+                                    { value: 2, label: 'Revisión informal' },
+                                    { value: 3, label: 'Evaluación anual' },
+                                    { value: 4, label: 'Evaluación periódica' },
+                                    { value: 5, label: 'Sistema integral' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es la cultura y clima organizacional?',
+                                options: [
+                                    { value: 0, label: 'No hay cultura definida' },
+                                    { value: 1, label: 'Basada en el dueño' },
+                                    { value: 2, label: 'Algunos valores' },
+                                    { value: 3, label: 'Cultura definida' },
+                                    { value: 4, label: 'Cultura fortalecida' },
+                                    { value: 5, label: 'Cultura de alto desempeño' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas la compensación y beneficios?',
+                                options: [
+                                    { value: 0, label: 'No hay estructura' },
+                                    { value: 1, label: 'Salarios básicos' },
+                                    { value: 2, label: 'Algunos beneficios' },
+                                    { value: 3, label: 'Estructura definida' },
+                                    { value: 4, label: 'Paquete competitivo' },
+                                    { value: 5, label: 'Sistema estratégico' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'estrategia',
+                        title: 'Estrategia y Dirección',
+                        icon: 'fa-chess',
+                        questions: [
+                            {
+                                text: '¿Qué tan clara tienes tu visión y misión empresarial?',
+                                options: [
+                                    { value: 0, label: 'No las tengo' },
+                                    { value: 1, label: 'Idea básica' },
+                                    { value: 2, label: 'Algo definidas' },
+                                    { value: 3, label: 'Documentadas' },
+                                    { value: 4, label: 'Comunicadas al equipo' },
+                                    { value: 5, label: 'Guían todas las decisiones' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo defines y haces seguimiento a tus objetivos?',
+                                options: [
+                                    { value: 0, label: 'No tengo objetivos' },
+                                    { value: 1, label: 'Objetivos mentales' },
+                                    { value: 2, label: 'Algunos escritos' },
+                                    { value: 3, label: 'Objetivos anuales' },
+                                    { value: 4, label: 'Con seguimiento' },
+                                    { value: 5, label: 'Sistema estratégico' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo tomas decisiones estratégicas?',
+                                options: [
+                                    { value: 0, label: 'Intuición/improvisación' },
+                                    { value: 1, label: 'Basada en experiencia' },
+                                    { value: 2, label: 'Algo de análisis' },
+                                    { value: 3, label: 'Proceso definido' },
+                                    { value: 4, label: 'Con datos e indicadores' },
+                                    { value: 5, label: 'Sistema estratégico' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué tan preparado está tu negocio para crecer?',
+                                options: [
+                                    { value: 0, label: 'No puedo crecer' },
+                                    { value: 1, label: 'Crecimiento limitado' },
+                                    { value: 2, label: 'Alguna capacidad' },
+                                    { value: 3, label: 'Preparado para crecer' },
+                                    { value: 4, label: 'Estructura escalable' },
+                                    { value: 5, label: 'Listo para expansión' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas la innovación en tu empresa?',
+                                options: [
+                                    { value: 0, label: 'No hay innovación' },
+                                    { value: 1, label: 'Ocasional' },
+                                    { value: 2, label: 'Algunas mejoras' },
+                                    { value: 3, label: 'Proceso de mejora' },
+                                    { value: 4, label: 'Cultura innovadora' },
+                                    { value: 5, label: 'Innovación estratégica' }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                recommendations: {
+                    finanzas: {
+                        '0-5': [
+                            'Implementa un sistema básico de registro financiero (puede ser Excel o software simple)',
+                            'Comienza a revisar tus números financieros al menos mensualmente',
+                            'Separa tus finanzas personales de las del negocio'
+                        ],
+                        '6-10': [
+                            'Establece un presupuesto formal para el próximo trimestre',
+                            'Implementa un software contable básico',
+                            'Analiza tus márgenes por producto/servicio al menos una vez al mes'
+                        ],
+                        '11-15': [
+                            'Desarrolla un sistema de reportes financieros mensuales con KPIs clave',
+                            'Considera implementar un ERP financiero integrado',
+                            'Establece metas financieras trimestrales y haz seguimiento'
+                        ],
+                        '16-20': [
+                            'Optimiza tu estructura de costos y flujo de efectivo',
+                            'Implementa análisis financieros avanzados (puntos de equilibrio, escenarios)',
+                            'Desarrolla un sistema de pronósticos financieros'
+                        ],
+                        '21-25': [
+                            'Automatiza procesos financieros para mayor eficiencia',
+                            'Implementa análisis predictivos para toma de decisiones',
+                            'Explora estrategias avanzadas de gestión de capital y financiamiento'
+                        ]
+                    },
+                    ventas: {
+                        '0-5': [
+                            'Define claramente tu propuesta de valor y diferenciación',
+                            'Establece un proceso básico de ventas (pasos a seguir)',
+                            'Implementa un sistema simple para registrar clientes y ventas'
+                        ],
+                        '6-10': [
+                            'Documenta tu proceso de ventas actual y mejóralo',
+                            'Implementa un CRM básico para gestionar clientes',
+                            'Desarrolla una estrategia de marketing digital básica'
+                        ],
+                        '11-15': [
+                            'Optimiza tu funnel de ventas con métricas clave',
+                            'Implementa un CRM profesional con seguimiento de oportunidades',
+                            'Desarrolla programas de fidelización de clientes'
+                        ],
+                        '16-20': [
+                            'Automatiza partes de tu proceso de ventas y marketing',
+                            'Implementa análisis avanzado de datos de clientes',
+                            'Desarrolla estrategias de upselling y cross-selling'
+                        ],
+                        '21-25': [
+                            'Implementa inteligencia artificial para personalización de ventas',
+                            'Desarrolla programas avanzados de retención y lealtad',
+                            'Integra completamente tus sistemas de ventas, marketing y servicio al cliente'
+                        ]
+                    },
+                    operaciones: {
+                        '0-5': [
+                            'Documenta tus procesos operativos más importantes',
+                            'Establece estándares básicos de calidad',
+                            'Identifica y formaliza relaciones con proveedores clave'
+                        ],
+                        '6-10': [
+                            'Estandariza tus procesos operativos principales',
+                            'Implementa controles básicos de calidad',
+                            'Considera software especializado para tus operaciones'
+                        ],
+                        '11-15': [
+                            'Optimiza tus procesos operativos clave',
+                            'Implementa un sistema de gestión de calidad',
+                            'Automatiza procesos operativos repetitivos'
+                        ],
+                        '16-20': [
+                            'Implementa metodologías de mejora continua (Lean, Six Sigma)',
+                            'Desarrolla un sistema de gestión de la cadena de suministro',
+                            'Integra tus sistemas operativos con otras áreas'
+                        ],
+                        '21-25': [
+                            'Implementa tecnologías avanzadas (IoT, automatización)',
+                            'Desarrolla capacidades de manufactura/escala clase mundial',
+                            'Crea un sistema de innovación operativa continua'
+                        ]
+                    },
+                    personas: {
+                        '0-5': [
+                            'Establece descripciones básicas de puesto',
+                            'Implementa un proceso básico de contratación',
+                            'Define una estructura salarial básica'
+                        ],
+                        '6-10': [
+                            'Desarrolla un manual básico de políticas',
+                            'Implementa un programa de inducción para nuevos empleados',
+                            'Establece un sistema básico de evaluación de desempeño'
+                        ],
+                        '11-15': [
+                            'Desarrolla programas de capacitación regulares',
+                            'Implementa un sistema formal de evaluación de desempeño',
+                            'Define y comunica claramente la cultura organizacional'
+                        ],
+                        '16-20': [
+                            'Desarrolla planes de carrera y sucesión',
+                            'Implementa programas de desarrollo de liderazgo',
+                            'Optimiza tu paquete de compensación y beneficios'
+                        ],
+                        '21-25': [
+                            'Implementa programas avanzados de desarrollo organizacional',
+                            'Crea una cultura de alto desempeño y aprendizaje continuo',
+                            'Desarrolla estrategias avanzadas de gestión del talento'
+                        ]
+                    },
+                    estrategia: {
+                        '0-5': [
+                            'Define claramente tu visión y misión empresarial',
+                            'Establece 3-5 objetivos clave para el próximo año',
+                            'Implementa reuniones periódicas de revisión estratégica'
+                        ],
+                        '6-10': [
+                            'Documenta tu plan estratégico básico',
+                            'Establece métricas clave para medir progreso',
+                            'Analiza regularmente tu entorno competitivo'
+                        ],
+                        '11-15': [
+                            'Desarrolla un plan estratégico formal con iniciativas clave',
+                            'Implementa un sistema de seguimiento de objetivos (OKRs/KPIs)',
+                            'Establece un proceso formal de toma de decisiones estratégicas'
+                        ],
+                        '16-20': [
+                            'Optimiza tu proceso de planeación estratégica',
+                            'Desarrolla capacidades de análisis estratégico avanzado',
+                            'Implementa sistemas de innovación estratégica'
+                        ],
+                        '21-25': [
+                            'Desarrolla capacidades de anticipación estratégica',
+                            'Implementa sistemas de gestión del cambio estratégico',
+                            'Crea un proceso de reinvención estratégica continua'
+                        ]
+                    }
+                }
+            };
+
+            // Estado de la aplicación
+            const state = {
+                currentSection: 0,
+                answers: {},
+                scores: {},
+                totalScore: 0
+            };
+
+            // Inicializar la aplicación
+            init();
+
+            function init() {
+                // Inicializar estructura de respuestas
+                config.sections.forEach(section => {
+                    state.answers[section.id] = Array(section.questions.length).fill(null);
+                });
+                
+                loadProgress();
+                renderFormSections();
+                setupEventListeners();
+                showSection(state.currentSection);
+                updateProgressBar();
+            }
+
+            function renderFormSections() {
+                const container = document.getElementById('form-sections-container');
+                container.innerHTML = '';
+                
+                config.sections.forEach((section, sectionIndex) => {
+                    const sectionEl = document.createElement('div');
+                    sectionEl.className = 'form-section';
+                    sectionEl.id = `section-${section.id}`;
                     
-                    // Remover selección previa para esta pregunta
-                    const questionContainer = this.closest('.question-container');
-                    questionContainer.querySelectorAll('.scale-number').forEach(opt => {
-                        opt.classList.remove('selected');
+                    // Header de la sección
+                    const header = document.createElement('div');
+                    header.className = 'section-header';
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'section-icon';
+                    icon.innerHTML = `<i class="fas ${section.icon}"></i>`;
+                    
+                    const title = document.createElement('div');
+                    title.className = 'section-title';
+                    title.textContent = section.title;
+                    
+                    const completeIndicator = document.createElement('div');
+                    completeIndicator.className = 'section-complete hidden';
+                    completeIndicator.id = `${section.id}-complete`;
+                    completeIndicator.innerHTML = '<i class="fas fa-check-circle"></i> Completo';
+                    
+                    header.appendChild(icon);
+                    header.appendChild(title);
+                    header.appendChild(completeIndicator);
+                    sectionEl.appendChild(header);
+                    
+                    // Preguntas
+                    section.questions.forEach((question, questionIndex) => {
+                        const questionContainer = document.createElement('div');
+                        questionContainer.className = 'question-container';
+                        
+                        const questionText = document.createElement('div');
+                        questionText.className = 'question-text';
+                        questionText.textContent = `${questionIndex + 1}. ${question.text}`;
+                        questionContainer.appendChild(questionText);
+                        
+                        const scaleContainer = document.createElement('div');
+                        scaleContainer.className = 'scale-container';
+                        
+                        question.options.forEach(option => {
+                            const scaleOption = document.createElement('div');
+                            scaleOption.className = 'scale-option';
+                            
+                            const scaleNumber = document.createElement('div');
+                            scaleNumber.className = 'scale-number';
+                            scaleNumber.textContent = option.value;
+                            scaleNumber.setAttribute('data-value', option.value);
+                            scaleNumber.setAttribute('data-section', section.id);
+                            scaleNumber.setAttribute('data-question', questionIndex);
+                            
+                            // Marcar como seleccionado si ya hay respuesta
+                            if (state.answers[section.id][questionIndex] === option.value) {
+                                scaleNumber.classList.add('selected');
+                            }
+                            
+                            const scaleLabel = document.createElement('div');
+                            scaleLabel.className = 'scale-label';
+                            scaleLabel.textContent = option.label;
+                            
+                            scaleOption.appendChild(scaleNumber);
+                            scaleOption.appendChild(scaleLabel);
+                            scaleContainer.appendChild(scaleOption);
+                        });
+                        
+                        questionContainer.appendChild(scaleContainer);
+                        sectionEl.appendChild(questionContainer);
                     });
                     
-                    // Marcar como seleccionado
-                    this.classList.add('selected');
+                    // Botones de navegación
+                    const navButtons = document.createElement('div');
+                    navButtons.className = 'nav-buttons';
                     
-                    // Guardar respuesta
-                    answers[section][questionIndex] = parseInt(this.getAttribute('data-value'));
+                    const prevBtn = document.createElement('button');
+                    prevBtn.className = 'btn btn-secondary';
+                    prevBtn.id = 'prevBtn';
+                    prevBtn.textContent = 'Anterior';
+                    prevBtn.disabled = sectionIndex === 0;
                     
-                    // Verificar si la sección está completa
-                    checkSectionComplete(section);
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'btn btn-primary';
+                    nextBtn.id = 'nextBtn';
+                    nextBtn.textContent = sectionIndex === config.sections.length - 1 ? 'Finalizar' : 'Siguiente';
+                    nextBtn.disabled = !isSectionComplete(section.id);
+                    
+                    navButtons.appendChild(prevBtn);
+                    navButtons.appendChild(nextBtn);
+                    sectionEl.appendChild(navButtons);
+                    
+                    container.appendChild(sectionEl);
                 });
-            });
-            
-            // Funciones de navegación
-            function showSection(index) {
-                document.querySelectorAll('.form-section').forEach(section => {
-                    section.classList.remove('active');
+            }
+
+            function setupEventListeners() {
+                // Event delegation para las opciones de escala
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('scale-number')) {
+                        const value = parseInt(e.target.getAttribute('data-value'));
+                        const section = e.target.getAttribute('data-section');
+                        const questionIndex = parseInt(e.target.getAttribute('data-question'));
+                        
+                        // Guardar respuesta
+                        state.answers[section][questionIndex] = value;
+                        
+                        // Actualizar UI
+                        updateSelectedOption(e.target);
+                        checkSectionComplete(section);
+                        saveProgress();
+                    }
                 });
                 
-                document.getElementById(`section-${sections[index]}`).classList.add('active');
-                
-                // Actualizar estado de los botones
-                document.querySelectorAll('#prevBtn').forEach(btn => {
-                    btn.disabled = index === 0;
+                // Navegación
+                document.addEventListener('click', function(e) {
+                    if (e.target.id === 'prevBtn') prevSection();
+                    if (e.target.id === 'nextBtn') nextSection();
+                    if (e.target.id === 'downloadBtn') generatePDF();
+                });
+            }
+
+            function updateSelectedOption(selectedOption) {
+                // Remover selección previa para esta pregunta
+                const questionContainer = selectedOption.closest('.question-container');
+                questionContainer.querySelectorAll('.scale-number').forEach(opt => {
+                    opt.classList.remove('selected');
                 });
                 
-                if (index === totalSections - 1) {
-                    document.querySelectorAll('#nextBtn').forEach(btn => {
-                        btn.style.display = 'none';
-                    });
-                    document.getElementById('finishBtn').style.display = 'block';
-                } else {
-                    document.querySelectorAll('#nextBtn').forEach(btn => {
-                        btn.style.display = 'block';
-                    });
-                    document.getElementById('finishBtn').style.display = 'none';
-                }
+                // Marcar como seleccionado
+                selectedOption.classList.add('selected');
             }
-            
-            function nextSection() {
-                if (currentSection < totalSections - 1) {
-                    currentSection++;
-                    showSection(currentSection);
-                    updateProgressBar();
-                }
-            }
-            
-            function prevSection() {
-                if (currentSection > 0) {
-                    currentSection--;
-                    showSection(currentSection);
-                    updateProgressBar();
-                }
-            }
-            
-            function updateProgressBar() {
-                const progress = ((currentSection) / totalSections) * 100;
-                document.getElementById('progressBar').style.width = `${progress}%`;
-            }
-            
-            function checkSectionComplete(section) {
-                const sectionAnswers = answers[section];
-                const isComplete = sectionAnswers.every(answer => answer !== null);
+
+            function isSectionComplete(sectionId) {
+                const sectionAnswers = state.answers[sectionId] || [];
+                const sectionQuestions = config.sections.find(s => s.id === sectionId).questions;
                 
-                const completeIndicator = document.getElementById(`${section}-complete`);
+                return sectionAnswers.length === sectionQuestions.length && 
+                       sectionAnswers.every(answer => answer !== null && answer !== undefined);
+            }
+
+            function checkSectionComplete(sectionId) {
+                const isComplete = isSectionComplete(sectionId);
+                
+                const completeIndicator = document.getElementById(`${sectionId}-complete`);
                 if (isComplete) {
                     completeIndicator.classList.remove('hidden');
                 } else {
                     completeIndicator.classList.add('hidden');
                 }
+                
+                // Habilitar/deshabilitar botón siguiente
+                const nextBtn = document.querySelector(`#section-${sectionId} #nextBtn`);
+                if (nextBtn) {
+                    nextBtn.disabled = !isComplete;
+                }
             }
-            
-            function finishAssessment() {
-                // Calcular puntuaciones
-                const scores = {};
-                let totalScore = 0;
+
+            function showSection(index) {
+                // Validar índice
+                if (index < 0 || index >= config.sections.length) return;
                 
-                sections.forEach(section => {
-                    scores[section] = answers[section].reduce((sum, val) => sum + val, 0);
-                    totalScore += scores[section];
-                });
+                state.currentSection = index;
                 
-                // Mostrar resultados
+                // Ocultar todas las secciones
                 document.querySelectorAll('.form-section').forEach(section => {
                     section.classList.remove('active');
-                    section.style.display = 'none';
                 });
                 
-                // Mostrar sección de resultados
+                // Mostrar sección actual
+                const currentSection = document.getElementById(`section-${config.sections[index].id}`);
+                if (currentSection) {
+                    currentSection.classList.add('active');
+                }
+                
+                // Actualizar barra de progreso
+                updateProgressBar();
+            }
+
+            function updateProgressBar() {
+                const progress = (state.currentSection / config.sections.length) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            }
+
+            function nextSection() {
+                if (state.currentSection < config.sections.length - 1) {
+                    showSection(state.currentSection + 1);
+                } else {
+                    finishAssessment();
+                }
+            }
+
+            function prevSection() {
+                if (state.currentSection > 0) {
+                    showSection(state.currentSection - 1);
+                }
+            }
+
+            function finishAssessment() {
+                if (!confirm("¿Estás seguro de que deseas finalizar el diagnóstico?")) return;
+                
+                calculateScores();
+                displayResults();
+                sendEmailResults();
+                
+                // Ocultar formulario y mostrar resultados
+                document.getElementById('form-sections-container').style.display = 'none';
                 document.getElementById('results-section').style.display = 'block';
+            }
+
+            function calculateScores() {
+                state.scores = {};
+                state.totalScore = 0;
                 
-                // Actualizar puntuaciones en la tabla
-                sections.forEach(section => {
-                    document.getElementById(`${section}-score`).textContent = scores[section];
-                    const percentage = (scores[section] / 25) * 100;
-                    document.getElementById(`${section}-bar`).style.width = `${percentage}%`;
-                    
-                    // Determinar nivel por área
-                    const level = getLevel(scores[section]);
-                    document.getElementById(`${section}-level`).textContent = level;
+                config.sections.forEach(section => {
+                    const sectionScore = (state.answers[section.id] || []).reduce((sum, val) => sum + (val || 0), 0);
+                    state.scores[section.id] = sectionScore;
+                    state.totalScore += sectionScore;
                 });
-                
-                document.getElementById('total-score').textContent = totalScore;
-                const totalPercentage = (totalScore / 125) * 100;
-                document.getElementById('total-bar').style.width = `${totalPercentage}%`;
-                
-                // Determinar nivel total
-                const totalLevel = getTotalLevel(totalScore);
-                document.getElementById('total-level').textContent = totalLevel;
-                
-                // Determinar perfil empresarial
-                const profile = getBusinessProfile(totalScore, scores);
+            }
+
+            function displayResults() {
+                // Mostrar perfil empresarial
+                const profile = getBusinessProfile();
                 document.getElementById('profile-title').textContent = profile.title;
                 document.getElementById('profile-description').textContent = profile.description;
                 
-                // Generar recomendaciones
-                generateRecommendations(scores, totalScore, totalLevel);
+                // Mostrar puntuaciones
+                const tableBody = document.getElementById('results-table-body');
+                tableBody.innerHTML = '';
                 
-                // Enviar resultados por correo
-                sendEmailResults(scores, totalScore, totalLevel, profile.title);
+                config.sections.forEach(section => {
+                    const row = document.createElement('tr');
+                    
+                    const areaCell = document.createElement('td');
+                    areaCell.textContent = section.title;
+                    
+                    const scoreCell = document.createElement('td');
+                    scoreCell.innerHTML = `
+                        <span>${state.scores[section.id]}/25</span>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: ${(state.scores[section.id] / 25) * 100}%"></div>
+                        </div>
+                    `;
+                    
+                    const levelCell = document.createElement('td');
+                    levelCell.textContent = getLevel(state.scores[section.id]);
+                    
+                    row.appendChild(areaCell);
+                    row.appendChild(scoreCell);
+                    row.appendChild(levelCell);
+                    tableBody.appendChild(row);
+                });
+                
+                // Mostrar total
+                const totalRow = document.createElement('tr');
+                
+                const totalLabelCell = document.createElement('td');
+                totalLabelCell.textContent = 'Total';
+                totalLabelCell.style.fontWeight = 'bold';
+                
+                const totalScoreCell = document.createElement('td');
+                totalScoreCell.innerHTML = `
+                    <strong>${state.totalScore}/125</strong>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: ${(state.totalScore / 125) * 100}%"></div>
+                    </div>
+                `;
+                
+                const totalLevelCell = document.createElement('td');
+                totalLevelCell.textContent = getTotalLevel(state.totalScore);
+                totalLevelCell.style.fontWeight = 'bold';
+                
+                totalRow.appendChild(totalLabelCell);
+                totalRow.appendChild(totalScoreCell);
+                totalRow.appendChild(totalLevelCell);
+                tableBody.appendChild(totalRow);
+                
+                // Mostrar recomendaciones
+                displayRecommendations();
             }
-            
+
+            function displayRecommendations() {
+                const container = document.getElementById('recommendations-container');
+                container.innerHTML = '<h3>Recomendaciones por Área</h3>';
+                
+                config.sections.forEach(section => {
+                    const sectionScore = state.scores[section.id];
+                    const recommendations = getRecommendations(section.id, sectionScore);
+                    
+                    if (recommendations.length > 0) {
+                        const block = document.createElement('div');
+                        block.className = 'recommendation-block';
+                        
+                        const title = document.createElement('h4');
+                        title.className = 'recommendation-title';
+                        title.innerHTML = `<i class="fas ${section.icon}"></i> ${section.title}`;
+                        
+                        const list = document.createElement('ul');
+                        list.className = 'recommendation-list';
+                        
+                        recommendations.forEach(rec => {
+                            const item = document.createElement('li');
+                            item.textContent = rec;
+                            list.appendChild(item);
+                        });
+                        
+                        block.appendChild(title);
+                        block.appendChild(list);
+                        container.appendChild(block);
+                    }
+                });
+                
+                // Agregar próximos pasos
+                const nextStepsBlock = document.createElement('div');
+                nextStepsBlock.className = 'recommendation-block';
+                
+                const nextStepsTitle = document.createElement('h4');
+                nextStepsTitle.className = 'recommendation-title';
+                nextStepsTitle.innerHTML = '<i class="fas fa-road"></i> Próximos Pasos';
+                
+                const nextStepsList = document.createElement('ul');
+                nextStepsList.className = 'recommendation-list';
+                
+                getNextSteps().forEach(step => {
+                    const item = document.createElement('li');
+                    item.textContent = step;
+                    nextStepsList.appendChild(item);
+                });
+                
+                nextStepsBlock.appendChild(nextStepsTitle);
+                nextStepsBlock.appendChild(nextStepsList);
+                container.appendChild(nextStepsBlock);
+            }
+
             function getLevel(score) {
                 if (score <= 5) return 'Inicial';
                 if (score <= 10) return 'Básico';
@@ -1500,7 +1246,7 @@
                 if (score <= 20) return 'Avanzado';
                 return 'Excelente';
             }
-            
+
             function getTotalLevel(totalScore) {
                 if (totalScore <= 25) return 'Inicial';
                 if (totalScore <= 50) return 'Básico';
@@ -1508,23 +1254,23 @@
                 if (totalScore <= 100) return 'Avanzado';
                 return 'Excelente';
             }
-            
-            function getBusinessProfile(totalScore, scores) {
+
+            function getBusinessProfile() {
                 // Calcular desviación estándar para ver equilibrio entre áreas
-                const avg = totalScore / 5;
+                const avg = state.totalScore / config.sections.length;
                 let variance = 0;
-                for (const section in scores) {
-                    variance += Math.pow(scores[section] - avg, 2);
+                for (const section in state.scores) {
+                    variance += Math.pow(state.scores[section] - avg, 2);
                 }
-                const stdDev = Math.sqrt(variance / 5);
+                const stdDev = Math.sqrt(variance / config.sections.length);
                 
                 // Determinar perfil basado en puntuación y equilibrio
-                if (totalScore <= 25) {
+                if (state.totalScore <= 25) {
                     return {
                         title: "Empresa Inicial",
                         description: "Tu negocio está en etapas muy tempranas con sistemas y procesos limitados. Es importante sentar bases sólidas para el crecimiento futuro."
                     };
-                } else if (totalScore <= 50) {
+                } else if (state.totalScore <= 50) {
                     if (stdDev > 7) {
                         return {
                             title: "Empresa con Desequilibrios",
@@ -1536,7 +1282,7 @@
                             description: "Tu negocio tiene los fundamentos básicos establecidos, pero hay oportunidades significativas para mejorar en todas las áreas."
                         };
                     }
-                } else if (totalScore <= 75) {
+                } else if (state.totalScore <= 75) {
                     if (stdDev > 6) {
                         return {
                             title: "Empresa en Crecimiento Desorganizado",
@@ -1548,7 +1294,7 @@
                             description: "Tu negocio está creciendo con relativo equilibrio entre áreas, pero aún hay espacio para mejorar procesos y sistemas para soportar un mayor crecimiento."
                         };
                     }
-                } else if (totalScore <= 100) {
+                } else if (state.totalScore <= 100) {
                     if (stdDev > 5) {
                         return {
                             title: "Empresa Avanzada con Áreas de Oportunidad",
@@ -1574,399 +1320,178 @@
                     }
                 }
             }
-            
-            function generateRecommendations(scores, totalScore, totalLevel) {
-                // Limpiar listas de recomendaciones existentes
-                document.querySelectorAll('.recommendation-list').forEach(list => {
-                    list.innerHTML = '';
-                });
+
+            function getRecommendations(sectionId, score) {
+                const sectionRecs = config.recommendations[sectionId];
                 
-                // Recomendaciones para Finanzas
-                const finanzasRecs = [];
-                if (scores.finanzas <= 5) {
-                    finanzasRecs.push("Implementa un sistema básico de registro financiero (puede ser Excel o software simple)");
-                    finanzasRecs.push("Comienza a revisar tus números financieros al menos mensualmente");
-                    finanzasRecs.push("Separa tus finanzas personales de las del negocio");
-                } else if (scores.finanzas <= 10) {
-                    finanzasRecs.push("Establece un presupuesto formal para el próximo trimestre");
-                    finanzasRecs.push("Implementa un software contable básico");
-                    finanzasRecs.push("Analiza tus márgenes por producto/servicio al menos una vez al mes");
-                } else if (scores.finanzas <= 15) {
-                    finanzasRecs.push("Desarrolla un sistema de reportes financieros mensuales con KPIs clave");
-                    finanzasRecs.push("Considera implementar un ERP financiero integrado");
-                    finanzasRecs.push("Establece metas financieras trimestrales y haz seguimiento");
-                } else if (scores.finanzas <= 20) {
-                    finanzasRecs.push("Optimiza tu estructura de costos y flujo de efectivo");
-                    finanzasRecs.push("Implementa análisis financieros avanzados (puntos de equilibrio, escenarios)");
-                    finanzasRecs.push("Desarrolla un sistema de pronósticos financieros");
-                } else {
-                    finanzasRecs.push("Automatiza procesos financieros para mayor eficiencia");
-                    finanzasRecs.push("Implementa análisis predictivos para toma de decisiones");
-                    finanzasRecs.push("Explora estrategias avanzadas de gestión de capital y financiamiento");
-                }
+                if (score <= 5) return sectionRecs['0-5'];
+                if (score <= 10) return sectionRecs['6-10'];
+                if (score <= 15) return sectionRecs['11-15'];
+                if (score <= 20) return sectionRecs['16-20'];
+                return sectionRecs['21-25'];
+            }
+
+            function getNextSteps() {
+                const steps = [];
                 
-                // Añadir recomendaciones al DOM
-                const finanzasList = document.getElementById('finanzas-recommendations');
-                finanzasRecs.forEach(rec => {
-                    const li = document.createElement('li');
-                    li.textContent = rec;
-                    finanzasList.appendChild(li);
-                });
-                
-                // Recomendaciones para Ventas y Marketing
-                const ventasRecs = [];
-                if (scores.ventas <= 5) {
-                    ventasRecs.push("Define claramente tu propuesta de valor y diferenciación");
-                    ventasRecs.push("Establece un proceso básico de ventas (pasos a seguir)");
-                    ventasRecs.push("Implementa un sistema simple para registrar clientes y ventas");
-                } else if (scores.ventas <= 10) {
-                    ventasRecs.push("Documenta tu proceso de ventas actual y mejóralo");
-                    ventasRecs.push("Implementa un CRM básico para gestionar clientes");
-                    ventasRecs.push("Desarrolla una estrategia de marketing digital básica");
-                } else if (scores.ventas <= 15) {
-                    ventasRecs.push("Optimiza tu funnel de ventas con métricas clave");
-                    ventasRecs.push("Implementa un CRM profesional con seguimiento de oportunidades");
-                    ventasRecs.push("Desarrolla programas de fidelización de clientes");
-                } else if (scores.ventas <= 20) {
-                    ventasRecs.push("Automatiza partes de tu proceso de ventas y marketing");
-                    ventasRecs.push("Implementa análisis avanzado de datos de clientes");
-                    ventasRecs.push("Desarrolla estrategias de upselling y cross-selling");
-                } else {
-                    ventasRecs.push("Implementa inteligencia artificial para personalización de ventas");
-                    ventasRecs.push("Desarrolla programas avanzados de retención y lealtad");
-                    ventasRecs.push("Integra completamente tus sistemas de ventas, marketing y servicio al cliente");
-                }
-                
-                const ventasList = document.getElementById('ventas-recommendations');
-                ventasRecs.forEach(rec => {
-                    const li = document.createElement('li');
-                    li.textContent = rec;
-                    ventasList.appendChild(li);
-                });
-                
-                // Recomendaciones para Operaciones
-                const operacionesRecs = [];
-                if (scores.operaciones <= 5) {
-                    operacionesRecs.push("Documenta tus procesos operativos más importantes");
-                    operacionesRecs.push("Establece estándares básicos de calidad");
-                    operacionesRecs.push("Identifica y formaliza relaciones con proveedores clave");
-                } else if (scores.operaciones <= 10) {
-                    operacionesRecs.push("Estandariza tus procesos operativos principales");
-                    operacionesRecs.push("Implementa controles básicos de calidad");
-                    operacionesRecs.push("Considera software especializado para tus operaciones");
-                } else if (scores.operaciones <= 15) {
-                    operacionesRecs.push("Optimiza tus procesos operativos clave");
-                    operacionesRecs.push("Implementa un sistema de gestión de calidad");
-                    operacionesRecs.push("Automatiza procesos operativos repetitivos");
-                } else if (scores.operaciones <= 20) {
-                    operacionesRecs.push("Implementa metodologías de mejora continua (Lean, Six Sigma)");
-                    operacionesRecs.push("Desarrolla un sistema de gestión de la cadena de suministro");
-                    operacionesRecs.push("Integra tus sistemas operativos con otras áreas");
-                } else {
-                    operacionesRecs.push("Implementa tecnologías avanzadas (IoT, automatización)");
-                    operacionesRecs.push("Desarrolla capacidades de manufactura/escala clase mundial");
-                    operacionesRecs.push("Crea un sistema de innovación operativa continua");
-                }
-                
-                const operacionesList = document.getElementById('operaciones-recommendations');
-                operacionesRecs.forEach(rec => {
-                    const li = document.createElement('li');
-                    li.textContent = rec;
-                    operacionesList.appendChild(li);
-                });
-                
-                // Recomendaciones para Personas y Equipo
-                const personasRecs = [];
-                if (scores.personas <= 5) {
-                    personasRecs.push("Establece descripciones básicas de puesto");
-                    personasRecs.push("Implementa un proceso básico de contratación");
-                    personasRecs.push("Define una estructura salarial básica");
-                } else if (scores.personas <= 10) {
-                    personasRecs.push("Desarrolla un manual básico de políticas");
-                    personasRecs.push("Implementa un programa de inducción para nuevos empleados");
-                    personasRecs.push("Establece un sistema básico de evaluación de desempeño");
-                } else if (scores.personas <= 15) {
-                    personasRecs.push("Desarrolla programas de capacitación regulares");
-                    personasRecs.push("Implementa un sistema formal de evaluación de desempeño");
-                    personasRecs.push("Define y comunica claramente la cultura organizacional");
-                } else if (scores.personas <= 20) {
-                    personasRecs.push("Desarrolla planes de carrera y sucesión");
-                    personasRecs.push("Implementa programas de desarrollo de liderazgo");
-                    personasRecs.push("Optimiza tu paquete de compensación y beneficios");
-                } else {
-                    personasRecs.push("Implementa programas avanzados de desarrollo organizacional");
-                    personasRecs.push("Crea una cultura de alto desempeño y aprendizaje continuo");
-                    personasRecs.push("Desarrolla estrategias avanzadas de gestión del talento");
-                }
-                
-                const personasList = document.getElementById('personas-recommendations');
-                personasRecs.forEach(rec => {
-                    const li = document.createElement('li');
-                    li.textContent = rec;
-                    personasList.appendChild(li);
-                });
-                
-                // Recomendaciones para Estrategia y Dirección
-                const estrategiaRecs = [];
-                if (scores.estrategia <= 5) {
-                    estrategiaRecs.push("Define claramente tu visión y misión empresarial");
-                    estrategiaRecs.push("Establece 3-5 objetivos clave para el próximo año");
-                    estrategiaRecs.push("Implementa reuniones periódicas de revisión estratégica");
-                } else if (scores.estrategia <= 10) {
-                    estrategiaRecs.push("Documenta tu plan estratégico básico");
-                    estrategiaRecs.push("Establece métricas clave para medir progreso");
-                    estrategiaRecs.push("Analiza regularmente tu entorno competitivo");
-                } else if (scores.estrategia <= 15) {
-                    estrategiaRecs.push("Desarrolla un plan estratégico formal con iniciativas clave");
-                    estrategiaRecs.push("Implementa un sistema de seguimiento de objetivos (OKRs/KPIs)");
-                    estrategiaRecs.push("Establece un proceso formal de toma de decisiones estratégicas");
-                } else if (scores.estrategia <= 20) {
-                    estrategiaRecs.push("Optimiza tu proceso de planeación estratégica");
-                    estrategiaRecs.push("Desarrolla capacidades de análisis estratégico avanzado");
-                    estrategiaRecs.push("Implementa sistemas de innovación estratégica");
-                } else {
-                    estrategiaRecs.push("Desarrolla capacidades de anticipación estratégica");
-                    estrategiaRecs.push("Implementa sistemas de gestión del cambio estratégico");
-                    estrategiaRecs.push("Crea un proceso de reinvención estratégica continua");
-                }
-                
-                const estrategiaList = document.getElementById('estrategia-recommendations');
-                estrategiaRecs.forEach(rec => {
-                    const li = document.createElement('li');
-                    li.textContent = rec;
-                    estrategiaList.appendChild(li);
-                });
-                
-                // Próximos pasos generales
-                const nextStepsList = document.getElementById('next-steps');
-                const nextSteps = [];
-                
-                // Identificar áreas con menor puntuación para priorizar
+                // Identificar áreas débiles
                 let minScore = Infinity;
                 let weakAreas = [];
-                for (const section in scores) {
-                    if (scores[section] < minScore) {
-                        minScore = scores[section];
-                        weakAreas = [section];
-                    } else if (scores[section] === minScore) {
-                        weakAreas.push(section);
+                for (const section in state.scores) {
+                    if (state.scores[section] < minScore) {
+                        minScore = state.scores[section];
+                        weakAreas = [config.sections.find(s => s.id === section).title];
+                    } else if (state.scores[section] === minScore) {
+                        weakAreas.push(config.sections.find(s => s.id === section).title);
                     }
                 }
                 
                 if (weakAreas.length > 0) {
-                    const areaNames = {
-                        finanzas: "Finanzas",
-                        ventas: "Ventas y Marketing",
-                        operaciones: "Operaciones",
-                        personas: "Personas y Equipo",
-                        estrategia: "Estrategia y Dirección"
-                    };
-                    
-                    nextSteps.push(`Prioriza mejorar en el área de ${weakAreas.map(a => areaNames[a]).join(' y ')} (tus áreas más débiles)`);
+                    steps.push(`Prioriza mejorar en ${weakAreas.join(' y ')} (tus áreas más débiles)`);
                 }
                 
-                // Pasos basados en nivel general
-                if (totalScore <= 50) {
-                    nextSteps.push("Enfócate en establecer sistemas y procesos básicos en todas las áreas");
-                    nextSteps.push("Considera asesoría externa para acelerar tu aprendizaje");
-                } else if (totalScore <= 100) {
-                    nextSteps.push("Optimiza y estandariza tus procesos existentes");
-                    nextSteps.push("Implementa sistemas de medición y seguimiento de KPIs");
+                // Pasos generales según nivel
+                if (state.totalScore <= 50) {
+                    steps.push("Enfócate en establecer sistemas y procesos básicos en todas las áreas");
+                    steps.push("Considera asesoría externa para acelerar tu aprendizaje");
+                } else if (state.totalScore <= 100) {
+                    steps.push("Optimiza y estandariza tus procesos existentes");
+                    steps.push("Implementa sistemas de medición y seguimiento de KPIs");
                 } else {
-                    nextSteps.push("Busca la excelencia operativa y la innovación continua");
-                    nextSteps.push("Explora oportunidades de expansión y escalamiento");
+                    steps.push("Busca la excelencia operativa y la innovación continua");
+                    steps.push("Explora oportunidades de expansión y escalamiento");
                 }
                 
-                nextSteps.push("Programa una revisión estratégica trimestral para evaluar progreso");
-                nextSteps.push("Considera capacitación específica para tus áreas de oportunidad");
+                steps.push("Programa una revisión estratégica trimestral para evaluar progreso");
+                steps.push("Considera capacitación específica para tus áreas de oportunidad");
                 
-                nextSteps.forEach(step => {
-                    const li = document.createElement('li');
-                    li.textContent = step;
-                    nextStepsList.appendChild(li);
-                });
+                return steps;
             }
-            
-            function sendEmailResults(scores, totalScore, totalLevel, profileTitle) {
-                // En una implementación real, aquí harías una llamada a un servidor o servicio de email
-                // Esto es solo un simulacro para demostración
-                
-                const emailData = {
-                    to: "uriel.vargas@vestra.mx",
-                    subject: `Resultados de Diagnóstico Empresarial - ${profileTitle}`,
-                    body: `
-                        <h2>Resultados de Diagnóstico Empresarial</h2>
-                        <p><strong>Perfil identificado:</strong> ${profileTitle}</p>
-                        <p><strong>Puntuación total:</strong> ${totalScore}/125 (${totalLevel})</p>
-                        <table border="1" cellpadding="5" cellspacing="0">
-                            <tr>
-                                <th>Área</th>
-                                <th>Puntuación</th>
-                                <th>Nivel</th>
-                            </tr>
-                            <tr>
-                                <td>Finanzas</td>
-                                <td>${scores.finanzas}/25</td>
-                                <td>${getLevel(scores.finanzas)}</td>
-                            </tr>
-                            <tr>
-                                <td>Ventas y Marketing</td>
-                                <td>${scores.ventas}/25</td>
-                                <td>${getLevel(scores.ventas)}</td>
-                            </tr>
-                            <tr>
-                                <td>Operaciones</td>
-                                <td>${scores.operaciones}/25</td>
-                                <td>${getLevel(scores.operaciones)}</td>
-                            </tr>
-                            <tr>
-                                <td>Personas y Equipo</td>
-                                <td>${scores.personas}/25</td>
-                                <td>${getLevel(scores.personas)}</td>
-                            </tr>
-                            <tr>
-                                <td>Estrategia y Dirección</td>
-                                <td>${scores.estrategia}/25</td>
-                                <td>${getLevel(scores.estrategia)}</td>
-                            </tr>
-                        </table>
-                        <p>Los resultados detallados con recomendaciones han sido generados y están disponibles en el sistema.</p>
-                    `
-                };
-                
-                console.log("Simulando envío de email a:", emailData.to);
-                console.log("Asunto:", emailData.subject);
-                console.log("Contenido:", emailData.body);
-                
-                // En producción, usarías algo como:
-                // fetch('/api/send-email', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(emailData)
-                // });
-            }
-            
+
             function generatePDF() {
-                // En una implementación real, usarías jsPDF y html2canvas como se incluyó en los scripts
-                // Esto es un simulacro para demostración
+                const spinner = document.getElementById('pdf-spinner');
+                spinner.style.display = 'block';
                 
-                console.log("Generando PDF con los resultados...");
-                
-                // Ejemplo de cómo sería con jsPDF:
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Agregar título
-                doc.setFontSize(18);
-                doc.text("Resultados de Diagnóstico Empresarial", 105, 20, { align: 'center' });
-                
-                // Agregar perfil identificado
-                doc.setFontSize(14);
-                const profileTitle = document.getElementById('profile-title').textContent;
-                const profileDesc = document.getElementById('profile-description').textContent;
-                doc.text(`Perfil identificado: ${profileTitle}`, 15, 30);
-                doc.setFontSize(12);
-                doc.text(profileDesc, 15, 37, { maxWidth: 180 });
-                
-                // Agregar tabla con puntuaciones
-                doc.setFontSize(14);
-                doc.text("Puntuaciones por Área", 15, 55);
-                
-                // Crear tabla
-                const headers = [["Área", "Puntuación", "Nivel"]];
-                const rows = [];
-                
-                rows.push([
-                    "Finanzas", 
-                    document.getElementById('finanzas-score').textContent, 
-                    document.getElementById('finanzas-level').textContent
-                ]);
-                rows.push([
-                    "Ventas y Marketing", 
-                    document.getElementById('ventas-score').textContent, 
-                    document.getElementById('ventas-level').textContent
-                ]);
-                rows.push([
-                    "Operaciones", 
-                    document.getElementById('operaciones-score').textContent, 
-                    document.getElementById('operaciones-level').textContent
-                ]);
-                rows.push([
-                    "Personas y Equipo", 
-                    document.getElementById('personas-score').textContent, 
-                    document.getElementById('personas-level').textContent
-                ]);
-                rows.push([
-                    "Estrategia y Dirección", 
-                    document.getElementById('estrategia-score').textContent, 
-                    document.getElementById('estrategia-level').textContent
-                ]);
-                rows.push([
-                    "TOTAL", 
-                    document.getElementById('total-score').textContent, 
-                    document.getElementById('total-level').textContent
-                ]);
-                
-                doc.autoTable({
-                    startY: 60,
-                    head: headers,
-                    body: rows,
-                    theme: 'grid',
-                    headStyles: {
-                        fillColor: [42, 92, 170], // Color primario
-                        textColor: 255 // Blanco
-                    },
-                    alternateRowStyles: {
-                        fillColor: [248, 249, 250] // Color secundario
+                // Usar setTimeout para simular carga (en producción sería una operación asíncrona)
+                setTimeout(() => {
+                    try {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF();
+                        
+                        // Título
+                        doc.setFontSize(18);
+                        doc.text("Resultados del Diagnóstico Empresarial", 105, 20, { align: 'center' });
+                        
+                        // Perfil
+                        doc.setFontSize(14);
+                        doc.text(`Perfil identificado: ${document.getElementById('profile-title').textContent}`, 15, 35);
+                        doc.setFontSize(12);
+                        doc.text(document.getElementById('profile-description').textContent, 15, 45, { maxWidth: 180 });
+                        
+                        // Tabla de puntuaciones
+                        doc.autoTable({
+                            startY: 60,
+                            head: [['Área', 'Puntuación', 'Nivel']],
+                            body: config.sections.map(section => [
+                                section.title,
+                                `${state.scores[section.id]}/25`,
+                                getLevel(state.scores[section.id])
+                            ]),
+                            headStyles: {
+                                fillColor: [42, 92, 170],
+                                textColor: 255
+                            },
+                            alternateRowStyles: {
+                                fillColor: [248, 249, 250]
+                            }
+                        });
+                        
+                        // Recomendaciones
+                        let yPos = doc.lastAutoTable.finalY + 15;
+                        doc.setFontSize(14);
+                        doc.text("Recomendaciones Clave", 15, yPos);
+                        yPos += 10;
+                        
+                        config.sections.forEach(section => {
+                            const recommendations = getRecommendations(section.id, state.scores[section.id]);
+                            if (recommendations.length > 0) {
+                                doc.setFontSize(12);
+                                doc.setTextColor(42, 92, 170);
+                                doc.text(`${section.title}:`, 15, yPos);
+                                yPos += 7;
+                                doc.setTextColor(0, 0, 0);
+                                
+                                recommendations.forEach(rec => {
+                                    doc.text(`• ${rec}`, 20, yPos);
+                                    yPos += 7;
+                                });
+                                yPos += 5;
+                            }
+                        });
+                        
+                        // Próximos pasos
+                        doc.setFontSize(14);
+                        doc.text("Próximos Pasos", 15, yPos + 10);
+                        yPos += 15;
+                        
+                        getNextSteps().forEach(step => {
+                            doc.text(`• ${step}`, 20, yPos);
+                            yPos += 7;
+                        });
+                        
+                        // Guardar PDF
+                        doc.save('diagnostico-empresarial.pdf');
+                    } catch (error) {
+                        console.error("Error al generar PDF:", error);
+                        alert("Ocurrió un error al generar el PDF. Por favor intenta nuevamente.");
+                    } finally {
+                        spinner.style.display = 'none';
                     }
+                }, 1000);
+            }
+
+            function sendEmailResults() {
+                // Simulación de envío de email
+                console.log("Enviando resultados por email...");
+                console.log("Puntuaciones:", state.scores);
+                console.log("Total:", state.totalScore);
+                
+                // En producción, usarías fetch() para enviar a un backend
+                /*
+                fetch('/api/send-results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: "uriel.vargas@vestra.mx",
+                        scores: state.scores,
+                        totalScore: state.totalScore,
+                        profile: document.getElementById('profile-title').textContent
+                    })
                 });
-                
-                // Agregar recomendaciones
-                let yPos = doc.lastAutoTable.finalY + 15;
-                doc.setFontSize(14);
-                doc.text("Recomendaciones Clave", 15, yPos);
-                yPos += 10;
-                
-                // Función para agregar texto con saltos de línea
-                const addTextWithBreaks = (text, y) => {
-                    const lines = doc.splitTextToSize(text, 180);
-                    doc.text(lines, 15, y);
-                    return y + (lines.length * 7);
-                };
-                
-                // Agregar recomendaciones por área
-                const areas = [
-                    { name: "Finanzas", id: "finanzas-recommendations" },
-                    { name: "Ventas y Marketing", id: "ventas-recommendations" },
-                    { name: "Operaciones", id: "operaciones-recommendations" },
-                    { name: "Personas y Equipo", id: "personas-recommendations" },
-                    { name: "Estrategia y Dirección", id: "estrategia-recommendations" }
-                ];
-                
-                areas.forEach(area => {
-                    doc.setFontSize(12);
-                    doc.setTextColor(42, 92, 170); // Color primario
-                    yPos = addTextWithBreaks(`${area.name}:`, yPos + 8);
-                    doc.setTextColor(0, 0, 0); // Negro
+                */
+            }
+
+            function saveProgress() {
+                localStorage.setItem('diagnosticoProgress', JSON.stringify({
+                    currentSection: state.currentSection,
+                    answers: state.answers
+                }));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem('diagnosticoProgress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    state.currentSection = data.currentSection || 0;
+                    state.answers = data.answers || {};
                     
-                    const items = document.getElementById(area.id).querySelectorAll('li');
-                    items.forEach(item => {
-                        yPos = addTextWithBreaks(`• ${item.textContent}`, yPos + 5);
+                    // Asegurar que todas las secciones tengan array de respuestas
+                    config.sections.forEach(section => {
+                        if (!state.answers[section.id]) {
+                            state.answers[section.id] = Array(section.questions.length).fill(null);
+                        }
                     });
-                });
-                
-                // Agregar próximos pasos
-                doc.setFontSize(14);
-                doc.text("Próximos Pasos", 15, yPos + 10);
-                yPos += 15;
-                
-                const nextSteps = document.getElementById('next-steps').querySelectorAll('li');
-                nextSteps.forEach(step => {
-                    yPos = addTextWithBreaks(`• ${step.textContent}`, yPos + 5);
-                });
-                
-                // Guardar PDF
-                doc.save('diagnostico-empresarial.pdf');
+                }
             }
         });
     </script>
