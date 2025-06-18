@@ -3,803 +3,1972 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediagnóstico Vestra - Autoevaluación para PYMES</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Diagnóstico Empresarial - Vestra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --primary: #2F80ED;
-            --secondary: #27AE60;
-            --danger: #EB5757;
-            --warning: #F2C94C;
-            --dark: #333333;
-            --light: #F8F9FA;
-            --gray: #828282;
-            --border-radius: 10px;
-            --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
+            --primary: #2A5CAA;
+            --secondary: #F8F9FA;
+            --accent: #FF6B35;
+            --text: #333333;
+            --light-text: #6C757D;
+            --border: #DEE2E6;
+            --success: #28A745;
         }
-
+        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text);
             background-color: #f5f7fa;
-            color: var(--dark);
             line-height: 1.6;
         }
-
+        
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
         }
-
-        header {
+        
+        .header {
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-
-        .logo {
-            font-size: 2.5rem;
+        
+        .header h1 {
             color: var(--primary);
             margin-bottom: 10px;
         }
-
-        h1 {
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 1.8rem;
+        
+        .header p {
+            color: var(--light-text);
+            max-width: 700px;
+            margin: 0 auto;
         }
-
-        .subtitle {
-            color: var(--gray);
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .benefits {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
+        
+        .progress-container {
+            width: 100%;
+            background-color: var(--border);
+            border-radius: 5px;
             margin: 20px 0;
+            height: 10px;
         }
-
-        .benefit-item {
-            display: flex;
-            align-items: center;
-            background: rgba(47, 128, 237, 0.1);
-            padding: 10px 15px;
-            border-radius: 50px;
-            font-size: 0.9rem;
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
         }
-
-        .benefit-item i {
-            margin-right: 8px;
-            color: var(--primary);
-        }
-
-        .form-container {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
+        
         .form-section {
-            margin-bottom: 30px;
             display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
         }
-
+        
         .form-section.active {
             display: block;
             animation: fadeIn 0.5s ease;
         }
-
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
         .section-title {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 600;
             color: var(--primary);
-            font-size: 1.3rem;
         }
-
-        .section-title i {
-            margin-right: 10px;
-            font-size: 1.5rem;
+        
+        .question-container {
+            margin-bottom: 25px;
         }
-
-        .form-group {
-            margin-bottom: 20px;
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 16px;
         }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        select:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(47, 128, 237, 0.2);
-        }
-
-        .radio-group {
+        
+        .scale-container {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            justify-content: space-between;
+            margin-top: 10px;
         }
-
-        .radio-option {
+        
+        .scale-option {
+            text-align: center;
+            width: 16%;
+        }
+        
+        .scale-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
             display: flex;
             align-items: center;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
+            justify-content: center;
+            margin: 0 auto 5px;
             cursor: pointer;
-            transition: var(--transition);
-            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+            font-weight: 600;
         }
-
-        .radio-option:hover {
+        
+        .scale-number:hover {
             border-color: var(--primary);
-            background: rgba(47, 128, 237, 0.05);
         }
-
-        .radio-option input {
-            margin-right: 10px;
+        
+        .scale-number.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
-
-        .radio-option .emoji {
-            margin-right: 10px;
-            font-size: 1.2rem;
+        
+        .scale-label {
+            font-size: 12px;
+            color: var(--light-text);
+            text-align: center;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .progress-container {
-            width: 100%;
-            background: #eee;
-            border-radius: 50px;
-            height: 8px;
-            margin: 30px 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .navigation {
+        
+        .nav-buttons {
             display: flex;
             justify-content: space-between;
             margin-top: 30px;
         }
-
+        
         .btn {
             padding: 12px 25px;
+            border-radius: 5px;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.3s ease;
         }
-
+        
         .btn-primary {
-            background: var(--primary);
+            background-color: var(--primary);
             color: white;
         }
-
+        
         .btn-primary:hover {
-            background: #2567c2;
-            transform: translateY(-2px);
+            background-color: #1d4a8a;
         }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
-
-        .btn-outline:hover {
-            background: rgba(47, 128, 237, 0.1);
+        
+        .btn-secondary:hover {
+            background-color: #e9ecef;
         }
-
-        .btn i {
-            margin-right: 8px;
+        
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-
+        
         .results-container {
             display: none;
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            background-color: white;
             padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .results-header {
             text-align: center;
+            margin-bottom: 30px;
         }
-
-        .results-container h2 {
+        
+        .results-title {
             color: var(--primary);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
-
-        .stage-badge {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            margin: 15px 0;
-            font-size: 1.2rem;
-        }
-
-        .stage-1 { background: var(--danger); color: white; }
-        .stage-2 { background: var(--warning); color: var(--dark); }
-        .stage-3 { background: var(--secondary); color: white; }
-
-        .recommendations {
-            text-align: left;
-            margin: 30px 0;
-        }
-
-        .recommendation {
-            background: rgba(47, 128, 237, 0.05);
-            padding: 15px;
-            border-left: 4px solid var(--primary);
-            margin-bottom: 15px;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-        }
-
-        .cta-box {
-            background: rgba(47, 128, 237, 0.1);
+        
+        .business-profile {
+            background-color: var(--secondary);
             padding: 20px;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            border-left: 5px solid var(--accent);
+        }
+        
+        .profile-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .profile-description {
+            color: var(--text);
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .results-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .results-table tr:nth-child(even) {
+            background-color: var(--secondary);
+        }
+        
+        .score-bar {
+            height: 10px;
+            background-color: var(--border);
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--primary);
+        }
+        
+        .recommendations {
             margin-top: 30px;
         }
-
+        
+        .recommendation-block {
+            margin-bottom: 25px;
+        }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .recommendation-title i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .recommendation-list {
+            list-style-type: none;
+        }
+        
+        .recommendation-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            display: flex;
+        }
+        
+        .recommendation-list li:before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            display: inline-block;
+            width: 20px;
+        }
+        
+        .download-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
         .hidden {
             display: none;
         }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
+        
+        .section-complete {
+            color: var(--success);
+            font-size: 14px;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-complete i {
+            margin-right: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .scale-label {
+                font-size: 10px;
+                height: 40px;
             }
             
-            header {
-                padding: 15px;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
-            
-            .section-title {
-                font-size: 1.1rem;
+            .question-container {
+                margin-bottom: 35px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-chart-line"></i>
+        <div class="header">
+            <h1>Diagnóstico Empresarial</h1>
+            <p>Evalúa el nivel de madurez de tu negocio y recibe recomendaciones personalizadas para crecer con control y rentabilidad</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- Sección de Finanzas -->
+        <div class="form-section active" id="section-finanzas">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="section-title">Finanzas</div>
+                <div class="section-complete hidden" id="finanzas-complete"><i class="fas fa-check-circle"></i> Completo</div>
             </div>
-            <h1>Prediagnóstico Vestra</h1>
-            <p class="subtitle">Descubre en qué etapa está tu negocio y recibe recomendaciones personalizadas</p>
             
-            <div class="benefits">
-                <div class="benefit-item">
-                    <i class="fas fa-check"></i>
-                    <span>Solo 5 minutos</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check"></i>
-                    <span>Análisis gratuito</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-check"></i>
-                    <span>Recomendaciones prácticas</span>
+            <div class="question-container">
+                <div class="question-text">1. ¿Con qué frecuencia analizas tus estados financieros (balance general, estado de resultados, flujo de efectivo)?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Nunca</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Anualmente</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Semestralmente</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Trimestralmente</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Mensualmente</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Semanalmente</div>
+                    </div>
                 </div>
             </div>
-        </header>
-
-        <div class="form-container" id="form-container">
-            <!-- Sección 1: Datos Básicos -->
-            <div class="form-section active" id="section1">
-                <div class="section-title">
-                    <i class="fas fa-user-tie"></i>
-                    <h2>Datos básicos</h2>
-                </div>
-                
-                <div class="form-group">
-                    <label for="name">Nombre completo</label>
-                    <input type="text" id="name" placeholder="Ej: Juan Pérez">
-                </div>
-                
-                <div class="form-group">
-                    <label for="company">Nombre de tu empresa</label>
-                    <input type="text" id="company" placeholder="Ej: Mi Negocio S.A.">
-                </div>
-                
-                <div class="form-group">
-                    <label for="industry">Rubro de tu negocio</label>
-                    <select id="industry">
-                        <option value="">Selecciona una opción</option>
-                        <option value="comercio">Comercio (tienda, distribuidora)</option>
-                        <option value="servicios">Servicios (consultoría, mantenimiento)</option>
-                        <option value="manufactura">Manufactura (producción, alimentos)</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="years">Años en el mercado</label>
-                    <select id="years">
-                        <option value="">Selecciona una opción</option>
-                        <option value="<1">Menos de 1 año</option>
-                        <option value="1-3">1 a 3 años</option>
-                        <option value="3+">Más de 3 años</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="employees">Número de empleados</label>
-                    <select id="employees">
-                        <option value="">Selecciona una opción</option>
-                        <option value="1">Solo yo</option>
-                        <option value="2-5">2 a 5 empleados</option>
-                        <option value="6-10">6 a 10 empleados</option>
-                        <option value="10+">Más de 10 empleados</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" placeholder="Ej: contacto@miempresa.com">
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-primary" onclick="nextSection(1, 2)">
-                        Siguiente <i class="fas fa-arrow-right"></i>
-                    </button>
+            
+            <div class="question-container">
+                <div class="question-text">2. ¿Cómo manejas el presupuesto y la planeación financiera en tu empresa?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No tenemos presupuesto</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Presupuesto mental</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Presupuesto básico</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Presupuesto anual</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Presupuesto con revisiones</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Presupuesto detallado con KPIs</div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Sección 2: Finanzas -->
-            <div class="form-section" id="section2">
-                <div class="section-title">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <h2>Finanzas</h2>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar" style="width: 20%;"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>1. ¿Llevas un control de ingresos y gastos?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="finanzas1" value="1">
-                            <span class="emoji">❌</span> No, todo en mi cabeza
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="finanzas1" value="2">
-                            <span class="emoji">✔</span> A veces, en papel o Excel
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="finanzas1" value="3">
-                            <span class="emoji">✅</span> Sí, con un sistema claro
-                        </label>
+            
+            <div class="question-container">
+                <div class="question-text">3. ¿Qué tan claro tienes tus márgenes de utilidad por producto/servicio?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No los conozco</div>
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>2. ¿Tienes un sueldo fijo como dueño?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="finanzas2" value="1">
-                            <span class="emoji">❌</span> No, saco lo que sobra
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="finanzas2" value="2">
-                            <span class="emoji">✔</span> A veces me pago algo
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="finanzas2" value="3">
-                            <span class="emoji">✅</span> Sí, tengo un sueldo definido
-                        </label>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Estimado general</div>
                     </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-outline" onclick="prevSection(2, 1)">
-                        <i class="fas fa-arrow-left"></i> Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="nextSection(2, 3)">
-                        Siguiente <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Conozco algunos</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Conozco la mayoría</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Conozco todos</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Con análisis detallado</div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Sección 3: Ventas y Clientes -->
-            <div class="form-section" id="section3">
-                <div class="section-title">
-                    <i class="fas fa-users"></i>
-                    <h2>Ventas y Clientes</h2>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 40%;"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>1. ¿Tienes clientes recurrentes?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="ventas1" value="1">
-                            <span class="emoji">❌</span> No, siempre busco nuevos
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ventas1" value="2">
-                            <span class="emoji">✔</span> Algunos vuelven
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ventas1" value="3">
-                            <span class="emoji">✅</span> Sí, la mayoría repite
-                        </label>
+            
+            <div class="question-container">
+                <div class="question-text">4. ¿Cómo es tu flujo de efectivo y capacidad para cubrir obligaciones?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Frecuentes problemas</div>
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>2. ¿Sabes cuánto cuesta conseguir un cliente nuevo?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="ventas2" value="1">
-                            <span class="emoji">❌</span> No tengo idea
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ventas2" value="2">
-                            <span class="emoji">✔</span> Más o menos
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ventas2" value="3">
-                            <span class="emoji">✅</span> Sí, lo mido exacto
-                        </label>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Justo cubro gastos</div>
                     </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-outline" onclick="prevSection(3, 2)">
-                        <i class="fas fa-arrow-left"></i> Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="nextSection(3, 4)">
-                        Siguiente <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algo de margen</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Buen flujo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Flujo saludable</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Excelente con reservas</div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Sección 4: Operaciones -->
-            <div class="form-section" id="section4">
-                <div class="section-title">
-                    <i class="fas fa-cogs"></i>
-                    <h2>Operaciones</h2>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 60%;"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>1. ¿Tienes procesos documentados?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="ops1" value="1">
-                            <span class="emoji">❌</span> No, yo hago todo
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ops1" value="2">
-                            <span class="emoji">✔</span> Algunos pasos escritos
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ops1" value="3">
-                            <span class="emoji">✅</span> Sí, cualquiera puede seguir mis instrucciones
-                        </label>
+            
+            <div class="question-container">
+                <div class="question-text">5. ¿Qué sistemas utilizas para el control financiero?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Ninguno</div>
                     </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>2. ¿Puedes tomarte una semana libre sin que todo colapse?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="ops2" value="1">
-                            <span class="emoji">❌</span> No, depende 100% de mí
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ops2" value="2">
-                            <span class="emoji">✔</span> Tal vez 1-2 días
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="ops2" value="3">
-                            <span class="emoji">✅</span> Sí, el equipo sigue trabajando
-                        </label>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Excel básico</div>
                     </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-outline" onclick="prevSection(4, 3)">
-                        <i class="fas fa-arrow-left"></i> Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="nextSection(4, 5)">
-                        Siguiente <i class="fas fa-arrow-right"></i>
-                    </button>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Software contable</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">ERP básico</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">ERP integrado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema avanzado con BI</div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Sección 5: Gestión -->
-            <div class="form-section" id="section5">
-                <div class="section-title">
-                    <i class="fas fa-chart-pie"></i>
-                    <h2>Gestión</h2>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 80%;"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>1. ¿Revisas métricas de tu negocio?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="gestion1" value="1">
-                            <span class="emoji">❌</span> No, voy a ciegas
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="gestion1" value="2">
-                            <span class="emoji">✔</span> Veo ventas y gastos
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="gestion1" value="3">
-                            <span class="emoji">✅</span> Analizo datos para tomar decisiones
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>2. ¿Tienes metas claras para este año?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="gestion2" value="1">
-                            <span class="emoji">❌</span> No, sobrevivo día a día
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="gestion2" value="2">
-                            <span class="emoji">✔</span> Tengo ideas, pero no escritas
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="gestion2" value="3">
-                            <span class="emoji">✅</span> Sí, con plazos y acciones definidas
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-outline" onclick="prevSection(5, 4)">
-                        <i class="fas fa-arrow-left"></i> Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="nextSection(5, 6)">
-                        Siguiente <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Sección 6: Bienestar -->
-            <div class="form-section" id="section6">
-                <div class="section-title">
-                    <i class="fas fa-heartbeat"></i>
-                    <h2>Bienestar</h2>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" style="width: 100%;"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label>1. ¿Tienes tiempo libre?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="bienestar1" value="1">
-                            <span class="emoji">❌</span> No, trabajo 24/7
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="bienestar1" value="2">
-                            <span class="emoji">✔</span> Algo, pero me cuesta desconectar
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="bienestar1" value="3">
-                            <span class="emoji">✅</span> Sí, mi negocio no depende de mí
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>2. ¿Te sientes motivado con tu negocio?</label>
-                    <div class="radio-group">
-                        <label class="radio-option">
-                            <input type="radio" name="bienestar2" value="1">
-                            <span class="emoji">❌</span> No, estoy quemado
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="bienestar2" value="2">
-                            <span class="emoji">✔</span> A veces, pero con estrés
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="bienestar2" value="3">
-                            <span class="emoji">✅</span> Sí, me encanta lo que hago
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="btn btn-outline" onclick="prevSection(6, 5)">
-                        <i class="fas fa-arrow-left"></i> Anterior
-                    </button>
-                    <button class="btn btn-primary" onclick="calculateResults()">
-                        Ver resultados <i class="fas fa-chart-bar"></i>
-                    </button>
-                </div>
+            
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn" disabled>Anterior</button>
+                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
             </div>
         </div>
-
-        <!-- Resultados -->
-        <div class="results-container" id="results-container">
-            <h2>Resultados de tu Prediagnóstico</h2>
-            
-            <div id="stage-badge" class="stage-badge stage-1">
-                Etapa de Supervivencia
+        
+        <!-- Sección de Ventas y Marketing -->
+        <div class="form-section" id="section-ventas">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="section-title">Ventas y Marketing</div>
+                <div class="section-complete hidden" id="ventas-complete"><i class="fas fa-check-circle"></i> Completo</div>
             </div>
             
-            <p id="stage-description">Tu negocio está en modo supervivencia, trabajando día a día sin mucha planificación.</p>
+            <div class="question-container">
+                <div class="question-text">1. ¿Cómo defines tus estrategias de marketing y ventas?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No tengo estrategia</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Intuición</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Estrategia básica</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Estrategia documentada</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Estrategia con métricas</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Estrategia integrada</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">2. ¿Qué tan claro tienes tu propuesta de valor y diferenciación?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No la tengo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Idea básica</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algo definida</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Definida</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Clara y comunicada</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Optimizada continuamente</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">3. ¿Cómo es tu proceso de ventas?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay proceso</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Informal</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algo estructurado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Documentado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Seguimiento métrico</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Optimizado continuamente</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">4. ¿Qué sistemas usas para gestionar clientes y ventas?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Ninguno</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Excel/Notas</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">CRM básico</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">CRM profesional</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">CRM integrado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema avanzado</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">5. ¿Cómo es tu estrategia de fidelización de clientes?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No tengo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Relación personal</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Programa básico</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Programa estructurado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Programa con métricas</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Estrategia integral</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
+                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Sección de Operaciones -->
+        <div class="form-section" id="section-operaciones">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div class="section-title">Operaciones</div>
+                <div class="section-complete hidden" id="operaciones-complete"><i class="fas fa-check-circle"></i> Completo</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">1. ¿Cómo están documentados tus procesos operativos?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Nada documentado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Algunos en mi cabeza</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunos documentados</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">La mayoría documentados</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Todos documentados</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Optimizados continuamente</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">2. ¿Qué nivel de estandarización tienen tus operaciones?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Nada estandarizado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Algo de consistencia</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunos estándares</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Buen nivel</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Altamente estandarizado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Excelencia operativa</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">3. ¿Cómo manejas la calidad de tus productos/servicios?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay control</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Revisión ocasional</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunos controles</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Procesos definidos</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Sistema de calidad</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Mejora continua</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">4. ¿Qué sistemas usas para gestionar operaciones?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Ninguno</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Excel/Herramientas básicas</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Software específico</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Sistemas integrados</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">ERP operativo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Tecnología avanzada</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">5. ¿Cómo es tu cadena de suministro y proveedores?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Improvisada</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Algunos proveedores</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Proveedores regulares</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Proveedores confiables</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Cadena optimizada</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Estrategia de suministro</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
+                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Sección de Personas y Equipo -->
+        <div class="form-section" id="section-personas">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="section-title">Personas y Equipo</div>
+                <div class="section-complete hidden" id="personas-complete"><i class="fas fa-check-circle"></i> Completo</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">1. ¿Cómo es tu proceso de reclutamiento y selección?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay proceso</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Contratación informal</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algo estructurado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Proceso definido</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Con evaluación técnica</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema integral</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">2. ¿Cómo capacitas y desarrollas a tu equipo?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay capacitación</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Ocasionalmente</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Capacitación básica</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Programa regular</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Desarrollo continuo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Plan de carrera</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">3. ¿Cómo evalúas el desempeño de tu equipo?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No evalúo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Por intuición</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Revisión informal</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Evaluación anual</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Evaluación periódica</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema integral</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">4. ¿Cómo es la cultura y clima organizacional?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay cultura definida</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Basada en el dueño</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunos valores</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Cultura definida</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Cultura fortalecida</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Cultura de alto desempeño</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">5. ¿Cómo manejas la compensación y beneficios?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay estructura</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Salarios básicos</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunos beneficios</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Estructura definida</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Paquete competitivo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema estratégico</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
+                <button class="btn btn-primary" id="nextBtn">Siguiente</button>
+            </div>
+        </div>
+        
+        <!-- Sección de Estrategia y Dirección -->
+        <div class="form-section" id="section-estrategia">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-chess"></i>
+                </div>
+                <div class="section-title">Estrategia y Dirección</div>
+                <div class="section-complete hidden" id="estrategia-complete"><i class="fas fa-check-circle"></i> Completo</div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">1. ¿Qué tan clara tienes tu visión y misión empresarial?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No las tengo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Idea básica</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algo definidas</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Documentadas</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Comunicadas al equipo</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Guían todas las decisiones</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">2. ¿Cómo defines y haces seguimiento a tus objetivos?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No tengo objetivos</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Objetivos mentales</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunos escritos</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Objetivos anuales</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Con seguimiento</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema estratégico</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">3. ¿Cómo tomas decisiones estratégicas?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">Intuición/improvisación</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Basada en experiencia</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algo de análisis</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Proceso definido</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Con datos e indicadores</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Sistema estratégico</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">4. ¿Qué tan preparado está tu negocio para crecer?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No puedo crecer</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Crecimiento limitado</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Alguna capacidad</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Preparado para crecer</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Estructura escalable</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Listo para expansión</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-text">5. ¿Cómo manejas la innovación en tu empresa?</div>
+                <div class="scale-container">
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="0">0</div>
+                        <div class="scale-label">No hay innovación</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="1">1</div>
+                        <div class="scale-label">Ocasional</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="2">2</div>
+                        <div class="scale-label">Algunas mejoras</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="3">3</div>
+                        <div class="scale-label">Proceso de mejora</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="4">4</div>
+                        <div class="scale-label">Cultura innovadora</div>
+                    </div>
+                    <div class="scale-option">
+                        <div class="scale-number" data-value="5">5</div>
+                        <div class="scale-label">Innovación estratégica</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevBtn">Anterior</button>
+                <button class="btn btn-primary" id="finishBtn">Finalizar Diagnóstico</button>
+            </div>
+        </div>
+        
+        <!-- Sección de Resultados -->
+        <div class="results-container" id="results-section">
+            <div class="results-header">
+                <h2 class="results-title">Resultados de tu Diagnóstico Empresarial</h2>
+                <p>Basado en tus respuestas, aquí tienes un análisis de la madurez de tu negocio y recomendaciones para mejorar</p>
+            </div>
+            
+            <div class="business-profile">
+                <h3 class="profile-title" id="profile-title">Empresa en Crecimiento Desorganizado</h3>
+                <p class="profile-description" id="profile-description">Tu negocio muestra signos de crecimiento, pero con falta de sistemas y procesos definidos que podrían limitar tu escalabilidad y rentabilidad a largo plazo.</p>
+            </div>
+            
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>Puntuación</th>
+                        <th>Nivel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Finanzas</td>
+                        <td>
+                            <span id="finanzas-score">0</span>/25
+                            <div class="score-bar"><div class="score-fill" id="finanzas-bar" style="width: 0%;"></div></div>
+                        </td>
+                        <td id="finanzas-level">Básico</td>
+                    </tr>
+                    <tr>
+                        <td>Ventas y Marketing</td>
+                        <td>
+                            <span id="ventas-score">0</span>/25
+                            <div class="score-bar"><div class="score-fill" id="ventas-bar" style="width: 0%;"></div></div>
+                        </td>
+                        <td id="ventas-level">Básico</td>
+                    </tr>
+                    <tr>
+                        <td>Operaciones</td>
+                        <td>
+                            <span id="operaciones-score">0</span>/25
+                            <div class="score-bar"><div class="score-fill" id="operaciones-bar" style="width: 0%;"></div></div>
+                        </td>
+                        <td id="operaciones-level">Básico</td>
+                    </tr>
+                    <tr>
+                        <td>Personas y Equipo</td>
+                        <td>
+                            <span id="personas-score">0</span>/25
+                            <div class="score-bar"><div class="score-fill" id="personas-bar" style="width: 0%;"></div></div>
+                        </td>
+                        <td id="personas-level">Básico</td>
+                    </tr>
+                    <tr>
+                        <td>Estrategia y Dirección</td>
+                        <td>
+                            <span id="estrategia-score">0</span>/25
+                            <div class="score-bar"><div class="score-fill" id="estrategia-bar" style="width: 0%;"></div></div>
+                        </td>
+                        <td id="estrategia-level">Básico</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>
+                            <strong><span id="total-score">0</span>/125</strong>
+                            <div class="score-bar"><div class="score-fill" id="total-bar" style="width: 0%;"></div></div>
+                        </td>
+                        <td id="total-level">Básico</td>
+                    </tr>
+                </tbody>
+            </table>
             
             <div class="recommendations">
-                <h3>Recomendaciones clave:</h3>
+                <h3>Recomendaciones por Área</h3>
                 
-                <div class="recommendation">
-                    <strong>1. Implementa un control financiero básico</strong>
-                    <p>Comienza registrando todos tus ingresos y gastos en una hoja de cálculo o app como Excel o Google Sheets.</p>
+                <div class="recommendation-block">
+                    <h4 class="recommendation-title"><i class="fas fa-chart-line"></i> Finanzas</h4>
+                    <ul class="recommendation-list" id="finanzas-recommendations">
+                        <!-- Las recomendaciones se generarán dinámicamente -->
+                    </ul>
                 </div>
                 
-                <div class="recommendation">
-                    <strong>2. Documenta tus procesos principales</strong>
-                    <p>Escribe los pasos de tu servicio/producto más importante para poder delegar en el futuro.</p>
+                <div class="recommendation-block">
+                    <h4 class="recommendation-title"><i class="fas fa-shopping-cart"></i> Ventas y Marketing</h4>
+                    <ul class="recommendation-list" id="ventas-recommendations">
+                        <!-- Las recomendaciones se generarán dinámicamente -->
+                    </ul>
                 </div>
                 
-                <div class="recommendation">
-                    <strong>3. Define 3 métricas clave para seguir</strong>
-                    <p>Pueden ser: ventas mensuales, gastos fijos y satisfacción de clientes.</p>
+                <div class="recommendation-block">
+                    <h4 class="recommendation-title"><i class="fas fa-cogs"></i> Operaciones</h4>
+                    <ul class="recommendation-list" id="operaciones-recommendations">
+                        <!-- Las recomendaciones se generarán dinámicamente -->
+                    </ul>
+                </div>
+                
+                <div class="recommendation-block">
+                    <h4 class="recommendation-title"><i class="fas fa-users"></i> Personas y Equipo</h4>
+                    <ul class="recommendation-list" id="personas-recommendations">
+                        <!-- Las recomendaciones se generarán dinámicamente -->
+                    </ul>
+                </div>
+                
+                <div class="recommendation-block">
+                    <h4 class="recommendation-title"><i class="fas fa-chess"></i> Estrategia y Dirección</h4>
+                    <ul class="recommendation-list" id="estrategia-recommendations">
+                        <!-- Las recomendaciones se generarán dinámicamente -->
+                    </ul>
+                </div>
+                
+                <div class="recommendation-block">
+                    <h4 class="recommendation-title"><i class="fas fa-road"></i> Próximos Pasos</h4>
+                    <ul class="recommendation-list" id="next-steps">
+                        <!-- Los próximos pasos se generarán dinámicamente -->
+                    </ul>
                 </div>
             </div>
             
-            <div class="cta-box">
-                <h3>¿Quieres un diagnóstico completo?</h3>
-                <p>Agenda una llamada gratuita con nuestro equipo para analizar tus resultados y crear un plan de acción personalizado.</p>
-                <button class="btn btn-primary" style="margin-top: 15px;">
-                    <i class="fas fa-calendar-check"></i> Agendar llamada
-                </button>
-            </div>
-            
-            <button class="btn btn-outline" style="margin-top: 20px;" onclick="restartQuiz()">
-                <i class="fas fa-redo"></i> Volver a empezar
-            </button>
+            <button class="btn btn-primary download-btn" id="downloadBtn"><i class="fas fa-download"></i> Descargar Reporte Completo (PDF)</button>
         </div>
     </div>
 
     <script>
-        // Navegación entre secciones
-        function nextSection(current, next) {
-            document.getElementById(`section${current}`).classList.remove('active');
-            document.getElementById(`section${next}`).classList.add('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuración inicial
+            const sections = [
+                'finanzas', 
+                'ventas', 
+                'operaciones', 
+                'personas', 
+                'estrategia'
+            ];
             
-            // Actualizar barra de progreso
-            const progress = (next - 1) * 20;
-            document.querySelectorAll('.progress-bar').forEach(bar => {
-                bar.style.width = `${progress}%`;
+            let currentSection = 0;
+            const totalSections = sections.length;
+            const answers = {};
+            
+            // Inicializar objeto de respuestas
+            sections.forEach(section => {
+                answers[section] = Array(5).fill(null);
             });
             
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function prevSection(current, prev) {
-            document.getElementById(`section${current}`).classList.remove('active');
-            document.getElementById(`section${prev}`).classList.add('active');
+            // Mostrar la primera sección
+            showSection(currentSection);
+            updateProgressBar();
             
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        // Calcular resultados
-        function calculateResults() {
-    // Obtener solo las preguntas de la sección actual (última sección)
-    const currentSection = document.querySelector('.form-section.active');
-    const unansweredInCurrentSection = currentSection.querySelectorAll('input[type="radio"]:not(:checked)').length;
-    
-    if (unansweredInCurrentSection > 0) {
-        alert('Por favor responde todas las preguntas de esta sección antes de continuar');
-        return;
-    }
-
-    // Ocultar formulario y mostrar resultados
-    document.getElementById('form-container').classList.add('hidden');
-    document.getElementById('results-container').style.display = 'block';
-    
-    // Calcular puntaje total solo de las preguntas respondidas
-    const radios = document.querySelectorAll('input[type="radio"]:checked');
-    let totalScore = 0;
-    
-    radios.forEach(radio => {
-        totalScore += parseInt(radio.value);
-    });
-    
-    // Determinar etapa del negocio
-    let stage, description, badgeClass;
-    
-    if (totalScore <= 10) {
-        stage = "Caos Total";
-        description = "Tu negocio opera en modo crisis constante, con poca estructura y mucha dependencia de ti.";
-        badgeClass = "stage-1";
-    } else if (totalScore <= 16) {
-        stage = "Supervivencia";
-        description = "Tu negocio está en modo supervivencia, trabajando día a día sin mucha planificación.";
-        badgeClass = "stage-2";
-    } else {
-        stage = "Crecimiento";
-        description = "Tu negocio tiene bases sólidas y está listo para crecer de manera estructurada.";
-        badgeClass = "stage-3";
-    }
-    
-    // Actualizar UI con resultados
-    document.getElementById('stage-badge').textContent = `Etapa de ${stage}`;
-    document.getElementById('stage-badge').className = `stage-badge ${badgeClass}`;
-    document.getElementById('stage-description').textContent = description;
-    
-    // Scroll to results
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+            // Configurar eventos de navegación
+            document.querySelectorAll('#nextBtn').forEach(btn => {
+                btn.addEventListener('click', nextSection);
+            });
+            
+            document.querySelectorAll('#prevBtn').forEach(btn => {
+                btn.addEventListener('click', prevSection);
+            });
+            
+            document.getElementById('finishBtn').addEventListener('click', finishAssessment);
+            document.getElementById('downloadBtn').addEventListener('click', generatePDF);
+            
+            // Configurar eventos para las opciones de escala
+            document.querySelectorAll('.scale-number').forEach(option => {
+                option.addEventListener('click', function() {
+                    const section = this.closest('.form-section').id.split('-')[1];
+                    const questionIndex = Array.from(this.closest('.question-container').parentElement.children).indexOf(this.closest('.question-container'));
+                    
+                    // Remover selección previa para esta pregunta
+                    const questionContainer = this.closest('.question-container');
+                    questionContainer.querySelectorAll('.scale-number').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Marcar como seleccionado
+                    this.classList.add('selected');
+                    
+                    // Guardar respuesta
+                    answers[section][questionIndex] = parseInt(this.getAttribute('data-value'));
+                    
+                    // Verificar si la sección está completa
+                    checkSectionComplete(section);
+                });
+            });
+            
+            // Funciones de navegación
+            function showSection(index) {
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                document.getElementById(`section-${sections[index]}`).classList.add('active');
+                
+                // Actualizar estado de los botones
+                document.querySelectorAll('#prevBtn').forEach(btn => {
+                    btn.disabled = index === 0;
+                });
+                
+                if (index === totalSections - 1) {
+                    document.querySelectorAll('#nextBtn').forEach(btn => {
+                        btn.style.display = 'none';
+                    });
+                    document.getElementById('finishBtn').style.display = 'block';
+                } else {
+                    document.querySelectorAll('#nextBtn').forEach(btn => {
+                        btn.style.display = 'block';
+                    });
+                    document.getElementById('finishBtn').style.display = 'none';
+                }
+            }
+            
+            function nextSection() {
+                if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                    updateProgressBar();
+                }
+            }
+            
+            function prevSection() {
+                if (currentSection > 0) {
+                    currentSection--;
+                    showSection(currentSection);
+                    updateProgressBar();
+                }
+            }
+            
+            function updateProgressBar() {
+                const progress = ((currentSection) / totalSections) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+            }
+            
+            function checkSectionComplete(section) {
+                const sectionAnswers = answers[section];
+                const isComplete = sectionAnswers.every(answer => answer !== null);
+                
+                const completeIndicator = document.getElementById(`${section}-complete`);
+                if (isComplete) {
+                    completeIndicator.classList.remove('hidden');
+                } else {
+                    completeIndicator.classList.add('hidden');
+                }
+            }
+            
+            function finishAssessment() {
+                // Calcular puntuaciones
+                const scores = {};
+                let totalScore = 0;
+                
+                sections.forEach(section => {
+                    scores[section] = answers[section].reduce((sum, val) => sum + val, 0);
+                    totalScore += scores[section];
+                });
+                
+                // Mostrar resultados
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'none';
+                });
+                
+                // Mostrar sección de resultados
+                document.getElementById('results-section').style.display = 'block';
+                
+                // Actualizar puntuaciones en la tabla
+                sections.forEach(section => {
+                    document.getElementById(`${section}-score`).textContent = scores[section];
+                    const percentage = (scores[section] / 25) * 100;
+                    document.getElementById(`${section}-bar`).style.width = `${percentage}%`;
+                    
+                    // Determinar nivel por área
+                    const level = getLevel(scores[section]);
+                    document.getElementById(`${section}-level`).textContent = level;
+                });
+                
+                document.getElementById('total-score').textContent = totalScore;
+                const totalPercentage = (totalScore / 125) * 100;
+                document.getElementById('total-bar').style.width = `${totalPercentage}%`;
+                
+                // Determinar nivel total
+                const totalLevel = getTotalLevel(totalScore);
+                document.getElementById('total-level').textContent = totalLevel;
+                
+                // Determinar perfil empresarial
+                const profile = getBusinessProfile(totalScore, scores);
+                document.getElementById('profile-title').textContent = profile.title;
+                document.getElementById('profile-description').textContent = profile.description;
+                
+                // Generar recomendaciones
+                generateRecommendations(scores, totalScore, totalLevel);
+                
+                // Enviar resultados por correo
+                sendEmailResults(scores, totalScore, totalLevel, profile.title);
+            }
+            
+            function getLevel(score) {
+                if (score <= 5) return 'Inicial';
+                if (score <= 10) return 'Básico';
+                if (score <= 15) return 'Intermedio';
+                if (score <= 20) return 'Avanzado';
+                return 'Excelente';
+            }
+            
+            function getTotalLevel(totalScore) {
+                if (totalScore <= 25) return 'Inicial';
+                if (totalScore <= 50) return 'Básico';
+                if (totalScore <= 75) return 'Intermedio';
+                if (totalScore <= 100) return 'Avanzado';
+                return 'Excelente';
+            }
+            
+            function getBusinessProfile(totalScore, scores) {
+                // Calcular desviación estándar para ver equilibrio entre áreas
+                const avg = totalScore / 5;
+                let variance = 0;
+                for (const section in scores) {
+                    variance += Math.pow(scores[section] - avg, 2);
+                }
+                const stdDev = Math.sqrt(variance / 5);
+                
+                // Determinar perfil basado en puntuación y equilibrio
+                if (totalScore <= 25) {
+                    return {
+                        title: "Empresa Inicial",
+                        description: "Tu negocio está en etapas muy tempranas con sistemas y procesos limitados. Es importante sentar bases sólidas para el crecimiento futuro."
+                    };
+                } else if (totalScore <= 50) {
+                    if (stdDev > 7) {
+                        return {
+                            title: "Empresa con Desequilibrios",
+                            description: "Algunas áreas de tu negocio están más desarrolladas que otras, lo que puede crear cuellos de botella. Es importante equilibrar el desarrollo de todas las áreas funcionales."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa Básica",
+                            description: "Tu negocio tiene los fundamentos básicos establecidos, pero hay oportunidades significativas para mejorar en todas las áreas."
+                        };
+                    }
+                } else if (totalScore <= 75) {
+                    if (stdDev > 6) {
+                        return {
+                            title: "Empresa en Crecimiento Desorganizado",
+                            description: "Tu negocio muestra signos de crecimiento, pero con falta de sistemas y procesos definidos que podrían limitar tu escalabilidad y rentabilidad a largo plazo."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa en Crecimiento Organizado",
+                            description: "Tu negocio está creciendo con relativo equilibrio entre áreas, pero aún hay espacio para mejorar procesos y sistemas para soportar un mayor crecimiento."
+                        };
+                    }
+                } else if (totalScore <= 100) {
+                    if (stdDev > 5) {
+                        return {
+                            title: "Empresa Avanzada con Áreas de Oportunidad",
+                            description: "Tu negocio es bastante maduro en la mayoría de áreas, pero algunas podrían necesitar atención para alcanzar el mismo nivel de desarrollo."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa Avanzada",
+                            description: "Tienes un negocio bien establecido con sistemas y procesos sólidos en la mayoría de áreas. El enfoque ahora debe estar en optimización y excelencia."
+                        };
+                    }
+                } else {
+                    if (stdDev > 4) {
+                        return {
+                            title: "Empresa de Alto Desempeño",
+                            description: "Tu negocio es un ejemplo de excelencia en la mayoría de áreas, con solo algunas oportunidades menores de mejora en áreas específicas."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa de Clase Mundial",
+                            description: "Felicidades, tienes un negocio excepcionalmente bien gestionado en todas las áreas clave, listo para escalar y competir a los más altos niveles."
+                        };
+                    }
+                }
+            }
+            
+            function generateRecommendations(scores, totalScore, totalLevel) {
+                // Limpiar listas de recomendaciones existentes
+                document.querySelectorAll('.recommendation-list').forEach(list => {
+                    list.innerHTML = '';
+                });
+                
+                // Recomendaciones para Finanzas
+                const finanzasRecs = [];
+                if (scores.finanzas <= 5) {
+                    finanzasRecs.push("Implementa un sistema básico de registro financiero (puede ser Excel o software simple)");
+                    finanzasRecs.push("Comienza a revisar tus números financieros al menos mensualmente");
+                    finanzasRecs.push("Separa tus finanzas personales de las del negocio");
+                } else if (scores.finanzas <= 10) {
+                    finanzasRecs.push("Establece un presupuesto formal para el próximo trimestre");
+                    finanzasRecs.push("Implementa un software contable básico");
+                    finanzasRecs.push("Analiza tus márgenes por producto/servicio al menos una vez al mes");
+                } else if (scores.finanzas <= 15) {
+                    finanzasRecs.push("Desarrolla un sistema de reportes financieros mensuales con KPIs clave");
+                    finanzasRecs.push("Considera implementar un ERP financiero integrado");
+                    finanzasRecs.push("Establece metas financieras trimestrales y haz seguimiento");
+                } else if (scores.finanzas <= 20) {
+                    finanzasRecs.push("Optimiza tu estructura de costos y flujo de efectivo");
+                    finanzasRecs.push("Implementa análisis financieros avanzados (puntos de equilibrio, escenarios)");
+                    finanzasRecs.push("Desarrolla un sistema de pronósticos financieros");
+                } else {
+                    finanzasRecs.push("Automatiza procesos financieros para mayor eficiencia");
+                    finanzasRecs.push("Implementa análisis predictivos para toma de decisiones");
+                    finanzasRecs.push("Explora estrategias avanzadas de gestión de capital y financiamiento");
+                }
+                
+                // Añadir recomendaciones al DOM
+                const finanzasList = document.getElementById('finanzas-recommendations');
+                finanzasRecs.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    finanzasList.appendChild(li);
+                });
+                
+                // Recomendaciones para Ventas y Marketing
+                const ventasRecs = [];
+                if (scores.ventas <= 5) {
+                    ventasRecs.push("Define claramente tu propuesta de valor y diferenciación");
+                    ventasRecs.push("Establece un proceso básico de ventas (pasos a seguir)");
+                    ventasRecs.push("Implementa un sistema simple para registrar clientes y ventas");
+                } else if (scores.ventas <= 10) {
+                    ventasRecs.push("Documenta tu proceso de ventas actual y mejóralo");
+                    ventasRecs.push("Implementa un CRM básico para gestionar clientes");
+                    ventasRecs.push("Desarrolla una estrategia de marketing digital básica");
+                } else if (scores.ventas <= 15) {
+                    ventasRecs.push("Optimiza tu funnel de ventas con métricas clave");
+                    ventasRecs.push("Implementa un CRM profesional con seguimiento de oportunidades");
+                    ventasRecs.push("Desarrolla programas de fidelización de clientes");
+                } else if (scores.ventas <= 20) {
+                    ventasRecs.push("Automatiza partes de tu proceso de ventas y marketing");
+                    ventasRecs.push("Implementa análisis avanzado de datos de clientes");
+                    ventasRecs.push("Desarrolla estrategias de upselling y cross-selling");
+                } else {
+                    ventasRecs.push("Implementa inteligencia artificial para personalización de ventas");
+                    ventasRecs.push("Desarrolla programas avanzados de retención y lealtad");
+                    ventasRecs.push("Integra completamente tus sistemas de ventas, marketing y servicio al cliente");
+                }
+                
+                const ventasList = document.getElementById('ventas-recommendations');
+                ventasRecs.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    ventasList.appendChild(li);
+                });
+                
+                // Recomendaciones para Operaciones
+                const operacionesRecs = [];
+                if (scores.operaciones <= 5) {
+                    operacionesRecs.push("Documenta tus procesos operativos más importantes");
+                    operacionesRecs.push("Establece estándares básicos de calidad");
+                    operacionesRecs.push("Identifica y formaliza relaciones con proveedores clave");
+                } else if (scores.operaciones <= 10) {
+                    operacionesRecs.push("Estandariza tus procesos operativos principales");
+                    operacionesRecs.push("Implementa controles básicos de calidad");
+                    operacionesRecs.push("Considera software especializado para tus operaciones");
+                } else if (scores.operaciones <= 15) {
+                    operacionesRecs.push("Optimiza tus procesos operativos clave");
+                    operacionesRecs.push("Implementa un sistema de gestión de calidad");
+                    operacionesRecs.push("Automatiza procesos operativos repetitivos");
+                } else if (scores.operaciones <= 20) {
+                    operacionesRecs.push("Implementa metodologías de mejora continua (Lean, Six Sigma)");
+                    operacionesRecs.push("Desarrolla un sistema de gestión de la cadena de suministro");
+                    operacionesRecs.push("Integra tus sistemas operativos con otras áreas");
+                } else {
+                    operacionesRecs.push("Implementa tecnologías avanzadas (IoT, automatización)");
+                    operacionesRecs.push("Desarrolla capacidades de manufactura/escala clase mundial");
+                    operacionesRecs.push("Crea un sistema de innovación operativa continua");
+                }
+                
+                const operacionesList = document.getElementById('operaciones-recommendations');
+                operacionesRecs.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    operacionesList.appendChild(li);
+                });
+                
+                // Recomendaciones para Personas y Equipo
+                const personasRecs = [];
+                if (scores.personas <= 5) {
+                    personasRecs.push("Establece descripciones básicas de puesto");
+                    personasRecs.push("Implementa un proceso básico de contratación");
+                    personasRecs.push("Define una estructura salarial básica");
+                } else if (scores.personas <= 10) {
+                    personasRecs.push("Desarrolla un manual básico de políticas");
+                    personasRecs.push("Implementa un programa de inducción para nuevos empleados");
+                    personasRecs.push("Establece un sistema básico de evaluación de desempeño");
+                } else if (scores.personas <= 15) {
+                    personasRecs.push("Desarrolla programas de capacitación regulares");
+                    personasRecs.push("Implementa un sistema formal de evaluación de desempeño");
+                    personasRecs.push("Define y comunica claramente la cultura organizacional");
+                } else if (scores.personas <= 20) {
+                    personasRecs.push("Desarrolla planes de carrera y sucesión");
+                    personasRecs.push("Implementa programas de desarrollo de liderazgo");
+                    personasRecs.push("Optimiza tu paquete de compensación y beneficios");
+                } else {
+                    personasRecs.push("Implementa programas avanzados de desarrollo organizacional");
+                    personasRecs.push("Crea una cultura de alto desempeño y aprendizaje continuo");
+                    personasRecs.push("Desarrolla estrategias avanzadas de gestión del talento");
+                }
+                
+                const personasList = document.getElementById('personas-recommendations');
+                personasRecs.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    personasList.appendChild(li);
+                });
+                
+                // Recomendaciones para Estrategia y Dirección
+                const estrategiaRecs = [];
+                if (scores.estrategia <= 5) {
+                    estrategiaRecs.push("Define claramente tu visión y misión empresarial");
+                    estrategiaRecs.push("Establece 3-5 objetivos clave para el próximo año");
+                    estrategiaRecs.push("Implementa reuniones periódicas de revisión estratégica");
+                } else if (scores.estrategia <= 10) {
+                    estrategiaRecs.push("Documenta tu plan estratégico básico");
+                    estrategiaRecs.push("Establece métricas clave para medir progreso");
+                    estrategiaRecs.push("Analiza regularmente tu entorno competitivo");
+                } else if (scores.estrategia <= 15) {
+                    estrategiaRecs.push("Desarrolla un plan estratégico formal con iniciativas clave");
+                    estrategiaRecs.push("Implementa un sistema de seguimiento de objetivos (OKRs/KPIs)");
+                    estrategiaRecs.push("Establece un proceso formal de toma de decisiones estratégicas");
+                } else if (scores.estrategia <= 20) {
+                    estrategiaRecs.push("Optimiza tu proceso de planeación estratégica");
+                    estrategiaRecs.push("Desarrolla capacidades de análisis estratégico avanzado");
+                    estrategiaRecs.push("Implementa sistemas de innovación estratégica");
+                } else {
+                    estrategiaRecs.push("Desarrolla capacidades de anticipación estratégica");
+                    estrategiaRecs.push("Implementa sistemas de gestión del cambio estratégico");
+                    estrategiaRecs.push("Crea un proceso de reinvención estratégica continua");
+                }
+                
+                const estrategiaList = document.getElementById('estrategia-recommendations');
+                estrategiaRecs.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    estrategiaList.appendChild(li);
+                });
+                
+                // Próximos pasos generales
+                const nextStepsList = document.getElementById('next-steps');
+                const nextSteps = [];
+                
+                // Identificar áreas con menor puntuación para priorizar
+                let minScore = Infinity;
+                let weakAreas = [];
+                for (const section in scores) {
+                    if (scores[section] < minScore) {
+                        minScore = scores[section];
+                        weakAreas = [section];
+                    } else if (scores[section] === minScore) {
+                        weakAreas.push(section);
+                    }
+                }
+                
+                if (weakAreas.length > 0) {
+                    const areaNames = {
+                        finanzas: "Finanzas",
+                        ventas: "Ventas y Marketing",
+                        operaciones: "Operaciones",
+                        personas: "Personas y Equipo",
+                        estrategia: "Estrategia y Dirección"
+                    };
+                    
+                    nextSteps.push(`Prioriza mejorar en el área de ${weakAreas.map(a => areaNames[a]).join(' y ')} (tus áreas más débiles)`);
+                }
+                
+                // Pasos basados en nivel general
+                if (totalScore <= 50) {
+                    nextSteps.push("Enfócate en establecer sistemas y procesos básicos en todas las áreas");
+                    nextSteps.push("Considera asesoría externa para acelerar tu aprendizaje");
+                } else if (totalScore <= 100) {
+                    nextSteps.push("Optimiza y estandariza tus procesos existentes");
+                    nextSteps.push("Implementa sistemas de medición y seguimiento de KPIs");
+                } else {
+                    nextSteps.push("Busca la excelencia operativa y la innovación continua");
+                    nextSteps.push("Explora oportunidades de expansión y escalamiento");
+                }
+                
+                nextSteps.push("Programa una revisión estratégica trimestral para evaluar progreso");
+                nextSteps.push("Considera capacitación específica para tus áreas de oportunidad");
+                
+                nextSteps.forEach(step => {
+                    const li = document.createElement('li');
+                    li.textContent = step;
+                    nextStepsList.appendChild(li);
+                });
+            }
+            
+            function sendEmailResults(scores, totalScore, totalLevel, profileTitle) {
+                // En una implementación real, aquí harías una llamada a un servidor o servicio de email
+                // Esto es solo un simulacro para demostración
+                
+                const emailData = {
+                    to: "uriel.vargas@vestra.mx",
+                    subject: `Resultados de Diagnóstico Empresarial - ${profileTitle}`,
+                    body: `
+                        <h2>Resultados de Diagnóstico Empresarial</h2>
+                        <p><strong>Perfil identificado:</strong> ${profileTitle}</p>
+                        <p><strong>Puntuación total:</strong> ${totalScore}/125 (${totalLevel})</p>
+                        <table border="1" cellpadding="5" cellspacing="0">
+                            <tr>
+                                <th>Área</th>
+                                <th>Puntuación</th>
+                                <th>Nivel</th>
+                            </tr>
+                            <tr>
+                                <td>Finanzas</td>
+                                <td>${scores.finanzas}/25</td>
+                                <td>${getLevel(scores.finanzas)}</td>
+                            </tr>
+                            <tr>
+                                <td>Ventas y Marketing</td>
+                                <td>${scores.ventas}/25</td>
+                                <td>${getLevel(scores.ventas)}</td>
+                            </tr>
+                            <tr>
+                                <td>Operaciones</td>
+                                <td>${scores.operaciones}/25</td>
+                                <td>${getLevel(scores.operaciones)}</td>
+                            </tr>
+                            <tr>
+                                <td>Personas y Equipo</td>
+                                <td>${scores.personas}/25</td>
+                                <td>${getLevel(scores.personas)}</td>
+                            </tr>
+                            <tr>
+                                <td>Estrategia y Dirección</td>
+                                <td>${scores.estrategia}/25</td>
+                                <td>${getLevel(scores.estrategia)}</td>
+                            </tr>
+                        </table>
+                        <p>Los resultados detallados con recomendaciones han sido generados y están disponibles en el sistema.</p>
+                    `
+                };
+                
+                console.log("Simulando envío de email a:", emailData.to);
+                console.log("Asunto:", emailData.subject);
+                console.log("Contenido:", emailData.body);
+                
+                // En producción, usarías algo como:
+                // fetch('/api/send-email', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(emailData)
+                // });
+            }
+            
+            function generatePDF() {
+                // En una implementación real, usarías jsPDF y html2canvas como se incluyó en los scripts
+                // Esto es un simulacro para demostración
+                
+                console.log("Generando PDF con los resultados...");
+                
+                // Ejemplo de cómo sería con jsPDF:
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Agregar título
+                doc.setFontSize(18);
+                doc.text("Resultados de Diagnóstico Empresarial", 105, 20, { align: 'center' });
+                
+                // Agregar perfil identificado
+                doc.setFontSize(14);
+                const profileTitle = document.getElementById('profile-title').textContent;
+                const profileDesc = document.getElementById('profile-description').textContent;
+                doc.text(`Perfil identificado: ${profileTitle}`, 15, 30);
+                doc.setFontSize(12);
+                doc.text(profileDesc, 15, 37, { maxWidth: 180 });
+                
+                // Agregar tabla con puntuaciones
+                doc.setFontSize(14);
+                doc.text("Puntuaciones por Área", 15, 55);
+                
+                // Crear tabla
+                const headers = [["Área", "Puntuación", "Nivel"]];
+                const rows = [];
+                
+                rows.push([
+                    "Finanzas", 
+                    document.getElementById('finanzas-score').textContent, 
+                    document.getElementById('finanzas-level').textContent
+                ]);
+                rows.push([
+                    "Ventas y Marketing", 
+                    document.getElementById('ventas-score').textContent, 
+                    document.getElementById('ventas-level').textContent
+                ]);
+                rows.push([
+                    "Operaciones", 
+                    document.getElementById('operaciones-score').textContent, 
+                    document.getElementById('operaciones-level').textContent
+                ]);
+                rows.push([
+                    "Personas y Equipo", 
+                    document.getElementById('personas-score').textContent, 
+                    document.getElementById('personas-level').textContent
+                ]);
+                rows.push([
+                    "Estrategia y Dirección", 
+                    document.getElementById('estrategia-score').textContent, 
+                    document.getElementById('estrategia-level').textContent
+                ]);
+                rows.push([
+                    "TOTAL", 
+                    document.getElementById('total-score').textContent, 
+                    document.getElementById('total-level').textContent
+                ]);
+                
+                doc.autoTable({
+                    startY: 60,
+                    head: headers,
+                    body: rows,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [42, 92, 170], // Color primario
+                        textColor: 255 // Blanco
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 249, 250] // Color secundario
+                    }
+                });
+                
+                // Agregar recomendaciones
+                let yPos = doc.lastAutoTable.finalY + 15;
+                doc.setFontSize(14);
+                doc.text("Recomendaciones Clave", 15, yPos);
+                yPos += 10;
+                
+                // Función para agregar texto con saltos de línea
+                const addTextWithBreaks = (text, y) => {
+                    const lines = doc.splitTextToSize(text, 180);
+                    doc.text(lines, 15, y);
+                    return y + (lines.length * 7);
+                };
+                
+                // Agregar recomendaciones por área
+                const areas = [
+                    { name: "Finanzas", id: "finanzas-recommendations" },
+                    { name: "Ventas y Marketing", id: "ventas-recommendations" },
+                    { name: "Operaciones", id: "operaciones-recommendations" },
+                    { name: "Personas y Equipo", id: "personas-recommendations" },
+                    { name: "Estrategia y Dirección", id: "estrategia-recommendations" }
+                ];
+                
+                areas.forEach(area => {
+                    doc.setFontSize(12);
+                    doc.setTextColor(42, 92, 170); // Color primario
+                    yPos = addTextWithBreaks(`${area.name}:`, yPos + 8);
+                    doc.setTextColor(0, 0, 0); // Negro
+                    
+                    const items = document.getElementById(area.id).querySelectorAll('li');
+                    items.forEach(item => {
+                        yPos = addTextWithBreaks(`• ${item.textContent}`, yPos + 5);
+                    });
+                });
+                
+                // Agregar próximos pasos
+                doc.setFontSize(14);
+                doc.text("Próximos Pasos", 15, yPos + 10);
+                yPos += 15;
+                
+                const nextSteps = document.getElementById('next-steps').querySelectorAll('li');
+                nextSteps.forEach(step => {
+                    yPos = addTextWithBreaks(`• ${step.textContent}`, yPos + 5);
+                });
+                
+                // Guardar PDF
+                doc.save('diagnostico-empresarial.pdf');
+            }
+        });
     </script>
 </body>
 </html>
