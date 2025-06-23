@@ -1,0 +1,3096 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VESTRA 360 - Dashboard Corporativo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        :root {
+            --corporate-blue: #2C3E50;
+            --success-green: #27AE60;
+            --alert-red: #E74C3C;
+            --warning-yellow: #F39C12;
+            --light-gray: #ECF0F1;
+            --dark-gray: #7F8C8D;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--corporate-blue);
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--corporate-blue);
+            color: white;
+            padding: 20px 0;
+            position: relative;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .nav-menu {
+            margin-top: 30px;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .nav-item.active {
+            background-color: rgba(255,255,255,0.2);
+            border-left: 4px solid var(--success-green);
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .module-group {
+            margin-top: 30px;
+            padding: 0 20px;
+        }
+        
+        .module-group h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .header h2 {
+            font-size: 1.8rem;
+            color: var(--corporate-blue);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--corporate-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--corporate-blue);
+            color: var(--corporate-blue);
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(44, 62, 80, 0.1);
+        }
+        
+        /* Dashboard Overview */
+        .dashboard-overview {
+            margin-bottom: 30px;
+        }
+        
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-title {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+        
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-change {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        
+        .kpi-change.positive {
+            color: var(--success-green);
+        }
+        
+        .kpi-change.negative {
+            color: var(--alert-red);
+        }
+        
+        .kpi-change i {
+            margin-right: 5px;
+        }
+        
+        .kpi-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-good {
+            background-color: var(--success-green);
+        }
+        
+        .status-warning {
+            background-color: var(--warning-yellow);
+        }
+        
+        .status-bad {
+            background-color: var(--alert-red);
+        }
+        
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--corporate-blue);
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        /* Recent Activity */
+        .recent-activity {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .activity-item {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(39, 174, 96, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--success-green);
+            font-size: 1.2rem;
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .activity-description {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+        
+        .activity-time {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        /* Module Content (hidden by default) */
+        .module-content {
+            display: none;
+        }
+        
+        .module-content.active {
+            display: block;
+        }
+        
+        /* Process Module */
+        .process-map {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .process-node {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background-color: var(--corporate-blue);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .process-node-title {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        .process-node-time {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        
+        .process-connection {
+            position: absolute;
+            height: 2px;
+            background-color: var(--dark-gray);
+            transform-origin: left center;
+            z-index: 1;
+        }
+        
+        .process-connection::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid var(--dark-gray);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+        
+        .sop-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .sop-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .sop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .sop-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .sop-card-title {
+            font-weight: 500;
+            color: var(--corporate-blue);
+        }
+        
+        .sop-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(44, 62, 80, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--corporate-blue);
+        }
+        
+        .sop-card-description {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+        
+        .sop-card-steps {
+            font-size: 0.8rem;
+            color: var(--dark-gray);
+        }
+        
+        /* RACI Matrix */
+        .raci-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .raci-matrix th, .raci-matrix td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .raci-matrix th {
+            background-color: var(--corporate-blue);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .raci-matrix td {
+            background-color: white;
+        }
+        
+        .raci-letter {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            line-height: 25px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .raci-r {
+            background-color: var(--alert-red);
+        }
+        
+        .raci-a {
+            background-color: var(--success-green);
+        }
+        
+        .raci-c {
+            background-color: var(--warning-yellow);
+        }
+        
+        .raci-i {
+            background-color: var(--dark-gray);
+        }
+        
+        /* Roles Module */
+        .org-chart {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .org-tree {
+            display: flex;
+            justify-content: center;
+            min-width: 100%;
+        }
+        
+        .org-level {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 0 20px;
+        }
+        
+        .org-node {
+            background-color: var(--corporate-blue);
+            color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            width: 180px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .org-node::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid var(--corporate-blue);
+        }
+        
+        .org-node-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            background-color: white;
+            overflow: hidden;
+        }
+        
+        .org-node-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .org-node-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .org-node-name {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* KPIs Module */
+        .kpi-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .kpi-filter {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .kpi-filter label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .kpi-filter select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-detail-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .kpi-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .kpi-detail-title {
+            font-weight: 500;
+            color: var(--corporate-blue);
+        }
+        
+        .kpi-detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-detail-target {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+        }
+        
+        .kpi-progress {
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        .kpi-progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .kpi-progress-good {
+            background-color: var(--success-green);
+        }
+        
+        .kpi-progress-warning {
+            background-color: var(--warning-yellow);
+        }
+        
+        .kpi-progress-bad {
+            background-color: var(--alert-red);
+        }
+        
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .kpi-trend i {
+            margin-right: 5px;
+        }
+        
+        /* Financial Module */
+        .financial-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .financial-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        .financial-tab.active {
+            color: var(--corporate-blue);
+            border-bottom-color: var(--corporate-blue);
+        }
+        
+        .financial-scenarios {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .scenario-card {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .scenario-card.active {
+            border: 2px solid var(--corporate-blue);
+        }
+        
+        .scenario-title {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .scenario-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .scenario-optimistic .scenario-value {
+            color: var(--success-green);
+        }
+        
+        .scenario-realistic .scenario-value {
+            color: var(--corporate-blue);
+        }
+        
+        .scenario-pessimistic .scenario-value {
+            color: var(--alert-red);
+        }
+        
+        /* Strategic Planning Module */
+        .canvas-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .canvas-cell {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 150px;
+        }
+        
+        .canvas-cell-title {
+            font-weight: 500;
+            color: var(--corporate-blue);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .canvas-cell-content {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .swot-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .swot-cell {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 150px;
+        }
+        
+        .swot-cell-title {
+            font-weight: 500;
+            color: white;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        .swot-strengths .swot-cell-title {
+            background-color: var(--success-green);
+        }
+        
+        .swot-weaknesses .swot-cell-title {
+            background-color: var(--warning-yellow);
+        }
+        
+        .swot-opportunities .swot-cell-title {
+            background-color: var(--corporate-blue);
+        }
+        
+        .swot-threats .swot-cell-title {
+            background-color: var(--alert-red);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .canvas-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 80px 1fr;
+            }
+            
+            .logo h1 {
+                display: none;
+            }
+            
+            .logo span {
+                display: none;
+            }
+            
+            .module-group h3 {
+                display: none;
+            }
+            
+            .nav-item span {
+                display: none;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+            }
+            
+            .nav-item.active {
+                border-left: none;
+                border-bottom: 4px solid var(--success-green);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .kpi-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .canvas-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .swot-matrix {
+                grid-template-columns: 1fr;
+            }
+            
+            .financial-scenarios {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .quick-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--corporate-blue);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--corporate-blue);
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--corporate-blue);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Checklist Styles */
+        .checklist {
+            margin-bottom: 20px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist-checkbox {
+            margin-right: 10px;
+        }
+        
+        .checklist-text {
+            flex: 1;
+        }
+        
+        .checklist-completed {
+            text-decoration: line-through;
+            color: var(--dark-gray);
+        }
+        
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--alert-red);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>VESTRA 360</h1>
+                <span>Business Intelligence Suite</span>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item active" data-module="dashboard">
+                    <i>📊</i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-module="processes">
+                    <i>⚙️</i>
+                    <span>Procesos</span>
+                </div>
+                <div class="nav-item" data-module="roles">
+                    <i>👥</i>
+                    <span>Roles</span>
+                </div>
+                <div class="nav-item" data-module="kpis">
+                    <i>📈</i>
+                    <span>Indicadores</span>
+                </div>
+                <div class="nav-item" data-module="financial">
+                    <i>💰</i>
+                    <span>Finanzas</span>
+                </div>
+                <div class="nav-item" data-module="strategy">
+                    <i>🎯</i>
+                    <span>Estrategia</span>
+                </div>
+                <div class="nav-item" data-module="settings">
+                    <i>⚙️</i>
+                    <span>Configuración</span>
+                </div>
+            </div>
+            
+            <div class="module-group">
+                <h3>Herramientas</h3>
+                <div class="nav-item" data-module="reports">
+                    <i>📑</i>
+                    <span>Reportes</span>
+                </div>
+                <div class="nav-item" data-module="alerts">
+                    <i>🔔</i>
+                    <span>Alertas</span>
+                </div>
+                <div class="nav-item" data-module="help">
+                    <i>❓</i>
+                    <span>Ayuda</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Dashboard Module (default active) -->
+            <div class="module-content active" id="dashboard-module">
+                <div class="header">
+                    <h2>Dashboard Ejecutivo</h2>
+                    <div class="user-info">
+                        <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="User Photo">
+                        <span>John Doe, CEO</span>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="btn btn-primary">
+                        <i>📤</i> Exportar Reporte
+                    </button>
+                    <button class="btn btn-outline">
+                        <i>🔄</i> Actualizar Datos
+                    </button>
+                </div>
+                
+                <div class="dashboard-overview">
+                    <div class="kpi-cards">
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-title">Ingresos Mensuales</div>
+                                <div class="kpi-status status-good"></div>
+                            </div>
+                            <div class="kpi-value">$245,780</div>
+                            <div class="kpi-change positive">
+                                <i>↑</i> 12.5% vs mes anterior
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-title">Margen Bruto</div>
+                                <div class="kpi-status status-warning"></div>
+                            </div>
+                            <div class="kpi-value">42.3%</div>
+                            <div class="kpi-change negative">
+                                <i>↓</i> 1.2% vs mes anterior
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-title">CAC</div>
+                                <div class="kpi-status status-good"></div>
+                            </div>
+                            <div class="kpi-value">$120</div>
+                            <div class="kpi-change positive">
+                                <i>↑</i> 8.3% vs mes anterior
+                            </div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-title">Satisfacción Cliente</div>
+                                <div class="kpi-status status-bad"></div>
+                            </div>
+                            <div class="kpi-value">78%</div>
+                            <div class="kpi-change negative">
+                                <i>↓</i> 5.1% vs mes anterior
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-section">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Ventas Mensuales (Últimos 12 meses)</div>
+                                <div class="chart-actions">
+                                    <button class="btn btn-outline">Año</button>
+                                    <button class="btn btn-outline">Trimestre</button>
+                                    <button class="btn btn-primary">Mes</button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <div class="chart-title">Distribución de Ventas</div>
+                                <div class="chart-actions">
+                                    <button class="btn btn-outline">Productos</button>
+                                    <button class="btn btn-primary">Regiones</button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="distributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-activity">
+                        <div class="chart-header">
+                            <div class="chart-title">Actividad Reciente</div>
+                            <div class="chart-actions">
+                                <button class="btn btn-outline">Ver Todo</button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">📊</div>
+                            <div class="activity-details">
+                                <div class="activity-title">Reporte Mensual Generado</div>
+                                <div class="activity-description">El reporte financiero de Mayo 2023 ha sido generado automáticamente</div>
+                                <div class="activity-time">Hace 2 horas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">⚠️</div>
+                            <div class="activity-details">
+                                <div class="activity-title">Alerta de Inventario</div>
+                                <div class="activity-description">El producto SKU-2451 está por debajo del nivel mínimo de inventario</div>
+                                <div class="activity-time">Hace 5 horas</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">👥</div>
+                            <div class="activity-details">
+                                <div class="activity-title">Nuevo Empleado</div>
+                                <div class="activity-description">María González ha sido asignada como nueva Gerente de Ventas</div>
+                                <div class="activity-time">Ayer, 3:45 PM</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">💰</div>
+                            <div class="activity-details">
+                                <div class="activity-title">Pago Recibido</div>
+                                <div class="activity-description">Se ha registrado el pago de $15,200 de Cliente XYZ por factura #2451</div>
+                                <div class="activity-time">Ayer, 10:30 AM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Processes Module -->
+            <div class="module-content" id="processes-module">
+                <div class="header">
+                    <h2>Gestión de Procesos</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" id="new-process-btn">
+                            <i>➕</i> Nuevo Proceso
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>📤</i> Exportar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="process-map">
+                    <h3>Mapa de Procesos Clave</h3>
+                    <p class="tooltip">Arrastra y suelta los nodos para reorganizar los procesos
+                        <span class="tooltiptext">Puedes crear conexiones entre procesos arrastrando desde el borde de un nodo a otro</span>
+                    </p>
+                    
+                    <!-- Process nodes will be added here dynamically -->
+                    <div class="process-node" style="top: 100px; left: 100px;" data-process-id="1">
+                        <div class="process-node-title">Recepción de Pedido</div>
+                        <div class="process-node-time">2-4 horas</div>
+                    </div>
+                    
+                    <div class="process-node" style="top: 100px; left: 300px;" data-process-id="2">
+                        <div class="process-node-title">Verificación Stock</div>
+                        <div class="process-node-time">1-2 horas</div>
+                    </div>
+                    
+                    <div class="process-node" style="top: 100px; left: 500px;" data-process-id="3">
+                        <div class="process-node-title">Preparación Envío</div>
+                        <div class="process-node-time">4-8 horas</div>
+                    </div>
+                    
+                    <div class="process-node" style="top: 250px; left: 300px;" data-process-id="4">
+                        <div class="process-node-title">Facturación</div>
+                        <div class="process-node-time">1 hora</div>
+                    </div>
+                    
+                    <!-- Process connections -->
+                    <div class="process-connection" style="width: 180px; top: 130px; left: 220px; transform: rotate(0deg);"></div>
+                    <div class="process-connection" style="width: 180px; top: 130px; left: 420px; transform: rotate(0deg);"></div>
+                    <div class="process-connection" style="width: 150px; top: 180px; left: 300px; transform: rotate(90deg);"></div>
+                </div>
+                
+                <h3>Plantillas SOP Predefinidas</h3>
+                <div class="sop-templates">
+                    <div class="sop-card" data-template-id="sales">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Proceso de Ventas</div>
+                            <div class="sop-card-icon">💰</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Proceso estandarizado para la gestión de oportunidades de venta desde el primer contacto hasta el cierre.
+                        </div>
+                        <div class="sop-card-steps">15 pasos | 3 aprobaciones</div>
+                    </div>
+                    
+                    <div class="sop-card" data-template-id="production">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Control de Producción</div>
+                            <div class="sop-card-icon">🏭</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Flujo completo para la planificación, ejecución y control de la producción manufacturera.
+                        </div>
+                        <div class="sop-card-steps">22 pasos | 5 aprobaciones</div>
+                    </div>
+                    
+                    <div class="sop-card" data-template-id="hr">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Contratación RRHH</div>
+                            <div class="sop-card-icon">👥</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Proceso completo para la selección, contratación e incorporación de nuevo personal.
+                        </div>
+                        <div class="sop-card-steps">18 pasos | 4 aprobaciones</div>
+                    </div>
+                    
+                    <div class="sop-card" data-template-id="finance">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Cierre Financiero</div>
+                            <div class="sop-card-icon">📊</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Procedimiento para el cierre mensual contable con todas las verificaciones requeridas.
+                        </div>
+                        <div class="sop-card-steps">27 pasos | 7 aprobaciones</div>
+                    </div>
+                    
+                    <div class="sop-card" data-template-id="quality">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Control de Calidad</div>
+                            <div class="sop-card-icon">✅</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Protocolos para asegurar los estándares de calidad en productos y servicios.
+                        </div>
+                        <div class="sop-card-steps">14 pasos | 3 aprobaciones</div>
+                    </div>
+                </div>
+                
+                <h3>Matriz RACI - Proceso de Ventas</h3>
+                <table class="raci-matrix">
+                    <thead>
+                        <tr>
+                            <th>Actividad / Rol</th>
+                            <th>Director Ventas</th>
+                            <th>Ejecutivo Ventas</th>
+                            <th>Finanzas</th>
+                            <th>Logística</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Generación de Oportunidad</td>
+                            <td><span class="raci-letter raci-c">C</span></td>
+                            <td><span class="raci-letter raci-r">R</span></td>
+                            <td><span class="raci-letter raci-i">I</span></td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Cotización</td>
+                            <td><span class="raci-letter raci-a">A</span></td>
+                            <td><span class="raci-letter raci-r">R</span></td>
+                            <td><span class="raci-letter raci-c">C</span></td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Negociación</td>
+                            <td><span class="raci-letter raci-a">A</span></td>
+                            <td><span class="raci-letter raci-r">R</span></td>
+                            <td><span class="raci-letter raci-c">C</span></td>
+                            <td><span class="raci-letter raci-i">I</span></td>
+                        </tr>
+                        <tr>
+                            <td>Preparación de Pedido</td>
+                            <td>-</td>
+                            <td><span class="raci-letter raci-c">C</span></td>
+                            <td><span class="raci-letter raci-i">I</span></td>
+                            <td><span class="raci-letter raci-r">R</span></td>
+                        </tr>
+                        <tr>
+                            <td>Seguimiento Post-Venta</td>
+                            <td><span class="raci-letter raci-i">I</span></td>
+                            <td><span class="raci-letter raci-r">R</span></td>
+                            <td>-</td>
+                            <td><span class="raci-letter raci-c">C</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Checklist de Implementación</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" class="checklist-checkbox" id="check1" checked>
+                        <label for="check1" class="checklist-text checklist-completed">Identificar procesos clave</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" class="checklist-checkbox" id="check2" checked>
+                        <label for="check2" class="checklist-text checklist-completed">Documentar pasos actuales</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" class="checklist-checkbox" id="check3">
+                        <label for="check3" class="checklist-text">Asignar responsables (RACI)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" class="checklist-checkbox" id="check4">
+                        <label for="check4" class="checklist-text">Establecer métricas de proceso</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" class="checklist-checkbox" id="check5">
+                        <label for="check5" class="checklist-text">Capacitar a los equipos</label>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <strong>Progreso:</strong> 40% completado (2 de 5 tareas)
+                </div>
+            </div>
+            
+            <!-- Roles Module -->
+            <div class="module-content" id="roles-module">
+                <div class="header">
+                    <h2>Roles y Responsabilidades</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" id="new-role-btn">
+                            <i>➕</i> Nuevo Rol
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>📤</i> Exportar Organigrama
+                        </button>
+                    </div>
+                </div>
+                
+                <h3>Organigrama Corporativo</h3>
+                <div class="org-chart">
+                    <div class="org-tree">
+                        <div class="org-level">
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="CEO">
+                                </div>
+                                <div class="org-node-title">CEO</div>
+                                <div class="org-node-name">John Doe</div>
+                            </div>
+                        </div>
+                        
+                        <div class="org-level">
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="CFO">
+                                </div>
+                                <div class="org-node-title">CFO</div>
+                                <div class="org-node-name">Jane Smith</div>
+                            </div>
+                            
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="COO">
+                                </div>
+                                <div class="org-node-title">COO</div>
+                                <div class="org-node-name">Robert Johnson</div>
+                            </div>
+                            
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/women/28.jpg" alt="CMO">
+                                </div>
+                                <div class="org-node-title">CMO</div>
+                                <div class="org-node-name">Maria García</div>
+                            </div>
+                        </div>
+                        
+                        <div class="org-level">
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/men/65.jpg" alt="Controller">
+                                </div>
+                                <div class="org-node-title">Controller</div>
+                                <div class="org-node-name">David Wilson</div>
+                            </div>
+                            
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="HR Director">
+                                </div>
+                                <div class="org-node-title">HR Director</div>
+                                <div class="org-node-name">Lisa Brown</div>
+                            </div>
+                            
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Sales Director">
+                                </div>
+                                <div class="org-node-title">Sales Director</div>
+                                <div class="org-node-name">Michael Davis</div>
+                            </div>
+                            
+                            <div class="org-node">
+                                <div class="org-node-photo">
+                                    <img src="https://randomuser.me/api/portraits/women/55.jpg" alt="Ops Manager">
+                                </div>
+                                <div class="org-node-title">Ops Manager</div>
+                                <div class="org-node-name">Sarah Miller</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Fichas de Puesto Predefinidas</h3>
+                <div class="sop-templates">
+                    <div class="sop-card" data-role-id="ceo">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Director General (CEO)</div>
+                            <div class="sop-card-icon">👑</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Máximo responsable de la estrategia, resultados y dirección general de la empresa.
+                        </div>
+                        <div class="sop-card-steps">12 responsabilidades | 5 KPIs</div>
+                    </div>
+                    
+                    <div class="sop-card" data-role-id="cfo">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Director Financiero (CFO)</div>
+                            <div class="sop-card-icon">💰</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Responsable de la gestión financiera, reporting y estrategia de inversiones.
+                        </div>
+                        <div class="sop-card-steps">15 responsabilidades | 7 KPIs</div>
+                    </div>
+                    
+                    <div class="sop-card" data-role-id="sales">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Director de Ventas</div>
+                            <div class="sop-card-icon">📈</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Lidera el equipo comercial y es responsable de alcanzar los objetivos de ingresos.
+                        </div>
+                        <div class="sop-card-steps">18 responsabilidades | 6 KPIs</div>
+                    </div>
+                    
+                    <div class="sop-card" data-role-id="marketing">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Director de Marketing</div>
+                            <div class="sop-card-icon">📢</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Desarrolla e implementa estrategias de marketing y posicionamiento de marca.
+                        </div>
+                        <div class="sop-card-steps">14 responsabilidades | 5 KPIs</div>
+                    </div>
+                    
+                    <div class="sop-card" data-role-id="hr">
+                        <div class="sop-card-header">
+                            <div class="sop-card-title">Director de RRHH</div>
+                            <div class="sop-card-icon">👥</div>
+                        </div>
+                        <div class="sop-card-description">
+                            Gestiona el capital humano, desarrollo organizacional y cultura empresarial.
+                        </div>
+                        <div class="sop-card-steps">16 responsabilidades | 4 KPIs</div>
+                    </div>
+                </div>
+                
+                <h3>Matriz de Sucesión</h3>
+                <table class="raci-matrix">
+                    <thead>
+                        <tr>
+                            <th>Puesto Clave</th>
+                            <th>Titular Actual</th>
+                            <th>Suplente Primario</th>
+                            <th>Suplente Secundario</th>
+                            <th>% Preparación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CEO</td>
+                            <td>John Doe</td>
+                            <td>Jane Smith (CFO)</td>
+                            <td>Robert Johnson (COO)</td>
+                            <td>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar kpi-progress-good" style="width: 85%"></div>
+                                </div>
+                                85%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CFO</td>
+                            <td>Jane Smith</td>
+                            <td>David Wilson (Controller)</td>
+                            <td>Lisa Brown (HR)</td>
+                            <td>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar kpi-progress-warning" style="width: 65%"></div>
+                                </div>
+                                65%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sales Director</td>
+                            <td>Michael Davis</td>
+                            <td>Sarah Miller (Ops)</td>
+                            <td>Maria García (CMO)</td>
+                            <td>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar kpi-progress-bad" style="width: 40%"></div>
+                                </div>
+                                40%
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- KPIs Module -->
+            <div class="module-content" id="kpis-module">
+                <div class="header">
+                    <h2>Indicadores Clave (KPIs)</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" id="new-kpi-btn">
+                            <i>➕</i> Nuevo KPI
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>🔔</i> Configurar Alertas
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="kpi-filters">
+                    <div class="kpi-filter">
+                        <label for="kpi-category">Categoría</label>
+                        <select id="kpi-category">
+                            <option value="all">Todas las Categorías</option>
+                            <option value="financial">Financieros</option>
+                            <option value="commercial">Comerciales</option>
+                            <option value="operational">Operativos</option>
+                            <option value="hr">Recursos Humanos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="kpi-filter">
+                        <label for="kpi-period">Período</label>
+                        <select id="kpi-period">
+                            <option value="monthly">Mensual</option>
+                            <option value="quarterly">Trimestral</option>
+                            <option value="yearly">Anual</option>
+                        </select>
+                    </div>
+                    
+                    <div class="kpi-filter">
+                        <label for="kpi-department">Departamento</label>
+                        <select id="kpi-department">
+                            <option value="all">Todos los Departamentos</option>
+                            <option value="executive">Ejecutivo</option>
+                            <option value="sales">Ventas</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="operations">Operaciones</option>
+                            <option value="finance">Finanzas</option>
+                            <option value="hr">RRHH</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="kpi-grid">
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">ROI (Retorno sobre Inversión)</div>
+                            <div class="kpi-status status-good"></div>
+                        </div>
+                        <div class="kpi-detail-value">18.5%</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: 15%</span>
+                            <span>Variación: +3.5%</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-good" style="width: 123%"></div>
+                        </div>
+                        <div class="kpi-trend positive">
+                            <i>↑</i> Tendencia positiva (3.2% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">EBITDA</div>
+                            <div class="kpi-status status-warning"></div>
+                        </div>
+                        <div class="kpi-detail-value">$125,400</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: $130,000</span>
+                            <span>Variación: -4,600</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-warning" style="width: 96%"></div>
+                        </div>
+                        <div class="kpi-trend negative">
+                            <i>↓</i> Tendencia negativa (1.8% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">Flujo de Caja Libre</div>
+                            <div class="kpi-status status-good"></div>
+                        </div>
+                        <div class="kpi-detail-value">$78,200</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: $70,000</span>
+                            <span>Variación: +8,200</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-good" style="width: 112%"></div>
+                        </div>
+                        <div class="kpi-trend positive">
+                            <i>↑</i> Tendencia positiva (5.1% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">CAC (Costo Adquisición Cliente)</div>
+                            <div class="kpi-status status-bad"></div>
+                        </div>
+                        <div class="kpi-detail-value">$245</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: $200</span>
+                            <span>Variación: +45</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-bad" style="width: 122%"></div>
+                        </div>
+                        <div class="kpi-trend negative">
+                            <i>↓</i> Tendencia negativa (12.3% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">LTV (Valor Vida Cliente)</div>
+                            <div class="kpi-status status-good"></div>
+                        </div>
+                        <div class="kpi-detail-value">$1,850</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: $1,500</span>
+                            <span>Variación: +350</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-good" style="width: 123%"></div>
+                        </div>
+                        <div class="kpi-trend positive">
+                            <i>↑</i> Tendencia positiva (8.7% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">Tasa de Conversión</div>
+                            <div class="kpi-status status-warning"></div>
+                        </div>
+                        <div class="kpi-detail-value">3.2%</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: 3.5%</span>
+                            <span>Variación: -0.3%</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-warning" style="width: 91%"></div>
+                        </div>
+                        <div class="kpi-trend negative">
+                            <i>↓</i> Tendencia negativa (0.8% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">Productividad por Empleado</div>
+                            <div class="kpi-status status-good"></div>
+                        </div>
+                        <div class="kpi-detail-value">$12,500</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: $11,000</span>
+                            <span>Variación: +1,500</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-good" style="width: 114%"></div>
+                        </div>
+                        <div class="kpi-trend positive">
+                            <i>↑</i> Tendencia positiva (4.2% último trimestre)
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-detail-card">
+                        <div class="kpi-detail-header">
+                            <div class="kpi-detail-title">Rotación de Personal</div>
+                            <div class="kpi-status status-bad"></div>
+                        </div>
+                        <div class="kpi-detail-value">15.2%</div>
+                        <div class="kpi-detail-target">
+                            <span>Meta: 10%</span>
+                            <span>Variación: +5.2%</span>
+                        </div>
+                        <div class="kpi-progress">
+                            <div class="kpi-progress-bar kpi-progress-bad" style="width: 152%"></div>
+                        </div>
+                        <div class="kpi-trend negative">
+                            <i>↓</i> Tendencia negativa (2.1% último trimestre)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Comparativa de KPIs vs Benchmarking Sectorial</div>
+                        <div class="chart-actions">
+                            <button class="btn btn-outline">Financieros</button>
+                            <button class="btn btn-outline">Comerciales</button>
+                            <button class="btn btn-primary">Operativos</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="benchmarkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financial Module -->
+            <div class="module-content" id="financial-module">
+                <div class="header">
+                    <h2>Control Financiero</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary">
+                            <i>📤</i> Exportar Reporte
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>🔄</i> Sincronizar Datos
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="financial-tabs">
+                    <div class="financial-tab active" data-tab="pl">Estado de Resultados</div>
+                    <div class="financial-tab" data-tab="cashflow">Flujo de Caja</div>
+                    <div class="financial-tab" data-tab="balance">Balance General</div>
+                    <div class="financial-tab" data-tab="analysis">Análisis</div>
+                </div>
+                
+                <div class="financial-scenarios">
+                    <div class="scenario-card scenario-optimistic">
+                        <div class="scenario-title">Escenario Optimista</div>
+                        <div class="scenario-value">+12.5%</div>
+                        <div>vs presupuesto</div>
+                    </div>
+                    
+                    <div class="scenario-card scenario-realistic active">
+                        <div class="scenario-title">Escenario Realista</div>
+                        <div class="scenario-value">+3.2%</div>
+                        <div>vs presupuesto</div>
+                    </div>
+                    
+                    <div class="scenario-card scenario-pessimistic">
+                        <div class="scenario-title">Escenario Pesimista</div>
+                        <div class="scenario-value">-5.8%</div>
+                        <div>vs presupuesto</div>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Estado de Resultados (Últimos 12 meses)</div>
+                        <div class="chart-actions">
+                            <button class="btn btn-outline">Detalle</button>
+                            <button class="btn btn-primary">Exportar</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="profitLossChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Flujo de Caja Proyectado</div>
+                        <div class="chart-actions">
+                            <button class="btn btn-outline">6 meses</button>
+                            <button class="btn btn-primary">12 meses</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="cashflowChart"></canvas>
+                    </div>
+                </div>
+                
+                <h3>Alertas Financieras Activas</h3>
+                <div class="recent-activity">
+                    <div class="activity-item">
+                        <div class="activity-icon">⚠️</div>
+                        <div class="activity-details">
+                            <div class="activity-title">Días de Cuentas por Cobrar Elevados</div>
+                            <div class="activity-description">Los DSO actuales son de 45 días, por encima del objetivo de 30 días</div>
+                            <div class="activity-time">Actualizado hoy</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">⚠️</div>
+                        <div class="activity-details">
+                            <div class="activity-title">Margen Bruto en Descenso</div>
+                            <div class="activity-description">El margen bruto ha caído un 2.3% en el último trimestre</div>
+                            <div class="activity-time">Actualizado ayer</div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon">⚠️</div>
+                        <div class="activity-details">
+                            <div class="activity-title">Vencimiento de Línea de Crédito</div>
+                            <div class="activity-description">La línea de crédito por $250,000 vence en 15 días</div>
+                            <div class="activity-time">Actualizado hace 3 días</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Calculadora de Punto de Equilibrio</h3>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Análisis de Punto de Equilibrio por Producto</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="breakEvenChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Strategy Module -->
+            <div class="module-content" id="strategy-module">
+                <div class="header">
+                    <h2>Planificación Estratégica</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" id="new-strategy-btn">
+                            <i>➕</i> Nueva Iniciativa
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>📤</i> Exportar Plan
+                        </button>
+                    </div>
+                </div>
+                
+                <h3>Business Model Canvas</h3>
+                <div class="canvas-grid">
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Asociaciones Clave</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Aliados tecnológicos</li>
+                                <li>Distribuidores exclusivos</li>
+                                <li>Socios financieros</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Actividades Clave</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Desarrollo de producto</li>
+                                <li>Marketing digital</li>
+                                <li>Soporte al cliente</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Propuesta de Valor</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Soluciones personalizadas</li>
+                                <li>Precios competitivos</li>
+                                <li>Soporte 24/7</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Relación con Clientes</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Autoservicio con soporte</li>
+                                <li>Comunidades online</li>
+                                <li>Asesoría personalizada</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Segmentos de Clientes</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Empresas medianas</li>
+                                <li>Sector educativo</li>
+                                <li>Gobierno local</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Recursos Clave</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Equipo especializado</li>
+                                <li>Propiedad intelectual</li>
+                                <li>Infraestructura TI</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Canales</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Web propia</li>
+                                <li>Marketplaces</li>
+                                <li>Red de distribuidores</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Estructura de Costos</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Costos fijos altos</li>
+                                <li>Economías de escala</li>
+                                <li>Inversión en I+D</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-cell">
+                        <div class="canvas-cell-title">Flujos de Ingresos</div>
+                        <div class="canvas-cell-content">
+                            <ul>
+                                <li>Venta de licencias</li>
+                                <li>Suscripciones</li>
+                                <li>Servicios profesionales</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Análisis FODA</h3>
+                <div class="swot-matrix">
+                    <div class="swot-cell swot-strengths">
+                        <div class="swot-cell-title">Fortalezas</div>
+                        <ul>
+                            <li>Equipo altamente calificado</li>
+                            <li>Tecnología patentada</li>
+                            <li>Relación con clientes clave</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="swot-cell swot-weaknesses">
+                        <div class="swot-cell-title">Debilidades</div>
+                        <ul>
+                            <li>Dependencia de pocos clientes</li>
+                            <li>Falta de presencia internacional</li>
+                            <li>Procesos manuales</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="swot-cell swot-opportunities">
+                        <div class="swot-cell-title">Oportunidades</div>
+                        <ul>
+                            <li>Expansión a nuevos mercados</li>
+                            <li>Alianzas estratégicas</li>
+                            <li>Tendencias del sector</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="swot-cell swot-threats">
+                        <div class="swot-cell-title">Amenazas</div>
+                        <ul>
+                            <li>Nuevos competidores</li>
+                            <li>Cambios regulatorios</li>
+                            <li>Inestabilidad económica</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>Objetivos y Resultados Clave (OKRs)</h3>
+                <table class="raci-matrix">
+                    <thead>
+                        <tr>
+                            <th>Objetivo</th>
+                            <th>KR1</th>
+                            <th>KR2</th>
+                            <th>KR3</th>
+                            <th>Progreso</th>
+                            <th>Responsable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mejorar satisfacción cliente</td>
+                            <td>NPS ≥ 40</td>
+                            <td>Retención ≥ 85%</td>
+                            <td>Resolución en 24h ≥ 90%</td>
+                            <td>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar kpi-progress-warning" style="width: 65%"></div>
+                                </div>
+                            </td>
+                            <td>Maria García</td>
+                        </tr>
+                        <tr>
+                            <td>Incrementar eficiencia operativa</td>
+                            <td>Reducción costos 15%</td>
+                            <td>Automatizar 3 procesos</td>
+                            <td>Productividad +20%</td>
+                            <td>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar kpi-progress-good" style="width: 78%"></div>
+                                </div>
+                            </td>
+                            <td>Robert Johnson</td>
+                        </tr>
+                        <tr>
+                            <td>Expandir presencia de mercado</td>
+                            <td>2 nuevos mercados</td>
+                            <td>Ingresos nuevos ≥ 25%</td>
+                            <td>Brand awareness 60%</td>
+                            <td>
+                                <div class="kpi-progress">
+                                    <div class="kpi-progress-bar kpi-progress-bad" style="width: 32%"></div>
+                                </div>
+                            </td>
+                            <td>Michael Davis</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Roadmap Estratégico</h3>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Cronograma de Iniciativas Estratégicas</div>
+                        <div class="chart-actions">
+                            <button class="btn btn-outline">2023</button>
+                            <button class="btn btn-primary">2024</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="roadmapChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Module -->
+            <div class="module-content" id="settings-module">
+                <div class="header">
+                    <h2>Configuración del Sistema</h2>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Preferencias de Usuario</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tema de Color</label>
+                        <select class="form-control">
+                            <option>Azul Corporativo (Predeterminado)</option>
+                            <option>Verde Oscuro</option>
+                            <option>Gris Profesional</option>
+                            <option>Modo Claro</option>
+                            <option>Modo Oscuro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Frecuencia de Actualización</label>
+                        <select class="form-control">
+                            <option>Cada 15 minutos</option>
+                            <option>Cada hora</option>
+                            <option>Cada 4 horas</option>
+                            <option>Diariamente</option>
+                            <option>Manual</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Notificaciones</label>
+                        <select class="form-control">
+                            <option>Email y Dashboard</option>
+                            <option>Solo Email</option>
+                            <option>Solo Dashboard</option>
+                            <option>WhatsApp y Email</option>
+                            <option>Ninguna</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Zona Horaria</label>
+                        <select class="form-control">
+                            <option>GMT-5:00 (Ciudad de México)</option>
+                            <option>GMT-6:00 (Centroamérica)</option>
+                            <option>GMT-3:00 (Argentina, Chile)</option>
+                            <option>GMT-4:00 (Bolivia, Venezuela)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-outline">Cancelar</button>
+                        <button class="btn btn-primary">Guardar Cambios</button>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Integraciones</div>
+                    </div>
+                    
+                    <div class="checklist">
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" id="int1" checked>
+                            <label for="int1" class="checklist-text checklist-completed">Google Workspace</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" id="int2">
+                            <label for="int2" class="checklist-text">Microsoft 365</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" id="int3" checked>
+                            <label for="int3" class="checklist-text checklist-completed">WhatsApp Business</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" id="int4">
+                            <label for="int4" class="checklist-text">Slack</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" class="checklist-checkbox" id="int5">
+                            <label for="int5" class="checklist-text">ERP SAP</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-primary">Configurar Integración</button>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Exportación de Datos</div>
+                    </div>
+                    
+                    <div class="export-buttons">
+                        <button class="btn btn-outline">
+                            <i>📊</i> Exportar a Excel
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>📄</i> Exportar a PDF
+                        </button>
+                        <button class="btn btn-outline">
+                            <i>🖨️</i> Configurar Impresión
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Frecuencia de Backup Automático</label>
+                        <select class="form-control">
+                            <option>Diariamente</option>
+                            <option>Semanalmente</option>
+                            <option>Mensualmente</option>
+                            <option>Nunca</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-primary">Ejecutar Backup Ahora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Offline Indicator -->
+    <div class="offline-indicator">
+        <i>⚠️</i> Estás trabajando en modo offline. Los cambios se sincronizarán cuando se restablezca la conexión.
+    </div>
+    
+    <!-- Modal for New Process -->
+    <div class="modal" id="new-process-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Nuevo Proceso</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nombre del Proceso</label>
+                <input type="text" class="form-control" placeholder="Ej: Aprobación de crédito">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Departamento</label>
+                <select class="form-control">
+                    <option>Ventas</option>
+                    <option>Marketing</option>
+                    <option>Operaciones</option>
+                    <option>Finanzas</option>
+                    <option>RRHH</option>
+                    <option>TI</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Plantilla Base</label>
+                <select class="form-control">
+                    <option>Ninguna (Crear desde cero)</option>
+                    <option>Proceso de Ventas</option>
+                    <option>Control de Producción</option>
+                    <option>Contratación RRHH</option>
+                    <option>Cierre Financiero</option>
+                    <option>Control de Calidad</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-control" rows="3" placeholder="Describa el propósito y alcance del proceso"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn btn-outline close-modal">Cancelar</button>
+                <button class="btn btn-primary">Guardar Proceso</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for New Role -->
+    <div class="modal" id="new-role-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Nuevo Rol</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nombre del Puesto</label>
+                <input type="text" class="form-control" placeholder="Ej: Gerente de Ventas Regional">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Departamento</label>
+                <select class="form-control">
+                    <option>Ventas</option>
+                    <option>Marketing</option>
+                    <option>Operaciones</option>
+                    <option>Finanzas</option>
+                    <option>RRHH</option>
+                    <option>TI</option>
+                    <option>Ejecutivo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Reporta a</label>
+                <select class="form-control">
+                    <option>Director General</option>
+                    <option>Director de Ventas</option>
+                    <option>Director de Marketing</option>
+                    <option>Director de Operaciones</option>
+                    <option>Director Financiero</option>
+                    <option>Director de RRHH</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Plantilla Base</label>
+                <select class="form-control">
+                    <option>Ninguna (Crear desde cero)</option>
+                    <option>Director General</option>
+                    <option>Director Financiero</option>
+                    <option>Director de Ventas</option>
+                    <option>Director de Marketing</option>
+                    <option>Director de RRHH</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Responsabilidades Clave</label>
+                <textarea class="form-control" rows="3" placeholder="Describa las principales responsabilidades del puesto"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn btn-outline close-modal">Cancelar</button>
+                <button class="btn btn-primary">Guardar Rol</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for New KPI -->
+    <div class="modal" id="new-kpi-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Nuevo Indicador (KPI)</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nombre del KPI</label>
+                <input type="text" class="form-control" placeholder="Ej: Tasa de conversión web">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Categoría</label>
+                <select class="form-control">
+                    <option>Financiero</option>
+                    <option>Comercial</option>
+                    <option>Operativo</option>
+                    <option>Recursos Humanos</option>
+                    <option>Calidad</option>
+                    <option>Innovación</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fórmula de Cálculo</label>
+                <input type="text" class="form-control" placeholder="Ej: (Ventas / Leads) * 100">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Unidad de Medida</label>
+                <select class="form-control">
+                    <option>Porcentaje</option>
+                    <option>Moneda</option>
+                    <option>Número</option>
+                    <option>Ratio</option>
+                    <option>Tiempo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Meta</label>
+                <input type="text" class="form-control" placeholder="Valor objetivo">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Frecuencia de Medición</label>
+                <select class="form-control">
+                    <option>Diaria</option>
+                    <option>Semanal</option>
+                    <option>Mensual</option>
+                    <option>Trimestral</option>
+                    <option>Anual</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Responsable</label>
+                <select class="form-control">
+                    <option>Director General</option>
+                    <option>Director de Ventas</option>
+                    <option>Director de Marketing</option>
+                    <option>Director de Operaciones</option>
+                    <option>Director Financiero</option>
+                    <option>Director de RRHH</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn btn-outline close-modal">Cancelar</button>
+                <button class="btn btn-primary">Guardar KPI</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for New Strategy -->
+    <div class="modal" id="new-strategy-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Nueva Iniciativa Estratégica</div>
+                <div class="close-modal">&times;</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Nombre de la Iniciativa</label>
+                <input type="text" class="form-control" placeholder="Ej: Expansión a mercado europeo">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Objetivo Estratégico Relacionado</label>
+                <select class="form-control">
+                    <option>Crecimiento de Ingresos</option>
+                    <option>Eficiencia Operativa</option>
+                    <option>Satisfacción del Cliente</option>
+                    <option>Innovación de Producto</option>
+                    <option>Expansión Geográfica</option>
+                    <option>Desarrollo de Talento</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Prioridad</label>
+                <select class="form-control">
+                    <option>Alta</option>
+                    <option>Media</option>
+                    <option>Baja</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fecha Inicio</label>
+                <input type="date" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fecha Fin Estimada</label>
+                <input type="date" class="form-control">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Presupuesto Asignado</label>
+                <input type="text" class="form-control" placeholder="Ej: $50,000">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Responsable</label>
+                <select class="form-control">
+                    <option>Director General</option>
+                    <option>Director de Ventas</option>
+                    <option>Director de Marketing</option>
+                    <option>Director de Operaciones</option>
+                    <option>Director Financiero</option>
+                    <option>Director de RRHH</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-control" rows="3" placeholder="Describa la iniciativa, sus objetivos y alcance"></textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn btn-outline close-modal">Cancelar</button>
+                <button class="btn btn-primary">Guardar Iniciativa</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Navigation between modules
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(navItem => {
+                    navItem.classList.remove('active');
+                });
+                
+                // Add active class to clicked nav item
+                this.classList.add('active');
+                
+                // Hide all module contents
+                document.querySelectorAll('.module-content').forEach(module => {
+                    module.classList.remove('active');
+                });
+                
+                // Show selected module content
+                const moduleId = this.getAttribute('data-module');
+                document.getElementById(`${moduleId}-module`).classList.add('active');
+            });
+        });
+        
+        // Financial tabs navigation
+        document.querySelectorAll('.financial-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.financial-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+            });
+        });
+        
+        // Scenario cards selection
+        document.querySelectorAll('.scenario-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove active class from all cards
+                document.querySelectorAll('.scenario-card').forEach(c => {
+                    c.classList.remove('active');
+                });
+                
+                // Add active class to clicked card
+                this.classList.add('active');
+            });
+        });
+        
+        // Modal handling
+        const modals = document.querySelectorAll('.modal');
+        const modalBtns = document.querySelectorAll('[id$="-btn"]');
+        const closeBtns = document.querySelectorAll('.close-modal');
+        
+        modalBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modalId = this.id.replace('-btn', '-modal');
+                document.getElementById(modalId).style.display = 'block';
+            });
+        });
+        
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+        
+        window.addEventListener('click', function(e) {
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Process node dragging functionality
+        const processNodes = document.querySelectorAll('.process-node');
+        
+        processNodes.forEach(node => {
+            node.addEventListener('mousedown', function(e) {
+                const shiftX = e.clientX - node.getBoundingClientRect().left;
+                const shiftY = e.clientY - node.getBoundingClientRect().top;
+                
+                function moveAt(pageX, pageY) {
+                    node.style.left = pageX - shiftX + 'px';
+                    node.style.top = pageY - shiftY + 'px';
+                }
+                
+                function onMouseMove(e) {
+                    moveAt(e.pageX, e.pageY);
+                }
+                
+                document.addEventListener('mousemove', onMouseMove);
+                
+                node.onmouseup = function() {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    node.onmouseup = null;
+                };
+            });
+            
+            node.ondragstart = function() {
+                return false;
+            };
+        });
+        
+        // Checkbox functionality
+        document.querySelectorAll('.checklist-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if (this.checked) {
+                    label.classList.add('checklist-completed');
+                } else {
+                    label.classList.remove('checklist-completed');
+                }
+            });
+        });
+        
+        // Simulate offline mode (for demo purposes)
+        setTimeout(() => {
+            document.querySelector('.offline-indicator').style.display = 'block';
+        }, 15000);
+        
+        // Charts initialization
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(salesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                    label: 'Ventas 2023',
+                    data: [120000, 135000, 142000, 158000, 165000, 172000, 185000, 192000, 205000, 218000, 225000, 245780],
+                    borderColor: '#2C3E50',
+                    backgroundColor: 'rgba(44, 62, 80, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Ventas 2022',
+                    data: [110000, 115000, 125000, 130000, 140000, 145000, 150000, 155000, 160000, 170000, 175000, 185000],
+                    borderColor: '#7F8C8D',
+                    backgroundColor: 'rgba(127, 140, 141, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Distribution Chart
+        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Norte', 'Sur', 'Este', 'Oeste', 'Centro'],
+                datasets: [{
+                    data: [25, 20, 15, 25, 15],
+                    backgroundColor: [
+                        '#2C3E50',
+                        '#27AE60',
+                        '#E74C3C',
+                        '#F39C12',
+                        '#3498DB'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Benchmark Chart
+        const benchmarkCtx = document.getElementById('benchmarkChart').getContext('2d');
+        const benchmarkChart = new Chart(benchmarkCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Productividad', 'Calidad', 'Tiempo Entrega', 'Satisfacción', 'Innovación'],
+                datasets: [{
+                    label: 'Tu Empresa',
+                    data: [78, 82, 75, 80, 65],
+                    backgroundColor: '#2C3E50'
+                }, {
+                    label: 'Promedio Sector',
+                    data: [65, 70, 68, 72, 60],
+                    backgroundColor: '#7F8C8D'
+                }, {
+                    label: 'Top Performers',
+                    data: [90, 95, 92, 94, 85],
+                    backgroundColor: '#27AE60'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Profit & Loss Chart
+        const profitLossCtx = document.getElementById('profitLossChart').getContext('2d');
+        const profitLossChart = new Chart(profitLossCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: [120000, 135000, 142000, 158000, 165000, 172000, 185000, 192000, 205000, 218000, 225000, 245780],
+                    backgroundColor: '#27AE60'
+                }, {
+                    label: 'Costos',
+                    data: [80000, 85000, 88000, 92000, 95000, 98000, 102000, 105000, 108000, 112000, 115000, 120000],
+                    backgroundColor: '#E74C3C'
+                }, {
+                    label: 'Utilidad',
+                    data: [40000, 50000, 54000, 66000, 70000, 74000, 83000, 87000, 97000, 106000, 110000, 125780],
+                    backgroundColor: '#2C3E50',
+                    type: 'line',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Cashflow Chart
+        const cashflowCtx = document.getElementById('cashflowChart').getContext('2d');
+        const cashflowChart = new Chart(cashflowCtx, {
+            type: 'line',
+            data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                    label: 'Flujo Operativo',
+                    data: [25000, 28000, 30000, 32000, 35000, 38000, 40000, 42000, 45000, 48000, 50000, 52000],
+                    borderColor: '#27AE60',
+                    backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Flujo de Inversión',
+                    data: [-10000, -8000, -12000, -5000, -15000, -10000, -8000, -12000, -5000, -15000, -10000, -8000],
+                    borderColor: '#E74C3C',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Flujo de Financiamiento',
+                    data: [15000, 10000, 5000, 8000, 12000, 5000, 15000, 10000, 8000, 12000, 5000, 15000],
+                    borderColor: '#3498DB',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Flujo Neto',
+                    data: [30000, 30000, 23000, 35000, 32000, 33000, 47000, 40000, 48000, 45000, 45000, 59000],
+                    borderColor: '#2C3E50',
+                    backgroundColor: 'rgba(44, 62, 80, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Break Even Chart
+        const breakEvenCtx = document.getElementById('breakEvenChart').getContext('2d');
+        const breakEvenChart = new Chart(breakEvenCtx, {
+            type: 'line',
+            data: {
+                labels: ['0', '100', '200', '300', '400', '500', '600', '700', '800'],
+                datasets: [{
+                    label: 'Costos Fijos',
+                    data: [50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000],
+                    borderColor: '#E74C3C',
+                    borderWidth: 2,
+                    fill: false
+                }, {
+                    label: 'Costos Totales',
+                    data: [50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000],
+                    borderColor: '#F39C12',
+                    borderWidth: 2,
+                    fill: false
+                }, {
+                    label: 'Ingresos',
+                    data: [0, 40000, 80000, 120000, 160000, 200000, 240000, 280000, 320000],
+                    borderColor: '#27AE60',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.raw.toLocaleString();
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: 100000,
+                                yMax: 100000,
+                                borderColor: 'rgb(255, 99, 132)',
+                                borderWidth: 2,
+                                label: {
+                                    content: 'Punto de Equilibrio',
+                                    enabled: true,
+                                    position: 'left'
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Dólares ($)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Unidades Vendidas'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Roadmap Chart
+        const roadmapCtx = document.getElementById('roadmapChart').getContext('2d');
+        const roadmapChart = new Chart(roadmapCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Expansión Mercado', 'Nuevo Producto', 'Digitalización', 'Capacitación', 'Optimización'],
+                datasets: [{
+                    label: 'Q1',
+                    data: [30, 20, 40, 10, 0],
+                    backgroundColor: '#2C3E50'
+                }, {
+                    label: 'Q2',
+                    data: [40, 30, 50, 20, 10],
+                    backgroundColor: '#3498DB'
+                }, {
+                    label: 'Q3',
+                    data: [20, 50, 30, 30, 40],
+                    backgroundColor: '#27AE60'
+                }, {
+                    label: 'Q4',
+                    data: [10, 0, 20, 40, 50],
+                    backgroundColor: '#F39C12'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '% completado';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
