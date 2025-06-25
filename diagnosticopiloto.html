@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Empresarial - Vestra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --primary: #2A5CAA;
+            --secondary: #F8F9FA;
+            --accent: #FF6B35;
+            --text: #333333;
+            --light-text: #6C757D;
+            --border: #DEE2E6;
+            --success: #28A745;
+            --error: #DC3545;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text);
+            background-color: #f5f7fa;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--light-text);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: var(--border);
+            border-radius: 5px;
+            margin: 20px 0;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .form-section {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .scale-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .scale-option {
+            text-align: center;
+            width: 16%;
+        }
+        
+        .scale-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+            font-weight: 600;
+        }
+        
+        .scale-number:hover, .scale-number:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .scale-number.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .scale-label {
+            font-size: 12px;
+            color: var(--light-text);
+            text-align: center;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 5px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #1d4a8a;
+            outline: none;
+        }
+        
+        .btn-primary:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover, .btn-secondary:focus {
+            background-color: #e9ecef;
+            outline: none;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-accent:hover, .btn-accent:focus {
+            background-color: #e05a2a;
+            outline: none;
+        }
+        
+        .section-complete {
+            color: var(--success);
+            font-size: 14px;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-complete i {
+            margin-right: 5px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .results-container {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .business-profile {
+            background-color: var(--secondary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            border-left: 5px solid var(--accent);
+        }
+        
+        .profile-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .results-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .results-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .results-table tr:nth-child(even) {
+            background-color: var(--secondary);
+        }
+        
+        .score-bar {
+            height: 10px;
+            background-color: var(--border);
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--primary);
+        }
+        
+        .recommendations {
+            margin-top: 30px;
+        }
+        
+        .recommendation-block {
+            margin-bottom: 25px;
+        }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .recommendation-title i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .recommendation-list {
+            list-style-type: none;
+        }
+        
+        .recommendation-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            display: flex;
+        }
+        
+        .recommendation-list li:before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            display: inline-block;
+            width: 20px;
+        }
+        
+        .results-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner i {
+            font-size: 24px;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .scale-label {
+                font-size: 10px;
+                height: 40px;
+            }
+            
+            .nav-buttons, .results-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .scale-container {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .scale-option {
+                width: 30%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .scale-option {
+                width: 48%;
+            }
+            
+            .form-section, .results-container {
+                padding: 20px 15px;
+            }
+            
+            .section-header {
+                flex-wrap: wrap;
+            }
+            
+            .section-complete {
+                margin-left: 55px; /* Alinear con el título */
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Diagnóstico Empresarial</h1>
+            <p>Evalúa el nivel de madurez de tu negocio y recibe recomendaciones personalizadas para crecer con control y rentabilidad</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        
+        <!-- Secciones del formulario se generarán dinámicamente -->
+        <div id="form-sections-container"></div>
+        
+        <!-- Sección de Resultados -->
+        <div class="results-container" id="results-section">
+            <div class="results-header">
+                <h2 class="results-title">Resultados de tu Diagnóstico Empresarial</h2>
+                <p>Basado en tus respuestas, aquí tienes un análisis de la madurez de tu negocio y recomendaciones para mejorar</p>
+            </div>
+            
+            <div class="business-profile">
+                <h3 class="profile-title" id="profile-title"></h3>
+                <p class="profile-description" id="profile-description"></p>
+            </div>
+            
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>Puntuación</th>
+                        <th>Nivel</th>
+                    </tr>
+                </thead>
+                <tbody id="results-table-body">
+                    <!-- Se generará dinámicamente -->
+                </tbody>
+            </table>
+            
+            <div class="recommendations" id="recommendations-container">
+                <!-- Se generará dinámicamente -->
+            </div>
+            
+            <div class="spinner" id="pdf-spinner">
+                <i class="fas fa-spinner"></i>
+                <p>Generando PDF...</p>
+            </div>
+            
+            <div class="results-actions">
+                <button class="btn btn-primary download-btn" id="downloadBtn">
+                    <i class="fas fa-download"></i> Descargar Reporte (PDF)
+                </button>
+                <button class="btn btn-accent" id="restartBtn">
+                    <i class="fas fa-redo"></i> Reiniciar Cuestionario
+                </button>
+                <a href="/" class="btn btn-secondary" id="homeBtn">
+                    <i class="fas fa-home"></i> Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuración centralizada con todas las preguntas
+            const config = {
+                sections: [
+                    {
+                        id: 'finanzas',
+                        title: 'Finanzas',
+                        icon: 'fa-chart-line',
+                        questions: [
+                            {
+                                text: '¿Con qué frecuencia analizas tus estados financieros (balance general, estado de resultados, flujo de efectivo)?',
+                                options: [
+                                    { value: 0, label: 'Nunca' },
+                                    { value: 1, label: 'Anualmente' },
+                                    { value: 2, label: 'Semestralmente' },
+                                    { value: 3, label: 'Trimestralmente' },
+                                    { value: 4, label: 'Mensualmente' },
+                                    { value: 5, label: 'Semanalmente' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas el presupuesto y la planeación financiera en tu empresa?',
+                                options: [
+                                    { value: 0, label: 'No tenemos presupuesto' },
+                                    { value: 1, label: 'Presupuesto mental' },
+                                    { value: 2, label: 'Presupuesto básico' },
+                                    { value: 3, label: 'Presupuesto anual' },
+                                    { value: 4, label: 'Presupuesto con revisiones' },
+                                    { value: 5, label: 'Presupuesto detallado con KPIs' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué tan claro tienes tus márgenes de utilidad por producto/servicio?',
+                                options: [
+                                    { value: 0, label: 'No los conozco' },
+                                    { value: 1, label: 'Estimado general' },
+                                    { value: 2, label: 'Conozco algunos' },
+                                    { value: 3, label: 'Conozco la mayoría' },
+                                    { value: 4, label: 'Conozco todos' },
+                                    { value: 5, label: 'Con análisis detallado' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu flujo de efectivo y capacidad para cubrir obligaciones?',
+                                options: [
+                                    { value: 0, label: 'Frecuentes problemas' },
+                                    { value: 1, label: 'Justo cubro gastos' },
+                                    { value: 2, label: 'Algo de margen' },
+                                    { value: 3, label: 'Buen flujo' },
+                                    { value: 4, label: 'Flujo saludable' },
+                                    { value: 5, label: 'Excelente con reservas' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué sistemas utilizas para el control financiero?',
+                                options: [
+                                    { value: 0, label: 'Ninguno' },
+                                    { value: 1, label: 'Excel básico' },
+                                    { value: 2, label: 'Software contable' },
+                                    { value: 3, label: 'ERP básico' },
+                                    { value: 4, label: 'ERP integrado' },
+                                    { value: 5, label: 'Sistema avanzado con BI' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'ventas',
+                        title: 'Ventas y Marketing',
+                        icon: 'fa-shopping-cart',
+                        questions: [
+                            {
+                                text: '¿Cómo defines tus estrategias de marketing y ventas?',
+                                options: [
+                                    { value: 0, label: 'No tengo estrategia' },
+                                    { value: 1, label: 'Intuición' },
+                                    { value: 2, label: 'Estrategia básica' },
+                                    { value: 3, label: 'Estrategia documentada' },
+                                    { value: 4, label: 'Estrategia con métricas' },
+                                    { value: 5, label: 'Estrategia integrada' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué tan claro tienes tu propuesta de valor y diferenciación?',
+                                options: [
+                                    { value: 0, label: 'No la tengo' },
+                                    { value: 1, label: 'Idea básica' },
+                                    { value: 2, label: 'Algo definida' },
+                                    { value: 3, label: 'Definida' },
+                                    { value: 4, label: 'Clara y comunicada' },
+                                    { value: 5, label: 'Optimizada continuamente' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu proceso de ventas?',
+                                options: [
+                                    { value: 0, label: 'No hay proceso' },
+                                    { value: 1, label: 'Informal' },
+                                    { value: 2, label: 'Algo estructurado' },
+                                    { value: 3, label: 'Documentado' },
+                                    { value: 4, label: 'Seguimiento métrico' },
+                                    { value: 5, label: 'Optimizado continuamente' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué sistemas usas para gestionar clientes y ventas?',
+                                options: [
+                                    { value: 0, label: 'Ninguno' },
+                                    { value: 1, label: 'Excel/Notas' },
+                                    { value: 2, label: 'CRM básico' },
+                                    { value: 3, label: 'CRM profesional' },
+                                    { value: 4, label: 'CRM integrado' },
+                                    { value: 5, label: 'Sistema avanzado' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu estrategia de fidelización de clientes?',
+                                options: [
+                                    { value: 0, label: 'No tengo' },
+                                    { value: 1, label: 'Relación personal' },
+                                    { value: 2, label: 'Programa básico' },
+                                    { value: 3, label: 'Programa estructurado' },
+                                    { value: 4, label: 'Programa con métricas' },
+                                    { value: 5, label: 'Estrategia integral' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'operaciones',
+                        title: 'Operaciones',
+                        icon: 'fa-cogs',
+                        questions: [
+                            {
+                                text: '¿Cómo están documentados tus procesos operativos?',
+                                options: [
+                                    { value: 0, label: 'Nada documentado' },
+                                    { value: 1, label: 'Algunos en mi cabeza' },
+                                    { value: 2, label: 'Algunos documentados' },
+                                    { value: 3, label: 'La mayoría documentados' },
+                                    { value: 4, label: 'Todos documentados' },
+                                    { value: 5, label: 'Optimizados continuamente' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué nivel de estandarización tienen tus operaciones?',
+                                options: [
+                                    { value: 0, label: 'Nada estandarizado' },
+                                    { value: 1, label: 'Algo de consistencia' },
+                                    { value: 2, label: 'Algunos estándares' },
+                                    { value: 3, label: 'Buen nivel' },
+                                    { value: 4, label: 'Altamente estandarizado' },
+                                    { value: 5, label: 'Excelencia operativa' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas la calidad de tus productos/servicios?',
+                                options: [
+                                    { value: 0, label: 'No hay control' },
+                                    { value: 1, label: 'Revisión ocasional' },
+                                    { value: 2, label: 'Algunos controles' },
+                                    { value: 3, label: 'Procesos definidos' },
+                                    { value: 4, label: 'Sistema de calidad' },
+                                    { value: 5, label: 'Mejora continua' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué sistemas usas para gestionar operaciones?',
+                                options: [
+                                    { value: 0, label: 'Ninguno' },
+                                    { value: 1, label: 'Excel/Herramientas básicas' },
+                                    { value: 2, label: 'Software específico' },
+                                    { value: 3, label: 'Sistemas integrados' },
+                                    { value: 4, label: 'ERP operativo' },
+                                    { value: 5, label: 'Tecnología avanzada' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es tu cadena de suministro y proveedores?',
+                                options: [
+                                    { value: 0, label: 'Improvisada' },
+                                    { value: 1, label: 'Algunos proveedores' },
+                                    { value: 2, label: 'Proveedores regulares' },
+                                    { value: 3, label: 'Proveedores confiables' },
+                                    { value: 4, label: 'Cadena optimizada' },
+                                    { value: 5, label: 'Estrategia de suministro' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'personas',
+                        title: 'Personas y Equipo',
+                        icon: 'fa-users',
+                        questions: [
+                            {
+                                text: '¿Cómo es tu proceso de reclutamiento y selección?',
+                                options: [
+                                    { value: 0, label: 'No hay proceso' },
+                                    { value: 1, label: 'Contratación informal' },
+                                    { value: 2, label: 'Algo estructurado' },
+                                    { value: 3, label: 'Proceso definido' },
+                                    { value: 4, label: 'Con evaluación técnica' },
+                                    { value: 5, label: 'Sistema integral' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo capacitas y desarrollas a tu equipo?',
+                                options: [
+                                    { value: 0, label: 'No hay capacitación' },
+                                    { value: 1, label: 'Ocasionalmente' },
+                                    { value: 2, label: 'Capacitación básica' },
+                                    { value: 3, label: 'Programa regular' },
+                                    { value: 4, label: 'Desarrollo continuo' },
+                                    { value: 5, label: 'Plan de carrera' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo evalúas el desempeño de tu equipo?',
+                                options: [
+                                    { value: 0, label: 'No evalúo' },
+                                    { value: 1, label: 'Por intuición' },
+                                    { value: 2, label: 'Revisión informal' },
+                                    { value: 3, label: 'Evaluación anual' },
+                                    { value: 4, label: 'Evaluación periódica' },
+                                    { value: 5, label: 'Sistema integral' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo es la cultura y clima organizacional?',
+                                options: [
+                                    { value: 0, label: 'No hay cultura definida' },
+                                    { value: 1, label: 'Basada en el dueño' },
+                                    { value: 2, label: 'Algunos valores' },
+                                    { value: 3, label: 'Cultura definida' },
+                                    { value: 4, label: 'Cultura fortalecida' },
+                                    { value: 5, label: 'Cultura de alto desempeño' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas la compensación y beneficios?',
+                                options: [
+                                    { value: 0, label: 'No hay estructura' },
+                                    { value: 1, label: 'Salarios básicos' },
+                                    { value: 2, label: 'Algunos beneficios' },
+                                    { value: 3, label: 'Estructura definida' },
+                                    { value: 4, label: 'Paquete competitivo' },
+                                    { value: 5, label: 'Sistema estratégico' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'estrategia',
+                        title: 'Estrategia y Dirección',
+                        icon: 'fa-chess',
+                        questions: [
+                            {
+                                text: '¿Qué tan clara tienes tu visión y misión empresarial?',
+                                options: [
+                                    { value: 0, label: 'No las tengo' },
+                                    { value: 1, label: 'Idea básica' },
+                                    { value: 2, label: 'Algo definidas' },
+                                    { value: 3, label: 'Documentadas' },
+                                    { value: 4, label: 'Comunicadas al equipo' },
+                                    { value: 5, label: 'Guían todas las decisiones' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo defines y haces seguimiento a tus objetivos?',
+                                options: [
+                                    { value: 0, label: 'No tengo objetivos' },
+                                    { value: 1, label: 'Objetivos mentales' },
+                                    { value: 2, label: 'Algunos escritos' },
+                                    { value: 3, label: 'Objetivos anuales' },
+                                    { value: 4, label: 'Con seguimiento' },
+                                    { value: 5, label: 'Sistema estratégico' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo tomas decisiones estratégicas?',
+                                options: [
+                                    { value: 0, label: 'Intuición/improvisación' },
+                                    { value: 1, label: 'Basada en experiencia' },
+                                    { value: 2, label: 'Algo de análisis' },
+                                    { value: 3, label: 'Proceso definido' },
+                                    { value: 4, label: 'Con datos e indicadores' },
+                                    { value: 5, label: 'Sistema estratégico' }
+                                ]
+                            },
+                            {
+                                text: '¿Qué tan preparado está tu negocio para crecer?',
+                                options: [
+                                    { value: 0, label: 'No puedo crecer' },
+                                    { value: 1, label: 'Crecimiento limitado' },
+                                    { value: 2, label: 'Alguna capacidad' },
+                                    { value: 3, label: 'Preparado para crecer' },
+                                    { value: 4, label: 'Estructura escalable' },
+                                    { value: 5, label: 'Listo para expansión' }
+                                ]
+                            },
+                            {
+                                text: '¿Cómo manejas la innovación en tu empresa?',
+                                options: [
+                                    { value: 0, label: 'No hay innovación' },
+                                    { value: 1, label: 'Ocasional' },
+                                    { value: 2, label: 'Algunas mejoras' },
+                                    { value: 3, label: 'Proceso de mejora' },
+                                    { value: 4, label: 'Cultura innovadora' },
+                                    { value: 5, label: 'Innovación estratégica' }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                recommendations: {
+                    finanzas: {
+                        '0-5': [
+                            'Implementa un sistema básico de registro financiero (puede ser Excel o software simple)',
+                            'Comienza a revisar tus números financieros al menos mensualmente',
+                            'Separa tus finanzas personales de las del negocio'
+                        ],
+                        '6-10': [
+                            'Establece un presupuesto formal para el próximo trimestre',
+                            'Implementa un software contable básico',
+                            'Analiza tus márgenes por producto/servicio al menos una vez al mes'
+                        ],
+                        '11-15': [
+                            'Desarrolla un sistema de reportes financieros mensuales con KPIs clave',
+                            'Considera implementar un ERP financiero integrado',
+                            'Establece metas financieras trimestrales y haz seguimiento'
+                        ],
+                        '16-20': [
+                            'Optimiza tu estructura de costos y flujo de efectivo',
+                            'Implementa análisis financieros avanzados (puntos de equilibrio, escenarios)',
+                            'Desarrolla un sistema de pronósticos financieros'
+                        ],
+                        '21-25': [
+                            'Automatiza procesos financieros para mayor eficiencia',
+                            'Implementa análisis predictivos para toma de decisiones',
+                            'Explora estrategias avanzadas de gestión de capital y financiamiento'
+                        ]
+                    },
+                    ventas: {
+                        '0-5': [
+                            'Define claramente tu propuesta de valor y diferenciación',
+                            'Establece un proceso básico de ventas (pasos a seguir)',
+                            'Implementa un sistema simple para registrar clientes y ventas'
+                        ],
+                        '6-10': [
+                            'Documenta tu proceso de ventas actual y mejóralo',
+                            'Implementa un CRM básico para gestionar clientes',
+                            'Desarrolla una estrategia de marketing digital básica'
+                        ],
+                        '11-15': [
+                            'Optimiza tu funnel de ventas con métricas clave',
+                            'Implementa un CRM profesional con seguimiento de oportunidades',
+                            'Desarrolla programas de fidelización de clientes'
+                        ],
+                        '16-20': [
+                            'Automatiza partes de tu proceso de ventas y marketing',
+                            'Implementa análisis avanzado de datos de clientes',
+                            'Desarrolla estrategias de upselling y cross-selling'
+                        ],
+                        '21-25': [
+                            'Implementa inteligencia artificial para personalización de ventas',
+                            'Desarrolla programas avanzados de retención y lealtad',
+                            'Integra completamente tus sistemas de ventas, marketing y servicio al cliente'
+                        ]
+                    },
+                    operaciones: {
+                        '0-5': [
+                            'Documenta tus procesos operativos más importantes',
+                            'Establece estándares básicos de calidad',
+                            'Identifica y formaliza relaciones con proveedores clave'
+                        ],
+                        '6-10': [
+                            'Estandariza tus procesos operativos principales',
+                            'Implementa controles básicos de calidad',
+                            'Considera software especializado para tus operaciones'
+                        ],
+                        '11-15': [
+                            'Optimiza tus procesos operativos clave',
+                            'Implementa un sistema de gestión de calidad',
+                            'Automatiza procesos operativos repetitivos'
+                        ],
+                        '16-20': [
+                            'Implementa metodologías de mejora continua (Lean, Six Sigma)',
+                            'Desarrolla un sistema de gestión de la cadena de suministro',
+                            'Integra tus sistemas operativos con otras áreas'
+                        ],
+                        '21-25': [
+                            'Implementa tecnologías avanzadas (IoT, automatización)',
+                            'Desarrolla capacidades de manufactura/escala clase mundial',
+                            'Crea un sistema de innovación operativa continua'
+                        ]
+                    },
+                    personas: {
+                        '0-5': [
+                            'Establece descripciones básicas de puesto',
+                            'Implementa un proceso básico de contratación',
+                            'Define una estructura salarial básica'
+                        ],
+                        '6-10': [
+                            'Desarrolla un manual básico de políticas',
+                            'Implementa un programa de inducción para nuevos empleados',
+                            'Establece un sistema básico de evaluación de desempeño'
+                        ],
+                        '11-15': [
+                            'Desarrolla programas de capacitación regulares',
+                            'Implementa un sistema formal de evaluación de desempeño',
+                            'Define y comunica claramente la cultura organizacional'
+                        ],
+                        '16-20': [
+                            'Desarrolla planes de carrera y sucesión',
+                            'Implementa programas de desarrollo de liderazgo',
+                            'Optimiza tu paquete de compensación y beneficios'
+                        ],
+                        '21-25': [
+                            'Implementa programas avanzados de desarrollo organizacional',
+                            'Crea una cultura de alto desempeño y aprendizaje continuo',
+                            'Desarrolla estrategias avanzadas de gestión del talento'
+                        ]
+                    },
+                    estrategia: {
+                        '0-5': [
+                            'Define claramente tu visión y misión empresarial',
+                            'Establece 3-5 objetivos clave para el próximo año',
+                            'Implementa reuniones periódicas de revisión estratégica'
+                        ],
+                        '6-10': [
+                            'Documenta tu plan estratégico básico',
+                            'Establece métricas clave para medir progreso',
+                            'Analiza regularmente tu entorno competitivo'
+                        ],
+                        '11-15': [
+                            'Desarrolla un plan estratégico formal con iniciativas clave',
+                            'Implementa un sistema de seguimiento de objetivos (OKRs/KPIs)',
+                            'Establece un proceso formal de toma de decisiones estratégicas'
+                        ],
+                        '16-20': [
+                            'Optimiza tu proceso de planeación estratégica',
+                            'Desarrolla capacidades de análisis estratégico avanzado',
+                            'Implementa sistemas de innovación estratégica'
+                        ],
+                        '21-25': [
+                            'Desarrolla capacidades de anticipación estratégica',
+                            'Implementa sistemas de gestión del cambio estratégico',
+                            'Crea un proceso de reinvención estratégica continua'
+                        ]
+                    }
+                }
+            };
+
+            // Estado de la aplicación
+            const state = {
+                currentSection: 0,
+                answers: {},
+                scores: {},
+                totalScore: 0
+            };
+
+            // Inicializar la aplicación
+            init();
+
+            function init() {
+                // Inicializar estructura de respuestas
+                config.sections.forEach(section => {
+                    state.answers[section.id] = Array(section.questions.length).fill(null);
+                });
+                
+                loadProgress();
+                renderFormSections();
+                setupEventListeners();
+                showSection(state.currentSection);
+                updateProgressBar();
+            }
+
+            function renderFormSections() {
+                const container = document.getElementById('form-sections-container');
+                container.innerHTML = '';
+                
+                config.sections.forEach((section, sectionIndex) => {
+                    const sectionEl = document.createElement('div');
+                    sectionEl.className = 'form-section';
+                    sectionEl.id = `section-${section.id}`;
+                    
+                    // Header de la sección
+                    const header = document.createElement('div');
+                    header.className = 'section-header';
+                    
+                    const icon = document.createElement('div');
+                    icon.className = 'section-icon';
+                    icon.innerHTML = `<i class="fas ${section.icon}"></i>`;
+                    icon.setAttribute('aria-hidden', 'true');
+                    
+                    const title = document.createElement('div');
+                    title.className = 'section-title';
+                    title.textContent = section.title;
+                    
+                    const completeIndicator = document.createElement('div');
+                    completeIndicator.className = 'section-complete hidden';
+                    completeIndicator.id = `${section.id}-complete`;
+                    completeIndicator.innerHTML = '<i class="fas fa-check-circle"></i> Completo';
+                    
+                    header.appendChild(icon);
+                    header.appendChild(title);
+                    header.appendChild(completeIndicator);
+                    sectionEl.appendChild(header);
+                    
+                    // Preguntas
+                    section.questions.forEach((question, questionIndex) => {
+                        const questionContainer = document.createElement('div');
+                        questionContainer.className = 'question-container';
+                        
+                        const questionText = document.createElement('div');
+                        questionText.className = 'question-text';
+                        questionText.textContent = `${questionIndex + 1}. ${question.text}`;
+                        questionContainer.appendChild(questionText);
+                        
+                        const scaleContainer = document.createElement('div');
+                        scaleContainer.className = 'scale-container';
+                        
+                        question.options.forEach(option => {
+                            const scaleOption = document.createElement('div');
+                            scaleOption.className = 'scale-option';
+                            
+                            const scaleNumber = document.createElement('div');
+                            scaleNumber.className = 'scale-number';
+                            scaleNumber.textContent = option.value;
+                            scaleNumber.setAttribute('data-value', option.value);
+                            scaleNumber.setAttribute('data-section', section.id);
+                            scaleNumber.setAttribute('data-question', questionIndex);
+                            scaleNumber.setAttribute('tabindex', '0'); // Hacer que sea enfocable
+                            scaleNumber.setAttribute('role', 'button');
+                            scaleNumber.setAttribute('aria-label', `Opción ${option.value}: ${option.label}`);
+                            
+                            // Marcar como seleccionado si ya hay respuesta
+                            if (state.answers[section.id][questionIndex] === option.value) {
+                                scaleNumber.classList.add('selected');
+                            }
+                            
+                            const scaleLabel = document.createElement('div');
+                            scaleLabel.className = 'scale-label';
+                            scaleLabel.textContent = option.label;
+                            
+                            scaleOption.appendChild(scaleNumber);
+                            scaleOption.appendChild(scaleLabel);
+                            scaleContainer.appendChild(scaleOption);
+                        });
+                        
+                        questionContainer.appendChild(scaleContainer);
+                        sectionEl.appendChild(questionContainer);
+                    });
+                    
+                    // Botones de navegación
+                    const navButtons = document.createElement('div');
+                    navButtons.className = 'nav-buttons';
+                    
+                    const prevBtn = document.createElement('button');
+                    prevBtn.className = 'btn btn-secondary';
+                    prevBtn.id = 'prevBtn';
+                    prevBtn.textContent = 'Anterior';
+                    prevBtn.disabled = sectionIndex === 0;
+                    
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'btn btn-primary';
+                    nextBtn.id = 'nextBtn';
+                    nextBtn.textContent = sectionIndex === config.sections.length - 1 ? 'Finalizar' : 'Siguiente';
+                    nextBtn.disabled = !isSectionComplete(section.id);
+                    
+                    navButtons.appendChild(prevBtn);
+                    navButtons.appendChild(nextBtn);
+                    sectionEl.appendChild(navButtons);
+                    
+                    container.appendChild(sectionEl);
+                });
+            }
+
+            function setupEventListeners() {
+                // Event delegation para las opciones de escala (click y teclado)
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('scale-number')) {
+                        handleScaleSelection(e.target);
+                    }
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('scale-number')) {
+                        e.preventDefault();
+                        handleScaleSelection(e.target);
+                    }
+                });
+                
+                // Navegación
+                document.addEventListener('click', function(e) {
+                    if (e.target.id === 'prevBtn') prevSection();
+                    if (e.target.id === 'nextBtn') nextSection();
+                    if (e.target.id === 'downloadBtn') generatePDF();
+                    if (e.target.id === 'restartBtn') restartQuestionnaire();
+                });
+                
+                // Manejar eventos de teclado para navegación
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowRight' && document.activeElement.id === 'nextBtn') {
+                        nextSection();
+                    } else if (e.key === 'ArrowLeft' && document.activeElement.id === 'prevBtn') {
+                        prevSection();
+                    }
+                });
+            }
+            
+            function handleScaleSelection(target) {
+                const value = parseInt(target.getAttribute('data-value'));
+                const section = target.getAttribute('data-section');
+                const questionIndex = parseInt(target.getAttribute('data-question'));
+                
+                // Guardar respuesta
+                state.answers[section][questionIndex] = value;
+                
+                // Actualizar UI
+                updateSelectedOption(target);
+                checkSectionComplete(section);
+                saveProgress();
+            }
+
+            function updateSelectedOption(selectedOption) {
+                // Remover selección previa para esta pregunta
+                const questionContainer = selectedOption.closest('.question-container');
+                questionContainer.querySelectorAll('.scale-number').forEach(opt => {
+                    opt.classList.remove('selected');
+                    opt.setAttribute('aria-pressed', 'false');
+                });
+                
+                // Marcar como seleccionado
+                selectedOption.classList.add('selected');
+                selectedOption.setAttribute('aria-pressed', 'true');
+                selectedOption.focus();
+            }
+
+            function isSectionComplete(sectionId) {
+                const sectionAnswers = state.answers[sectionId] || [];
+                const sectionQuestions = config.sections.find(s => s.id === sectionId).questions;
+                
+                return sectionAnswers.length === sectionQuestions.length && 
+                       sectionAnswers.every(answer => answer !== null && answer !== undefined);
+            }
+
+            function checkSectionComplete(sectionId) {
+                const isComplete = isSectionComplete(sectionId);
+                
+                const completeIndicator = document.getElementById(`${sectionId}-complete`);
+                if (isComplete) {
+                    completeIndicator.classList.remove('hidden');
+                } else {
+                    completeIndicator.classList.add('hidden');
+                }
+                
+                // Habilitar/deshabilitar botón siguiente
+                const nextBtn = document.querySelector(`#section-${sectionId} #nextBtn`);
+                if (nextBtn) {
+                    nextBtn.disabled = !isComplete;
+                }
+            }
+
+            function showSection(index) {
+                // Validar índice
+                if (index < 0 || index >= config.sections.length) return;
+                
+                state.currentSection = index;
+                
+                // Ocultar todas las secciones
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Mostrar sección actual
+                const currentSection = document.getElementById(`section-${config.sections[index].id}`);
+                if (currentSection) {
+                    currentSection.classList.add('active');
+                    
+                    // Enfocar el primer elemento interactivo
+                    const firstInteractive = currentSection.querySelector('.scale-number, button');
+                    if (firstInteractive) {
+                        firstInteractive.focus();
+                    }
+                }
+                
+                // Actualizar barra de progreso
+                updateProgressBar();
+            }
+
+            function updateProgressBar() {
+                const progress = (state.currentSection / config.sections.length) * 100;
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = `${progress}%`;
+                progressBar.setAttribute('aria-valuenow', progress);
+                progressBar.setAttribute('aria-label', `Progreso: ${Math.round(progress)}% completado`);
+            }
+
+            function nextSection() {
+                if (state.currentSection < config.sections.length - 1) {
+                    showSection(state.currentSection + 1);
+                } else {
+                    finishAssessment();
+                }
+            }
+
+            function prevSection() {
+                if (state.currentSection > 0) {
+                    showSection(state.currentSection - 1);
+                }
+            }
+            
+            function restartQuestionnaire() {
+                if (!confirm("¿Estás seguro de que deseas reiniciar el cuestionario? Se perderán todas tus respuestas.")) return;
+                
+                // Reiniciar estado
+                state.currentSection = 0;
+                state.answers = {};
+                state.scores = {};
+                state.totalScore = 0;
+                
+                // Reinicializar respuestas
+                config.sections.forEach(section => {
+                    state.answers[section.id] = Array(section.questions.length).fill(null);
+                });
+                
+                // Limpiar almacenamiento local
+                localStorage.removeItem('diagnosticoProgress');
+                
+                // Restaurar vista inicial
+                document.getElementById('form-sections-container').style.display = '';
+                document.getElementById('results-section').style.display = 'none';
+                
+                // Volver a renderizar todo
+                renderFormSections();
+                showSection(state.currentSection);
+                updateProgressBar();
+            }
+
+            function finishAssessment() {
+                if (!confirm("¿Estás seguro de que deseas finalizar el diagnóstico?")) return;
+                
+                calculateScores();
+                displayResults();
+                sendEmailResults();
+                
+                // Ocultar formulario y mostrar resultados
+                document.getElementById('form-sections-container').style.display = 'none';
+                document.getElementById('results-section').style.display = 'block';
+                
+                // Enfocar el primer elemento de los resultados para mejor accesibilidad
+                document.querySelector('.results-header').setAttribute('tabindex', '-1');
+                document.querySelector('.results-header').focus();
+            }
+
+            function calculateScores() {
+                state.scores = {};
+                state.totalScore = 0;
+                
+                config.sections.forEach(section => {
+                    const sectionScore = (state.answers[section.id] || []).reduce((sum, val) => sum + (val || 0), 0);
+                    state.scores[section.id] = sectionScore;
+                    state.totalScore += sectionScore;
+                });
+            }
+
+            function displayResults() {
+                // Mostrar perfil empresarial
+                const profile = getBusinessProfile();
+                document.getElementById('profile-title').textContent = profile.title;
+                document.getElementById('profile-description').textContent = profile.description;
+                
+                // Mostrar puntuaciones
+                const tableBody = document.getElementById('results-table-body');
+                tableBody.innerHTML = '';
+                
+                config.sections.forEach(section => {
+                    const row = document.createElement('tr');
+                    
+                    const areaCell = document.createElement('td');
+                    areaCell.textContent = section.title;
+                    
+                    const scoreCell = document.createElement('td');
+                    scoreCell.innerHTML = `
+                        <span>${state.scores[section.id]}/25</span>
+                        <div class="score-bar" role="progressbar" aria-valuenow="${state.scores[section.id]}" aria-valuemin="0" aria-valuemax="25">
+                            <div class="score-fill" style="width: ${(state.scores[section.id] / 25) * 100}%"></div>
+                        </div>
+                    `;
+                    
+                    const levelCell = document.createElement('td');
+                    levelCell.textContent = getLevel(state.scores[section.id]);
+                    
+                    row.appendChild(areaCell);
+                    row.appendChild(scoreCell);
+                    row.appendChild(levelCell);
+                    tableBody.appendChild(row);
+                });
+                
+                // Mostrar total
+                const totalRow = document.createElement('tr');
+                
+                const totalLabelCell = document.createElement('td');
+                totalLabelCell.textContent = 'Total';
+                totalLabelCell.style.fontWeight = 'bold';
+                
+                const totalScoreCell = document.createElement('td');
+                totalScoreCell.innerHTML = `
+                    <strong>${state.totalScore}/125</strong>
+                    <div class="score-bar" role="progressbar" aria-valuenow="${state.totalScore}" aria-valuemin="0" aria-valuemax="125">
+                        <div class="score-fill" style="width: ${(state.totalScore / 125) * 100}%"></div>
+                    </div>
+                `;
+                
+                const totalLevelCell = document.createElement('td');
+                totalLevelCell.textContent = getTotalLevel(state.totalScore);
+                totalLevelCell.style.fontWeight = 'bold';
+                
+                totalRow.appendChild(totalLabelCell);
+                totalRow.appendChild(totalScoreCell);
+                totalRow.appendChild(totalLevelCell);
+                tableBody.appendChild(totalRow);
+                
+                // Mostrar recomendaciones
+                displayRecommendations();
+            }
+
+            function displayRecommendations() {
+                const container = document.getElementById('recommendations-container');
+                container.innerHTML = '<h3>Recomendaciones por Área</h3>';
+                
+                config.sections.forEach(section => {
+                    const sectionScore = state.scores[section.id];
+                    const recommendations = getRecommendations(section.id, sectionScore);
+                    
+                    if (recommendations.length > 0) {
+                        const block = document.createElement('div');
+                        block.className = 'recommendation-block';
+                        
+                        const title = document.createElement('h4');
+                        title.className = 'recommendation-title';
+                        title.innerHTML = `<i class="fas ${section.icon}"></i> ${section.title}`;
+                        
+                        const list = document.createElement('ul');
+                        list.className = 'recommendation-list';
+                        
+                        recommendations.forEach(rec => {
+                            const item = document.createElement('li');
+                            item.textContent = rec;
+                            list.appendChild(item);
+                        });
+                        
+                        block.appendChild(title);
+                        block.appendChild(list);
+                        container.appendChild(block);
+                    }
+                });
+                
+                // Agregar próximos pasos
+                const nextStepsBlock = document.createElement('div');
+                nextStepsBlock.className = 'recommendation-block';
+                
+                const nextStepsTitle = document.createElement('h4');
+                nextStepsTitle.className = 'recommendation-title';
+                nextStepsTitle.innerHTML = '<i class="fas fa-road"></i> Próximos Pasos';
+                
+                const nextStepsList = document.createElement('ul');
+                nextStepsList.className = 'recommendation-list';
+                
+                getNextSteps().forEach(step => {
+                    const item = document.createElement('li');
+                    item.textContent = step;
+                    nextStepsList.appendChild(item);
+                });
+                
+                nextStepsBlock.appendChild(nextStepsTitle);
+                nextStepsBlock.appendChild(nextStepsList);
+                container.appendChild(nextStepsBlock);
+            }
+
+            function getLevel(score) {
+                if (score <= 5) return 'Inicial';
+                if (score <= 10) return 'Básico';
+                if (score <= 15) return 'Intermedio';
+                if (score <= 20) return 'Avanzado';
+                return 'Excelente';
+            }
+
+            function getTotalLevel(totalScore) {
+                if (totalScore <= 25) return 'Inicial';
+                if (totalScore <= 50) return 'Básico';
+                if (totalScore <= 75) return 'Intermedio';
+                if (totalScore <= 100) return 'Avanzado';
+                return 'Excelente';
+            }
+
+            function getBusinessProfile() {
+                // Calcular desviación estándar para ver equilibrio entre áreas
+                const avg = state.totalScore / config.sections.length;
+                let variance = 0;
+                for (const section in state.scores) {
+                    variance += Math.pow(state.scores[section] - avg, 2);
+                }
+                const stdDev = Math.sqrt(variance / config.sections.length);
+                
+                // Determinar perfil basado en puntuación y equilibrio
+                if (state.totalScore <= 25) {
+                    return {
+                        title: "Empresa Inicial",
+                        description: "Tu negocio está en etapas muy tempranas con sistemas y procesos limitados. Es importante sentar bases sólidas para el crecimiento futuro."
+                    };
+                } else if (state.totalScore <= 50) {
+                    if (stdDev > 7) {
+                        return {
+                            title: "Empresa con Desequilibrios",
+                            description: "Algunas áreas de tu negocio están más desarrolladas que otras, lo que puede crear cuellos de botella. Es importante equilibrar el desarrollo de todas las áreas funcionales."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa Básica",
+                            description: "Tu negocio tiene los fundamentos básicos establecidos, pero hay oportunidades significativas para mejorar en todas las áreas."
+                        };
+                    }
+                } else if (state.totalScore <= 75) {
+                    if (stdDev > 6) {
+                        return {
+                            title: "Empresa en Crecimiento Desorganizado",
+                            description: "Tu negocio muestra signos de crecimiento, pero con falta de sistemas y procesos definidos que podrían limitar tu escalabilidad y rentabilidad a largo plazo."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa en Crecimiento Organizado",
+                            description: "Tu negocio está creciendo con relativo equilibrio entre áreas, pero aún hay espacio para mejorar procesos y sistemas para soportar un mayor crecimiento."
+                        };
+                    }
+                } else if (state.totalScore <= 100) {
+                    if (stdDev > 5) {
+                        return {
+                            title: "Empresa Avanzada con Áreas de Oportunidad",
+                            description: "Tu negocio es bastante maduro en la mayoría de áreas, pero algunas podrían necesitar atención para alcanzar el mismo nivel de desarrollo."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa Avanzada",
+                            description: "Tienes un negocio bien establecido con sistemas y procesos sólidos en la mayoría de áreas. El enfoque ahora debe estar en optimización y excelencia."
+                        };
+                    }
+                } else {
+                    if (stdDev > 4) {
+                        return {
+                            title: "Empresa de Alto Desempeño",
+                            description: "Tu negocio es un ejemplo de excelencia en la mayoría de áreas, con solo algunas oportunidades menores de mejora en áreas específicas."
+                        };
+                    } else {
+                        return {
+                            title: "Empresa de Clase Mundial",
+                            description: "Felicidades, tienes un negocio excepcionalmente bien gestionado en todas las áreas clave, listo para escalar y competir a los más altos niveles."
+                        };
+                    }
+                }
+            }
+
+            function getRecommendations(sectionId, score) {
+                const sectionRecs = config.recommendations[sectionId];
+                
+                if (score <= 5) return sectionRecs['0-5'];
+                if (score <= 10) return sectionRecs['6-10'];
+                if (score <= 15) return sectionRecs['11-15'];
+                if (score <= 20) return sectionRecs['16-20'];
+                return sectionRecs['21-25'];
+            }
+
+            function getNextSteps() {
+                const steps = [];
+                
+                // Identificar áreas débiles
+                let minScore = Infinity;
+                let weakAreas = [];
+                for (const section in state.scores) {
+                    if (state.scores[section] < minScore) {
+                        minScore = state.scores[section];
+                        weakAreas = [config.sections.find(s => s.id === section).title];
+                    } else if (state.scores[section] === minScore) {
+                        weakAreas.push(config.sections.find(s => s.id === section).title);
+                    }
+                }
+                
+                if (weakAreas.length > 0) {
+                    steps.push(`Prioriza mejorar en ${weakAreas.join(' y ')} (tus áreas más débiles)`);
+                }
+                
+                // Pasos generales según nivel
+                if (state.totalScore <= 50) {
+                    steps.push("Enfócate en establecer sistemas y procesos básicos en todas las áreas");
+                    steps.push("Considera asesoría externa para acelerar tu aprendizaje");
+                } else if (state.totalScore <= 100) {
+                    steps.push("Optimiza y estandariza tus procesos existentes");
+                    steps.push("Implementa sistemas de medición y seguimiento de KPIs");
+                } else {
+                    steps.push("Busca la excelencia operativa y la innovación continua");
+                    steps.push("Explora oportunidades de expansión y escalamiento");
+                }
+                
+                steps.push("Programa una revisión estratégica trimestral para evaluar progreso");
+                steps.push("Considera capacitación específica para tus áreas de oportunidad");
+                
+                return steps;
+            }
+
+            function generatePDF() {
+                const spinner = document.getElementById('pdf-spinner');
+                spinner.style.display = 'block';
+                
+                // Usar setTimeout para simular carga (en producción sería una operación asíncrona)
+                setTimeout(() => {
+                    try {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF();
+                        
+                        // Título
+                        doc.setFontSize(18);
+                        doc.text("Resultados del Diagnóstico Empresarial", 105, 20, { align: 'center' });
+                        
+                        // Perfil
+                        doc.setFontSize(14);
+                        doc.text(`Perfil identificado: ${document.getElementById('profile-title').textContent}`, 15, 35);
+                        doc.setFontSize(12);
+                        doc.text(document.getElementById('profile-description').textContent, 15, 45, { maxWidth: 180 });
+                        
+                        // Tabla de puntuaciones
+                        doc.autoTable({
+                            startY: 60,
+                            head: [['Área', 'Puntuación', 'Nivel']],
+                            body: config.sections.map(section => [
+                                section.title,
+                                `${state.scores[section.id]}/25`,
+                                getLevel(state.scores[section.id])
+                            ]),
+                            headStyles: {
+                                fillColor: [42, 92, 170],
+                                textColor: 255
+                            },
+                            alternateRowStyles: {
+                                fillColor: [248, 249, 250]
+                            }
+                        });
+                        
+                        // Recomendaciones
+                        let yPos = doc.lastAutoTable.finalY + 15;
+                        doc.setFontSize(14);
+                        doc.text("Recomendaciones Clave", 15, yPos);
+                        yPos += 10;
+                        
+                        config.sections.forEach(section => {
+                            const recommendations = getRecommendations(section.id, state.scores[section.id]);
+                            if (recommendations.length > 0) {
+                                doc.setFontSize(12);
+                                doc.setTextColor(42, 92, 170);
+                                doc.text(`${section.title}:`, 15, yPos);
+                                yPos += 7;
+                                doc.setTextColor(0, 0, 0);
+                                
+                                recommendations.forEach(rec => {
+                                    doc.text(`• ${rec}`, 20, yPos);
+                                    yPos += 7;
+                                });
+                                yPos += 5;
+                            }
+                        });
+                        
+                        // Próximos pasos
+                        doc.setFontSize(14);
+                        doc.text("Próximos Pasos", 15, yPos + 10);
+                        yPos += 15;
+                        
+                        getNextSteps().forEach(step => {
+                            doc.text(`• ${step}`, 20, yPos);
+                            yPos += 7;
+                        });
+                        
+                        // Guardar PDF
+                        doc.save('diagnostico-empresarial.pdf');
+                    } catch (error) {
+                        console.error("Error al generar PDF:", error);
+                        alert("Ocurrió un error al generar el PDF. Por favor intenta nuevamente.");
+                    } finally {
+                        spinner.style.display = 'none';
+                    }
+                }, 1000);
+            }
+
+            function sendEmailResults() {
+                // Simulación de envío de email
+                console.log("Enviando resultados por email...");
+                console.log("Puntuaciones:", state.scores);
+                console.log("Total:", state.totalScore);
+                
+                // En producción, usarías fetch() para enviar a un backend
+                /*
+                fetch('/api/send-results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: "uriel.vargas@vestra.mx",
+                        scores: state.scores,
+                        totalScore: state.totalScore,
+                        profile: document.getElementById('profile-title').textContent
+                    })
+                });
+                */
+            }
+
+            function saveProgress() {
+                localStorage.setItem('diagnosticoProgress', JSON.stringify({
+                    currentSection: state.currentSection,
+                    answers: state.answers
+                }));
+            }
+
+            function loadProgress() {
+                const saved = localStorage.getItem('diagnosticoProgress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    state.currentSection = data.currentSection || 0;
+                    state.answers = data.answers || {};
+                    
+                    // Asegurar que todas las secciones tengan array de respuestas
+                    config.sections.forEach(section => {
+                        if (!state.answers[section.id]) {
+                            state.answers[section.id] = Array(section.questions.length).fill(null);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
