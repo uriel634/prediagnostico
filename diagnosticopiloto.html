@@ -1,6 +1,3 @@
-# Código Completo del Cuestionario Interactivo Mejorado
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -2064,4 +2061,60 @@
                 // In production, you would use fetch() to send to a backend
                 /*
                 fetch('/api/send-results', {
-                    method: '
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        scores: state.scores,
+                        totalScore: state.totalScore,
+                        profile: getBusinessProfile()
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+                */
+            }
+
+            function saveProgress() {
+                try {
+                    localStorage.setItem('diagnosticoProgress', JSON.stringify({
+                        currentSection: state.currentSection,
+                        answers: state.answers
+                    }));
+                } catch (e) {
+                    console.error("Error saving progress to localStorage:", e);
+                }
+            }
+
+            function loadProgress() {
+                try {
+                    const savedData = localStorage.getItem('diagnosticoProgress');
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        state.currentSection = data.currentSection || 0;
+                        
+                        // Merge saved answers with default structure
+                        for (const sectionId in data.answers) {
+                            if (state.answers[sectionId]) {
+                                data.answers[sectionId].forEach((answer, index) => {
+                                    if (answer !== null && index < state.answers[sectionId].length) {
+                                        state.answers[sectionId][index] = answer;
+                                    }
+                                });
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error loading progress from localStorage:", e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
