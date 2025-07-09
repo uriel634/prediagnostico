@@ -809,7 +809,7 @@
                 <button class="btn btn-accent" id="restartBtn">
                     <i class="fas fa-redo"></i> Reiniciar Cuestionario
                 </button>
-                <a href="/" class="btn btn-secondary" id="homeBtn">
+                <a href="index.html" class="btn btn-secondary" id="homeBtn">
                     <i class="fas fa-home"></i> Volver al Inicio
                 </a>
             </div>
@@ -1422,10 +1422,6 @@
                     if (e.target.id === 'nextBtn') nextSection();
                     if (e.target.id === 'downloadBtn') generatePDF();
                     if (e.target.id === 'restartBtn') restartQuestionnaire();
-                    if (e.target.id === 'homeBtn') {
-                        e.preventDefault();
-                        window.location.href = '/';
-                    }
                 });
                 
                 // Keyboard navigation for buttons
