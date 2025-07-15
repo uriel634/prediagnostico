@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Interactivo de tu Empresa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1, h2, h3 {
+            color: #1a3c6d;
+        }
+        .section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #1a3c6d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #15305b;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f0fe;
+            border-radius: 8px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagnóstico Interactivo de tu Empresa</h1>
+    <p>Responde las siguientes preguntas para obtener un diagnóstico personalizado de tu empresa basado en las dimensiones de <strong>Scaling Up</strong> (Personas, Estrategia, Ejecución, Flujo de Caja). Al final, recibirás un análisis con recomendaciones accionables.</p>
+
+    <div class="section">
+        <h2>Paso 1: Contexto General</h2>
+        <form id="diagnosticForm">
+            <div class="question">
+                <label>1. ¿Cuál es el giro o industria de tu empresa? (Ejemplo: tecnología, manufactura, servicios, retail)</label>
+                <input type="text" id="industry" placeholder="Escribe la industria">
+            </div>
+            <div class="question">
+                <label>2. ¿Cuál es el tamaño aproximado de tu empresa? (Número de empleados o ingresos anuales)</label>
+                <input type="text" id="size" placeholder="Ejemplo: 50 empleados, $5M USD en ingresos">
+            </div>
+            <div class="question">
+                <label>3. ¿En qué etapa está tu empresa?</label>
+                <select id="stage">
+                    <option value="startup">Startup (0-3 años)</option>
+                    <option value="growth">En crecimiento (escalando)</option>
+                    <option value="mature">Madura (establecida)</option>
+                    <option value="decline">En declive</option>
+                </select>
+            </div>
+            <div class="question">
+                <label>4. ¿Cuáles son los 2-3 mayores desafíos que enfrenta tu empresa hoy?</label>
+                <textarea id="challenges" rows="4" placeholder="Ejemplo: alta rotación, falta de liquidez, competencia"></textarea>
+            </div>
+            <div class="question">
+                <label>5. ¿Tienes una visión clara para los próximos 3-5 años? Si sí, descríbela brevemente.</label>
+                <textarea id="vision" rows="4" placeholder="Ejemplo: Convertirnos en líder regional en X"></textarea>
+            </div>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Paso 2: Evaluación por Dimensiones</h2>
+        <h3>Personas</h3>
+        <div class="question">
+            <label>6. ¿Tienes un equipo directivo alineado con la visión y con roles claramente definidos?</label>
+            <select id="teamAlignment">
+                <option value="strong">Sí, totalmente alineado</option>
+                <option value="moderate">Parcialmente alineado</option>
+                <option value="weak">No, hay desalineación</option>
+            </select>
+        </div>
+        <div class="question">
+            <label>7. ¿Qué tan alta es la rotación de empleados clave? (1 = baja, 5 = alta)</label>
+            <input type="number" id="turnover" min="1" max="5" value="1">
+        </div>
+
+        <h3>Estrategia</h3>
+        <div class="question">
+            <label>8. ¿Tu estrategia está claramente definida y comunicada a todo el equipo?</label>
+            <select id="strategyClarity">
+                <option value="clear">Sí, muy clara</option>
+                <option value="somewhat">Algo clara</option>
+                <option value="unclear">No, poco clara</option>
+            </select>
+        </div>
+        <div class="question">
+            <label>9. ¿Qué tan diferenciada es tu oferta frente a la competencia? (1 = poco, 5 = muy diferenciada)</label>
+            <input type="number" id="differentiation" min="1" max="5" value="1">
+        </div>
+
+        <h3>Ejecución</h3>
+        <div class="question">
+            <label>10. ¿Tienes procesos claros y métricas (KPIs) para medir el desempeño?</label>
+            <select id="processes">
+                <option value="robust">Sí, procesos robustos y KPIs claros</option>
+                <option value="partial">Procesos parciales, algunos KPIs</option>
+                <option value="none">No, carecemos de procesos claros</option>
+            </select>
+        </div>
+        <div class="question">
+            <label>11. ¿Qué tan consistentemente cumples tus objetivos trimestrales? (1 = nunca, 5 = siempre)</label>
+            <input type="number" id="goalAchievement" min="1" max="5" value="1">
+        </div>
+
+        <h3>Flujo de Caja</h3>
+        <div class="question">
+            <label>12. ¿Qué tan saludable es tu flujo de caja? (1 = crítico, 5 = muy saludable)</label>
+            <input type="number" id="cashFlow" min="1" max="5" value="1">
+        </div>
+        <div class="question">
+            <label>13. ¿Tienes reservas de efectivo para al menos 3-6 meses de operaciones?</label>
+            <select id="cashReserves">
+                <option value="yes">Sí, más de 6 meses</option>
+                <option value="partial">Entre 3-6 meses</option>
+                <option value="no">Menos de 3 meses</option>
+            </select>
+        </div>
+    </div>
+
+    <button onclick="generateDiagnosis()">Generar Diagnóstico</button>
+
+    <div id="result">
+        <h2>Diagnóstico y Recomendaciones</h2>
+        <div id="diagnosisOutput"></div>
+    </div>
+
+    <script>
+        function generateDiagnosis() {
+            // Obtener respuestas
+            const industry = document.getElementById('industry').value || 'No especificado';
+            const size = document.getElementById('size').value || 'No especificado';
+            const stage = document.getElementById('stage').value;
+            const challenges = document.getElementById('challenges').value || 'No especificado';
+            const vision = document.getElementById('vision').value || 'No especificado';
+            const teamAlignment = document.getElementById('teamAlignment').value;
+            const turnover = parseInt(document.getElementById('turnover').value);
+            const strategyClarity = document.getElementById('strategyClarity').value;
+            const differentiation = parseInt(document.getElementById('differentiation').value);
+            const processes = document.getElementById('processes').value;
+            const goalAchievement = parseInt(document.getElementById('goalAchievement').value);
+            const cashFlow = parseInt(document.getElementById('cashFlow').value);
+            const cashReserves = document.getElementById('cashReserves').value;
+
+            // Diagnóstico
+            let diagnosis = `<h3>Resumen de tu Empresa</h3>`;
+            diagnosis += `<p><strong>Industria:</strong> ${industry}</p>`;
+            diagnosis += `<p><strong>Tamaño:</strong> ${size}</p>`;
+            diagnosis += `<p><strong>Etapa:</strong> ${stage}</p>`;
+            diagnosis += `<p><strong>Desafíos:</strong> ${challenges}</p>`;
+            diagnosis += `<p><strong>Visión:</strong> ${vision}</p>`;
+
+            diagnosis += `<h3>Análisis por Dimensiones</h3>`;
+
+            // Personas
+            diagnosis += `<h4>Personas</h4>`;
+            if (teamAlignment === 'weak' || turnover >= 4) {
+                diagnosis += `<p><strong>Área Crítica:</strong> Hay desalineación en el equipo directivo o alta rotación de empleados clave. Esto puede estar afectando la moral y la ejecución.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Implementa talleres de alineación estratégica y revisa tu estrategia de retención (compensaciones, cultura, desarrollo). Comienza con una sesión de definición de roles y responsabilidades usando el framework <em>Accountability Chart</em> de Scaling Up.</p>`;
+            } else if (teamAlignment === 'moderate' || turnover === 3) {
+                diagnosis += `<p><strong>Oportunidad de Mejora:</strong> El equipo está parcialmente alineado, pero hay margen para mejorar la cohesión o reducir la rotación.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Realiza reuniones trimestrales de alineación y evalúa la satisfacción del equipo con encuestas anónimas.</p>`;
+            } else {
+                diagnosis += `<p><strong>Punto Fuerte:</strong> Tu equipo parece alineado y con baja rotación. Aprovecha esta fortaleza para impulsar iniciativas clave.</p>`;
+            }
+
+            // Estrategia
+            diagnosis += `<h4>Estrategia</h4>`;
+            if (strategyClarity === 'unclear' || differentiation <= 2) {
+                diagnosis += `<p><strong>Área Crítica:</strong> La estrategia no está clara o tu oferta no se diferencia lo suficiente en el mercado.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Define un <em>Core Purpose</em> y un <em>Brand Promise</em> claros. Usa el framework de Scaling Up para establecer un <em>One-Page Strategic Plan</em> y analiza a la competencia para identificar diferenciadores únicos.</p>`;
+            } else if (strategyClarity === 'somewhat' || differentiation === 3) {
+                diagnosis += `<p><strong>Oportunidad de Mejora:</strong> Tu estrategia tiene bases, pero necesita mayor claridad o diferenciación.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Realiza un taller estratégico con tu equipo para refinar tu propuesta de valor y comunicar la estrategia de forma consistente.</p>`;
+            } else {
+                diagnosis += `<p><strong>Punto Fuerte:</strong> Tienes una estrategia clara y diferenciada. Asegúrate de revisarla anualmente para mantener la relevancia.</p>`;
+            }
+
+            // Ejecución
+            diagnosis += `<h4>Ejecución</h4>`;
+            if (processes === 'none' || goalAchievement <= 2) {
+                diagnosis += `<p><strong>Área Crítica:</strong> La falta de procesos claros o el incumplimiento de objetivos está frenando tu crecimiento.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Implementa un sistema de KPIs basado en el framework de Scaling Up (SMART goals). Establece reuniones semanales de seguimiento para asegurar la ejecución.</p>`;
+            } else if (processes === 'partial' || goalAchievement === 3) {
+                diagnosis += `<p><strong>Oportunidad de Mejora:</strong> Hay procesos, pero no son robustos, o los objetivos se cumplen inconsistentemente.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Refuerza tus procesos con herramientas como OKRs o software de gestión (Trello, Asana) y revisa los KPIs trimestralmente.</p>`;
+            } else {
+               Processes robustos y cumplimiento consistente de objetivos. Mantén esta disciplina y considera automatizar procesos para mayor eficiencia.</p>`;
+            }
+
+            // Flujo de Caja
+            diagnosis += `<h4>Flujo de Caja</h4>`;
+            if (cashFlow <= 2 || cashReserves === 'no') {
+                diagnosis += `<p><strong>Área Crítica:</strong> Tu flujo de caja es débil o no tienes reservas suficientes, lo que pone en riesgo la sostenibilidad.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Realiza un análisis detallado de ingresos y gastos. Implementa un modelo de <em>Cash Flow Forecast</em> para 12 meses y busca optimizar el ciclo de cobro (p. ej., reducir DSO - Días de Ventas Pendientes).</p>`;
+            } else if (cashFlow === 3 || cashReserves === 'partial') {
+                diagnosis += `<p><strong>Oportunidad de Mejora:</strong> Tu flujo de caja es funcional, pero no óptimo. Las reservas podrían no ser suficientes para imprevistos.</p>`;
+                diagnosis += `<p><strong>Recomendación:</strong> Crea un plan de reservas para alcanzar 6 meses de cobertura y optimiza costos operativos sin sacrificar calidad.</p>`;
+            } else {
+                diagnosis += `<p><strong>Punto Fuerte:</strong> Tu flujo de caja es saludable y tienes reservas adecuadas. Considera invertir en crecimiento estratégico (expansión, innovación).</p>`;
+            }
+
+            // Prioridades
+            diagnosis += `<h3>Prioridades para Empezar</h3>`;
+            diagnosis += `<p>Basado en tus respuestas, las áreas críticas son:</p>`;
+            diagnosis += `<ul>`;
+            if (teamAlignment === 'weak' || turnover >= 4) diagnosis += `<li>Mejorar la alineación y retención del equipo.</li>`;
+            if (strategyClarity === 'unclear' || differentiation <= 2) diagnosis += `<li>Definir y comunicar una estrategia clara y diferenciada.</li>`;
+            if (processes === 'none' || goalAchievement <= 2) diagnosis += `<li>Fortalecer procesos y ejecución de objetivos.</li>`;
+            if (cashFlow <= 2 || cashReserves === 'no') diagnosis += `<li>Optimizar el flujo de caja y construir reservas.</li>`;
+            diagnosis += `</ul>`;
+            diagnosis += `<p><strong>Próximo paso:</strong> Reúne a tu equipo directivo y revisa este diagnóstico. Elige una prioridad clave y crea un plan de acción con metas específicas para los próximos 90 días.</p>`;
+
+            // Mostrar resultado
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('diagnosisOutput').innerHTML = diagnosis;
+        }
+    </script>
+</body>
+</html>
