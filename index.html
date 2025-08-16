@@ -1,32 +1,728 @@
-<!DOCTYPE html>
-<html>
+ <!DOCTYPE html>
+<html lang="es">
 <head>
-    <title>Mis proyectos GitHub Pages</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Qué tan estructurada está tu empresa?</title>
     <style>
-        /* Estilos similares al ejemplo anterior */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 30px 25px;
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .option:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: #e8f5e8;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .result-container.active {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .result-description {
+            font-size: 16px;
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .insights {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .insights h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .insights ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insights li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .insights li:last-child {
+            border-bottom: none;
+        }
+
+        .insights li::before {
+            content: '✓';
+            color: #4caf50;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        .cta-section h4 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            font-size: 14px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .cta-keyword {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .share-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .content {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Mis proyectos</h1>
-    <div id="projects"></div>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 ¿Qué tan estructurada está tu empresa?</h1>
+            <p>Descubre en 2 minutos el estado actual de tu negocio</p>
+        </div>
+
+        <div class="content">
+            <div class="progress-text">
+                <span id="current-question">1</span> de <span id="total-questions">10</span> preguntas
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <!-- Pregunta 1 -->
+            <div class="question-container active" data-question="1">
+                <div class="question">
+                    <h3>¿Tienes un organigrama claro de tu empresa?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">✅ Sí, cada persona sabe exactamente cuál es su rol y responsabilidades</div>
+                        <div class="option" data-value="2">🤔 Tengo una idea general, pero no está documentado</div>
+                        <div class="option" data-value="1">❌ No, todos hacemos de todo según lo que surja</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 2 -->
+            <div class="question-container" data-question="2">
+                <div class="question">
+                    <h3>¿Cómo manejas las finanzas de tu empresa?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">📊 Tengo reportes mensuales y sé exactamente mis números</div>
+                        <div class="option" data-value="2">💰 Reviso mi cuenta bancaria regularmente pero no tengo reportes</div>
+                        <div class="option" data-value="1">🤷‍♂️ Solo me preocupo cuando no hay dinero</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 3 -->
+            <div class="question-container" data-question="3">
+                <div class="question">
+                    <h3>¿Tienes procesos documentados para las tareas importantes?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">📋 Sí, tengo manuales y cualquier persona puede seguirlos</div>
+                        <div class="option" data-value="2">📝 Algunos procesos están escritos, otros están en mi cabeza</div>
+                        <div class="option" data-value="1">🧠 Todo está en mi cabeza, yo superviso todo</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="question-container" data-question="4">
+                <div class="question">
+                    <h3>¿Cómo gestionas las ventas?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">🎯 Tengo un sistema de seguimiento y métricas de ventas</div>
+                        <div class="option" data-value="2">📞 Hago seguimiento pero no tengo un sistema formal</div>
+                        <div class="option" data-value="1">🤞 Espero que los clientes me llamen</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 5 -->
+            <div class="question-container" data-question="5">
+                <div class="question">
+                    <h3>¿Qué tan dependiente eres tú de las operaciones diarias?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">🏖️ Puedo tomarme vacaciones sin preocuparme</div>
+                        <div class="option" data-value="2">📱 Puedo salir pero debo estar disponible por teléfono</div>
+                        <div class="option" data-value="1">🔥 Si no estoy, todo se incendia</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 6 -->
+            <div class="question-container" data-question="6">
+                <div class="question">
+                    <h3>¿Cómo planificas el crecimiento de tu empresa?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">📈 Tengo un plan estratégico a 3-5 años</div>
+                        <div class="option" data-value="2">📅 Planeo año por año</div>
+                        <div class="option" data-value="1">🎲 Voy resolviendo según aparecen las oportunidades</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 7 -->
+            <div class="question-container" data-question="7">
+                <div class="question">
+                    <h3>¿Cómo mides el rendimiento de tu empresa?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">📊 Tengo indicadores clave que reviso regularmente</div>
+                        <div class="option" data-value="2">💵 Solo miro si hay ganancias al final del mes</div>
+                        <div class="option" data-value="1">🤔 No tengo métricas claras</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 8 -->
+            <div class="question-container" data-question="8">
+                <div class="question">
+                    <h3>¿Cómo gestionas a tu equipo?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">👥 Tengo reuniones regulares y objetivos claros para cada persona</div>
+                        <div class="option" data-value="2">💬 Hablamos cuando hay problemas o dudas</div>
+                        <div class="option" data-value="1">🏃‍♂️ Cada quien hace lo que puede</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 9 -->
+            <div class="question-container" data-question="9">
+                <div class="question">
+                    <h3>¿Tienes sistemas para no perder clientes?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">🎯 Tengo estrategias de retención y seguimiento post-venta</div>
+                        <div class="option" data-value="2">📞 Llamo a mis clientes de vez en cuando</div>
+                        <div class="option" data-value="1">🤷‍♂️ Si se van, busco nuevos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pregunta 10 -->
+            <div class="question-container" data-question="10">
+                <div class="question">
+                    <h3>¿Qué tan organizada está tu información importante?</h3>
+                    <div class="options">
+                        <div class="option" data-value="3">🗂️ Todo está digitalizado y organizado</div>
+                        <div class="option" data-value="2">📁 Tengo carpetas pero a veces no encuentro lo que busco</div>
+                        <div class="option" data-value="1">📄 Papeles por todos lados y documentos en diferentes lugares</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <div class="result-container" id="result-caos">
+                <div class="result-icon">🔥</div>
+                <div class="result-title">Empresa en CAOS</div>
+                <div class="result-description">
+                    Tu empresa funciona, pero está completamente dependiente de ti. Es momento de crear orden antes de que el crecimiento se vuelva tu peor enemigo.
+                </div>
+                <div class="insights">
+                    <h4>Tus próximos pasos:</h4>
+                    <ul>
+                        <li>Documenta los procesos más críticos</li>
+                        <li>Implementa un sistema básico de finanzas</li>
+                        <li>Define roles y responsabilidades claras</li>
+                        <li>Crea un sistema simple de seguimiento de ventas</li>
+                    </ul>
+                </div>
+                <div class="cta-section">
+                    <h4>🎯 ¿Quieres salir del caos?</h4>
+                    <p>Te ayudo a crear estructura en tu empresa para que puedas crecer sin morir en el intento.</p>
+                    <div class="cta-keyword">Escríbeme "ORDEN" por MD</div>
+                    <p>y te comparto mi guía gratuita "De Caos a Control en 30 días"</p>
+                </div>
+            </div>
+
+            <div class="result-container" id="result-transicion">
+                <div class="result-icon">⚡</div>
+                <div class="result-title">Empresa en TRANSICIÓN</div>
+                <div class="result-description">
+                    Ya tienes algunas bases, pero necesitas sistematizar más para lograr el siguiente nivel. Estás en el punto perfecto para acelerar tu crecimiento.
+                </div>
+                <div class="insights">
+                    <h4>Tus próximos pasos:</h4>
+                    <ul>
+                        <li>Automatiza los procesos que ya tienes</li>
+                        <li>Implementa métricas de rendimiento</li>
+                        <li>Desarrolla tu equipo y delega más</li>
+                        <li>Crea un plan estratégico de crecimiento</li>
+                    </ul>
+                </div>
+                <div class="cta-section">
+                    <h4>🚀 ¿Listo para el siguiente nivel?</h4>
+                    <p>Te ayudo a optimizar lo que ya tienes y crear los sistemas que necesitas para escalar.</p>
+                    <div class="cta-keyword">Escríbeme "ACELERAR" por MD</div>
+                    <p>y hablamos de cómo llevar tu empresa al siguiente nivel</p>
+                </div>
+            </div>
+
+            <div class="result-container" id="result-estructurada">
+                <div class="result-icon">💎</div>
+                <div class="result-title">Empresa ESTRUCTURADA</div>
+                <div class="result-description">
+                    ¡Felicidades! Tu empresa tiene una base sólida. Ahora puedes enfocarte en estrategias avanzadas de crecimiento y expansión.
+                </div>
+                <div class="insights">
+                    <h4>Tus próximos pasos:</h4>
+                    <ul>
+                        <li>Optimiza la eficiencia de tus sistemas</li>
+                        <li>Explora nuevos mercados y oportunidades</li>
+                        <li>Desarrolla estrategias de innovación</li>
+                        <li>Considera la expansión o diversificación</li>
+                    </ul>
+                </div>
+                <div class="cta-section">
+                    <h4>🎯 ¿Quieres maximizar tu potencial?</h4>
+                    <p>Hablemos de estrategias avanzadas para llevar tu empresa a la excelencia.</p>
+                    <div class="cta-keyword">Escríbeme "EXCELENCIA" por MD</div>
+                    <p>y conversemos sobre optimización y crecimiento estratégico</p>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" onclick="previousQuestion()" style="display: none;">Anterior</button>
+                <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Siguiente</button>
+            </div>
+
+            <div class="share-buttons" style="display: none;" id="share-buttons">
+                <button class="share-btn" onclick="shareResult()">📱 Compartir Resultado</button>
+                <button class="share-btn" onclick="restartQuiz()">🔄 Hacer de Nuevo</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Lista de tus proyectos
-        const projects = [
-            { name: "diagnostico", url: "https://uriel634.github.io/prediagnostico/" },
-            { name: "Prediagnostico", url: "https://uriel634.github.io/prediagnostico/diagnosticopiloto.html" },
-            // Añade más proyectos aquí
-        ];
+        let currentQuestion = 1;
+        let totalQuestions = 10;
+        let answers = {};
+        let totalScore = 0;
 
-        const container = document.getElementById('projects');
-        let html = '<ul>';
-        
-        projects.forEach(project => {
-            html += `<li><a href="${project.url}" target="_blank">${project.name}</a></li>`;
+        function updateProgress() {
+            const progress = (currentQuestion - 1) / totalQuestions * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('current-question').textContent = currentQuestion;
+        }
+
+        function showQuestion(questionNumber) {
+            // Ocultar todas las preguntas
+            document.querySelectorAll('.question-container').forEach(q => {
+                q.classList.remove('active');
+            });
+            
+            // Mostrar la pregunta actual
+            const currentQuestionEl = document.querySelector(`[data-question="${questionNumber}"]`);
+            if (currentQuestionEl) {
+                currentQuestionEl.classList.add('active');
+            }
+            
+            // Actualizar botones de navegación
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            if (questionNumber === 1) {
+                prevBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'block';
+            }
+            
+            if (questionNumber === totalQuestions) {
+                nextBtn.textContent = 'Ver Resultado';
+            } else {
+                nextBtn.textContent = 'Siguiente';
+            }
+            
+            // Verificar si hay respuesta seleccionada
+            const hasAnswer = answers[questionNumber];
+            nextBtn.disabled = !hasAnswer;
+            
+            updateProgress();
+        }
+
+        function selectOption(element, value, questionNumber) {
+            // Remover selección anterior
+            element.parentNode.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Seleccionar nueva opción
+            element.classList.add('selected');
+            
+            // Guardar respuesta
+            answers[questionNumber] = value;
+            
+            // Habilitar botón siguiente
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                showResult();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function calculateResult() {
+            totalScore = Object.values(answers).reduce((sum, value) => sum + parseInt(value), 0);
+            
+            if (totalScore <= 15) {
+                return 'caos';
+            } else if (totalScore <= 25) {
+                return 'transicion';
+            } else {
+                return 'estructurada';
+            }
+        }
+
+        function showResult() {
+            const resultType = calculateResult();
+            
+            // Ocultar todas las preguntas
+            document.querySelectorAll('.question-container').forEach(q => {
+                q.classList.remove('active');
+            });
+            
+            // Ocultar navegación
+            document.querySelector('.navigation').style.display = 'none';
+            
+            // Ocultar barra de progreso
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.querySelector('.progress-text').style.display = 'none';
+            
+            // Mostrar resultado
+            document.getElementById(`result-${resultType}`).classList.add('active');
+            
+            // Mostrar botones de compartir
+            document.getElementById('share-buttons').style.display = 'flex';
+        }
+
+        function shareResult() {
+            const resultType = calculateResult();
+            let resultText = '';
+            
+            switch(resultType) {
+                case 'caos':
+                    resultText = 'Mi empresa está en CAOS 🔥 ¡Es hora de crear orden!';
+                    break;
+                case 'transicion':
+                    resultText = 'Mi empresa está en TRANSICIÓN ⚡ ¡Lista para el siguiente nivel!';
+                    break;
+                case 'estructurada':
+                    resultText = 'Mi empresa está ESTRUCTURADA 💎 ¡Maximizando el potencial!';
+                    break;
+            }
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: '¿Qué tan estructurada está tu empresa?',
+                    text: resultText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback para navegadores que no soportan Web Share API
+                const text = `${resultText} Haz el test aquí: ${window.location.href}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('¡Resultado copiado al portapapeles!');
+                });
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            totalScore = 0;
+            
+            // Resetear todas las selecciones
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Ocultar resultados
+            document.querySelectorAll('.result-container').forEach(r => {
+                r.classList.remove('active');
+            });
+            
+            // Mostrar controles
+            document.querySelector('.navigation').style.display = 'flex';
+            document.querySelector('.progress-bar').style.display = 'block';
+            document.querySelector('.progress-text').style.display = 'block';
+            document.getElementById('share-buttons').style.display = 'none';
+            
+            // Mostrar primera pregunta
+            showQuestion(1);
+        }
+
+        // Event listeners para las opciones
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    const questionContainer = this.closest('.question-container');
+                    const questionNumber = questionContainer.getAttribute('data-question');
+                    selectOption(this, value, parseInt(questionNumber));
+                });
+            });
+            
+            // Inicializar
+            showQuestion(1);
         });
-        
-        html += '</ul>';
-        container.innerHTML = html;
     </script>
 </body>
 </html>
